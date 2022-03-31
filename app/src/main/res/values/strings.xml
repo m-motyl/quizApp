@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">licencjat-projekt</string>
+    <string name="app_name">QuizApp</string>
+    <string name="signin_sign_in">Sign In</string>
+    <string name="signin_username">Username</string>
+    <string name="signin_password">Password</string>
+    <string name="signin_login">login</string>
+    <string name="signin_forgot_password">Forgot password?</string>
+    <string name="signin_or">or</string>
+    <string name="signin_sign_up">Sign Up</string>
+    <string name="signup_create_account">Create account</string>
+    <string name="signup_username">Username</string>
+    <string name="signup_e_mail">E-mail</string>
+    <string name="signup_password">Password</string>
+    <string name="signup_add_image">Add image</string>
+    <string name="signup_sign_up">Sign Up</string>
+    <string name="signup_info">Already have an account?</string>
+    <string name="signup_sign_in">Sign In</string>
+
 </resources>
