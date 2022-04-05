@@ -30,13 +30,49 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@+id/questions_toolbar"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageButton
+                    android:id="@+id/questions_prev_question"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:background="@color/purple_07"
+                    android:src="@drawable/ic_baseline_arrow_back_24_white" />
+
+                <ImageButton
+                    android:id="@+id/questions_finish_quiz"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:background="@color/purple_07"
+                    android:src="@drawable/ic_baseline_save_24" />
+
+                <ImageButton
+                    android:id="@+id/next_question"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:background="@color/purple_07"
+                    android:src="@drawable/ic_baseline_arrow_forward_24" />
+
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="270dp"
-            android:background="@color/purple_05"
-            android:padding="20dp">
+            android:background="@color/purple_05">
 
             <ImageView
                 android:id="@+id/questions_image"
@@ -46,7 +82,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="100dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="100dp"
                 android:src="@drawable/add_screen_image_placeholder" />
 
@@ -57,12 +93,12 @@
                 android:layout_below="@+id/questions_image"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/purple_07"
-                android:hint="Treść pytania"
+                android:hint="@string/questions_question_text"
                 android:inputType="text"
                 android:padding="20dp"
                 android:textColor="@color/white"
@@ -82,7 +118,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/purple_07"
                 android:layout_marginStart="5dp"
-                android:hint="Dodaj odpowiedź"
+                android:hint="@string/questions_answer_text"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white" />
 
@@ -90,9 +126,6 @@
                 android:id="@+id/questions_answer_image"
                 android:layout_width="81dp"
                 android:layout_height="51dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="15dp"
@@ -105,6 +138,27 @@
                 android:background="@color/purple_07"
                 android:src="@drawable/ic_baseline_add_24" />
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/questions_delete"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:src="@drawable/ic_baseline_delete_24"/>
+            <ImageButton
+                android:id="@+id/questions_select_correct_answers"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:src="@drawable/ic_baseline_star_24"/>
+        </LinearLayout>
+        <!--
             <CheckBox
                 android:id="@+id/questions_correctness"
                 android:text="Czy odpowiedź jest poprawna?"
@@ -124,7 +178,8 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            />
+            /> -->
+
         <!--<TextView
             android:id="@+id/questions_delete_last"
             android:layout_width="match_parent"
