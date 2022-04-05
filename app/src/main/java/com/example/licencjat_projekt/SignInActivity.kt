@@ -18,7 +18,7 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.signin_login -> {
-                val intent = Intent(this, QuizMainActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 //val intent = Intent(this, MainActivity::class.java) #to start main activity
                 startActivity(intent)
             }
