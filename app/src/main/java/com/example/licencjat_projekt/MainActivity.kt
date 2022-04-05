@@ -1,7 +1,9 @@
 package com.example.licencjat_projekt
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -9,7 +11,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.main_drawer_layout)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = ""
+        supportActionBar!!.title = "QuizApp"
 
         //navigation drawer menu
 
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         )
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState()
+        navigationView.setNavigationItemSelectedListener(this)
     }
 
     override fun onBackPressed() {
@@ -46,5 +49,33 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.drawer_menu_create_quiz -> run {
+                val intent = Intent(
+                    this,
+                    QuizMainActivity::class.java
+                )
+                startActivity(intent)
+            }
+            R.id.drawer_menu_profile -> run {
+                val intent = Intent(
+                    this,
+                    ProfileActivity::class.java
+                )
+                startActivity(intent)
+            }
+            R.id.drawer_menu_logout -> run {
+                val intent = Intent(
+                    this,
+                    SignInActivity::class.java
+                )
+                startActivity(intent)
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
     }
 }
