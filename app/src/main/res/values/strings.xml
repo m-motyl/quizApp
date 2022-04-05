@@ -7,6 +7,7 @@
     <string name="signin_forgot_password">Forgot password?</string>
     <string name="signin_or">or</string>
     <string name="signin_sign_up">Sign Up</string>
+
     <string name="signup_create_account">Create account</string>
     <string name="signup_username">Username</string>
     <string name="signup_e_mail">E-mail</string>
@@ -15,5 +16,20 @@
     <string name="signup_sign_up">Sign Up</string>
     <string name="signup_info">Already have an account?</string>
     <string name="signup_sign_in">Sign In</string>
+    <string name="profile_main_login">Nazwa użytkownika</string>
+    <string name="profile_rate">Ocena</string>
+    <string name="profile_quiz_taken">Rozwiązane quziy</string>
+    <string name="profile_quiz_taken_count">Liczba</string>
+    <string name="profile_rate_number">Liczba</string>
+    <string name="profile_login">Login</string>
+    <string name="profile_email">E-mail</string>
+    <string name="profile_password">Hasło</string>
+
+    <string name="quizmain_title">Tytuł</string>
+    <string name="quizmain_description">Opis</string>
+    <string name="quizmain_tags">Tagi</string>
+    <string name="quizmain_final_comment">Uwaga końcowa</string>
+    <string name="quizmain_create_quiz">Utwórz quiz</string>
+    <string name="quizmain_privacy">"Czy prywatne?"</string>
 
 </resources>

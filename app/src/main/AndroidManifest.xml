@@ -10,8 +10,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Licencjatprojekt">
         <activity
+            android:name=".QuizMainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="true" />
+        <activity
             android:name=".SignUpActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".SignInActivity"
             android:exported="true">
