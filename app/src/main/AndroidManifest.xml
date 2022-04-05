@@ -19,7 +19,7 @@
             android:name=".Projekt.Activities.QuizMainActivity"
             android:exported="true" />
         <activity
-            android:name=".Projekt.Activities.ProfileActivity"
+            android:name="com.example.licencjat_projekt.ProfileActivity"
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.SignUpActivity"
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Projekt.Activities.MainActivity"
+            android:name="com.example.licencjat_projekt.MainActivity"
             android:exported="true" />
     </application>
 
