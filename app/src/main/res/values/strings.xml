@@ -25,12 +25,14 @@
     <string name="profile_email">E-mail</string>
     <string name="profile_password">Hasło</string>
 
-    <string name="quizmain_title">Tytuł</string>
-    <string name="quizmain_description">Opis</string>
-    <string name="quizmain_tags">Tagi</string>
-    <string name="quizmain_final_comment">Uwaga końcowa</string>
-    <string name="quizmain_create_quiz">Utwórz quiz</string>
-    <string name="quizmain_privacy">"Czy prywatne?"</string>
+    <string name="quizmain_title">Title</string>
+    <string name="quizmain_description">Description</string>
+    <string name="quizmain_tags">Tags</string>
+    <string name="quizmain_final_comment">Final comment</string>
+    <string name="quizmain_create_quiz">CREATE QUIZ</string>
+    <string name="quizmain_privacy">"Is private?"</string>
+    <string name="questions_question_text">Question</string>
+    <string name="questions_answer_text">Answer</string>
 
     <string name="drawer_menu_create_quiz">Utwórz quiz</string>
     <string name="drawer_menu_profile">Profil</string>
