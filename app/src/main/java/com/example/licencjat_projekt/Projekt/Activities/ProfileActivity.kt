@@ -1,8 +1,8 @@
-package com.example.licencjat_projekt
+package com.example.licencjat_projekt.Projekt.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_quiz_main.*
+import com.example.licencjat_projekt.R
 
 class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

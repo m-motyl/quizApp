@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Projekt.Activities.QuestionsActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/questions_toolbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/purple_04"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="270dp"
+            android:background="@color/purple_05"
+            android:padding="20dp">
+
+            <ImageView
+                android:id="@+id/questions_image"
+                android:layout_width="278dp"
+                android:layout_height="147dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="100dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="100dp"
+                android:src="@drawable/add_screen_image_placeholder" />
+
+            <EditText
+                android:id="@+id/questions_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/questions_image"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/purple_07"
+                android:hint="Treść pytania"
+                android:inputType="text"
+                android:padding="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/purple_07">
+
+            <EditText
+                android:id="@+id/questions_add_answer"
+                android:layout_width="226dp"
+                android:layout_height="match_parent"
+                android:background="@color/purple_07"
+                android:layout_marginStart="5dp"
+                android:hint="Dodaj odpowiedź"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
+
+            <ImageView
+                android:id="@+id/questions_answer_image"
+                android:layout_width="81dp"
+                android:layout_height="51dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/add_screen_image_placeholder" />
+
+            <ImageButton
+                android:id="@+id/questions_add_button"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:background="@color/purple_07"
+                android:src="@drawable/ic_baseline_add_24" />
+        </LinearLayout>
+            <CheckBox
+                android:id="@+id/questions_correctness"
+                android:text="Czy odpowiedź jest poprawna?"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/purple_06"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textAlignment="center"
+                android:layoutDirection="rtl" />
+        <TextView
+            android:id="@+id/questions_delete_last"
+            android:text="Usuń ostatnią odpowiedź"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:background="@color/purple_07"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            />
+        <!--<TextView
+            android:id="@+id/questions_delete_last"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/purple_07"
+            />-->
+        <!--<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+            <TextView
+                android:layout_width="366dp"
+                android:layout_height="match_parent"
+                android:background="@color/purple_07"
+                android:text="  Usuń ostatnią odpowiedź"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="18sp"/>
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/purple_07"
+                android:src="@drawable/ic_baseline_remove_24" />
+
+        </LinearLayout>
+        -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/questions_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="287dp" />
+    </LinearLayout>
+</ScrollView>
