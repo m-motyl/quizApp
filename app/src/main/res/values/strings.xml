@@ -34,4 +34,10 @@
     <string name="questions_question_text">Question</string>
     <string name="questions_answer_text">Answer</string>
 
+    <string name="drawer_menu_create_quiz">Utwórz quiz</string>
+    <string name="drawer_menu_profile">Profil</string>
+    <string name="drawer_menu_logout">Wyloguj się</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>
