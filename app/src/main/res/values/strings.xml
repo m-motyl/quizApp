@@ -45,5 +45,10 @@
     <string name="question_display_btn_add">Dodaj odp</string>
     <string name="create_question_ask_question">Zadaj pytanie</string>
     <string name="create_question_points">Pkt</string>
+    <string name="detail_quiz_questions">Pytań:</string>
+    <string name="details_quiz_author">Autor:</string>
+    <string name="detail_quiz_description">Opis:</string>
+    <string name="detail_quiz_tags">Tagi:</string>
+    <string name="detail_quiz_participate">Weź udział!</string>
 
 </resources>
