@@ -1,9 +1,11 @@
-package com.example.licencjat_projekt
+package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.example.licencjat_projekt.MainActivity
+import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_sign_in.*
 
 class SignInActivity : AppCompatActivity(), View.OnClickListener {
@@ -18,7 +20,7 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when(v!!.id){
             R.id.signin_login -> {
-                val intent = Intent(this, QuizMainActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 //val intent = Intent(this, MainActivity::class.java) #to start main activity
                 startActivity(intent)
             }
