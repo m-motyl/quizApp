@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_quiz_main.*
 class CreateQuestionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_question_display)
+        setContentView(R.layout.activity_create_question)
 
         quizmain_toolbar.setNavigationOnClickListener{
             onBackPressed()
