@@ -31,5 +31,7 @@
     <string name="quizmain_final_comment">Uwaga końcowa</string>
     <string name="quizmain_create_quiz">Utwórz quiz</string>
     <string name="quizmain_privacy">"Czy prywatne?"</string>
+    <string name="question_display_btn_back"><![CDATA[<]]></string>
+    <string name="question_display_btn_next"><![CDATA[>]]></string>
 
 </resources>
