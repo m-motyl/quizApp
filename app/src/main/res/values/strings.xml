@@ -41,5 +41,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="question_display_btn_back"><![CDATA[<]]></string>
     <string name="question_display_btn_next"><![CDATA[>]]></string>
+    <string name="create_question_btn_end">zakończ</string>
+    <string name="question_display_btn_add">Dodaj odp</string>
+    <string name="create_question_ask_question">Zadaj pytanie</string>
+    <string name="create_question_points">Pkt</string>
 
 </resources>

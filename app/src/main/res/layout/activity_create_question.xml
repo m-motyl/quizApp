@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".CreateQuestionActivity">
+    tools:context=".Projekt.Activities.CreateQuestionActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
 
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/question_display_toolbar"
+            android:id="@+id/create_question_toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/purple_04"
@@ -35,7 +35,7 @@
         android:padding="20dp">
 
         <ImageView
-            android:id="@+id/question_display_image"
+            android:id="@+id/create_question_image"
             android:layout_width="278dp"
             android:layout_height="147dp"
             android:layout_alignParentStart="true"
@@ -46,11 +46,11 @@
             android:layout_marginEnd="110dp"
             android:src="@mipmap/ic_launcher_round" />
 
-        <TextView
+        <EditText
             android:id="@+id/question_display_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/question_display_image"
+            android:layout_below="@id/create_question_image"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
@@ -60,17 +60,38 @@
             android:layout_marginBottom="2dp"
             android:background="#30ffffff"
             android:drawablePadding="20dp"
+            android:hint="@string/create_question_ask_question"
             android:padding="20dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/create_question_points"
+            android:textColor="@color/white"
+            android:textSize="30sp" />
+
+        <EditText
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="70dp"
+            android:background="#30ffffff" />
 
     </RelativeLayout>
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="300dp"
         android:background="@color/white"
         android:padding="20dp">
 
@@ -78,19 +99,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/question_display_answer"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="50dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/purple_07"
-                android:drawablePadding="20dp"
-                android:padding="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/create_question_answer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/purple_07"
+                    android:drawablePadding="20dp"
+                    android:padding="20dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    />
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/ic_launcher_round"/>
+            </RelativeLayout>
         </ScrollView>
     </RelativeLayout>
 
@@ -99,20 +133,44 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/question_display_btn_back"
+            android:id="@+id/create_question_btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+
             android:layout_marginStart="60dp"
             android:backgroundTint="@color/purple_05"
             android:text="@string/question_display_btn_back" />
+
         <Button
-            android:id="@+id/question_display_btn_next"
+            android:id="@+id/create_question_btn_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+
+            android:layout_marginStart="60dp"
+            android:backgroundTint="@color/purple_05"
+            android:text="@string/create_question_btn_end" />
+
+        <Button
+            android:id="@+id/create_question_btn_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginEnd="60dp"
             android:backgroundTint="@color/purple_05"
             android:text="@string/question_display_btn_next" />
+
+        <Button
+            android:id="@+id/create_question_btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/purple_05"
+            android:text="@string/question_display_btn_add" />
     </RelativeLayout>
 </LinearLayout>
