@@ -39,5 +39,7 @@
     <string name="drawer_menu_logout">Wyloguj się</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="question_display_btn_back"><![CDATA[<]]></string>
+    <string name="question_display_btn_next"><![CDATA[>]]></string>
 
 </resources>
