@@ -13,13 +13,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Licencjatprojekt">
         <activity
+            android:name=".Projekt.Activities.ReportActivity"
+            android:exported="true" />
+        <activity
             android:name=".Projekt.Activities.QuestionsActivity"
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.QuizMainActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.licencjat_projekt.ProfileActivity"
+            android:name=".Projekt.Activities.ProfileActivity"
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.SignUpActivity"
@@ -34,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.licencjat_projekt.MainActivity"
+            android:name=".Projekt.Activities.MainActivity"
             android:exported="true" />
     </application>
 

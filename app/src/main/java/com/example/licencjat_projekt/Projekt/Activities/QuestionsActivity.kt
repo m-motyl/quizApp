@@ -1,20 +1,16 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.app.AlertDialog
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_questions.*
-import kotlinx.android.synthetic.main.question_item.*
 
 class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
@@ -54,7 +50,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             }
             R.id.questions_delete -> {
                 val alert = AlertDialog.Builder(this)
-                alert.setTitle("Usuwanie:")
+                alert.setTitle("Usuń:")
                 val items = arrayOf(
                     "Pytanie",
                     "Ostatnia odpowiedź"
@@ -95,7 +91,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
         answersList.setOnClickListener(object: AnswersList.OnClickListener{
             override fun onClick(position:Int, model: AnswerModel) {
-                Log.e("item", "${model.answer}")
+                Log.e("item", model.answer)
             }
         })
     }
