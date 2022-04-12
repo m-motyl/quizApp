@@ -8,6 +8,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.licencjat_projekt.Projekt.Activities.CommunityActivity
 import com.example.licencjat_projekt.Projekt.Activities.QuizMainActivity
 import com.example.licencjat_projekt.Projekt.Activities.SignInActivity
 import com.google.android.material.navigation.NavigationView
@@ -68,6 +69,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     ProfileActivity::class.java
                 )
                 startActivity(intent)
+            }
+            R.id.drawer_menu_community -> run {
+                val intent = Intent(
+                    this,
+                    CommunityActivity::class.java
+                )
             }
             R.id.drawer_menu_logout -> run {
                 val intent = Intent(
