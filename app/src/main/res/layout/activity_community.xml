@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/community_add_new_group_linear_layout"
-            android:visibility="visible">
+            android:visibility="invisible">
 
             <Button
                 android:id="@+id/community_decline_btn"

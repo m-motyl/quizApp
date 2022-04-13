@@ -7,12 +7,11 @@ import android.widget.ArrayAdapter
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.Models.GroupModel
-import com.example.licencjat_projekt.databinding.ActivityCommunityDetailBinding
 import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.android.synthetic.main.activity_community_detail.*
 
 class CommunityDetailActivity : AppCompatActivity() {
-    lateinit var binding: ActivityCommunityDetailBinding
+    //lateinit var binding: ActivityCommunityDetailBinding
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
