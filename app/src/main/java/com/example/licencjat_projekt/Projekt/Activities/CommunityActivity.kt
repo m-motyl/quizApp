@@ -1,6 +1,7 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.app.ActionBar
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
         community_add_btn.setOnClickListener(this)
         community_accept_btn.setOnClickListener(this)
         community_decline_btn.setOnClickListener(this)
+        community_group_btn.setOnClickListener(this)
 
     }
 
@@ -58,6 +60,13 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
             R.id.community_decline_btn -> {
                 community_new_group_name_text_edit.text.clear()
                 community_add_new_group_linear_layout.visibility = View.INVISIBLE
+            }
+            R.id.community_group_btn -> {
+                val intent = Intent(
+                    this,
+                    CommunityDetailActivity::class.java
+                )
+                startActivity(intent)
             }
         }
     }

@@ -63,6 +63,7 @@
     <string name="community_accept">Akceptuj</string>
     <string name="community_decline">Anuluj</string>
     <string name="quizmain_time">Czas</string>
+    <string name="quizmain_minutues">10</string>
 
 
 </resources>
