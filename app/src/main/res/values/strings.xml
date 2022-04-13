@@ -56,7 +56,13 @@
     <string name="detail_quiz_description">Opis:</string>
     <string name="detail_quiz_tags">Tagi:</string>
     <string name="detail_quiz_participate">Weź udział!</string>
+    <string name="community_add_btn">dodaj</string>
+    <string name="community_friends">znajomi</string>
+    <string name="community_class">klasa</string>
+    <string name="drawer_menu_community">Społeczność</string>
+    <string name="community_accept">Akceptuj</string>
+    <string name="community_decline">Anuluj</string>
     <string name="quizmain_time">Czas</string>
-    <string name="quizmain_minutues">min</string>
+
 
 </resources>
