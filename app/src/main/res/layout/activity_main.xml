@@ -5,7 +5,7 @@
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".Projekt.Activities.MainActivity"
     tools:openDrawer="start">
 
     <LinearLayout
@@ -17,7 +17,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="70dp"
-            android:background="@color/purple_03"
+            android:background="@color/purple_05"
             android:elevation="5dp" />
 
         <FrameLayout

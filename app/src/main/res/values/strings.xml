@@ -39,6 +39,12 @@
     <string name="drawer_menu_logout">Wyloguj się</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="report_score">Wynik</string>
+    <string name="report_user_score">13</string>
+    <string name="report_max_score">15</string>
+    <string name="report_slash">/</string>
+    <string name="report_author_message">Wiadomość od autora</string>
+    <string name="item_answer">Answer</string>
     <string name="question_display_btn_back"><![CDATA[<]]></string>
     <string name="question_display_btn_next"><![CDATA[>]]></string>
     <string name="create_question_btn_end">zakończ</string>
@@ -56,5 +62,7 @@
     <string name="drawer_menu_community">Społeczność</string>
     <string name="community_accept">Akceptuj</string>
     <string name="community_decline">Anuluj</string>
+    <string name="quizmain_time">Czas</string>
+
 
 </resources>
