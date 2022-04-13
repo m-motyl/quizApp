@@ -28,7 +28,7 @@
             android:padding="5dp">
             <TextView
                 android:id="@+id/item_answer"
-                android:text="Answer"
+                android:text="@string/item_answer"
                 android:textSize="30sp"
                 android:textColor="@color/white"
                 android:padding="3dp"

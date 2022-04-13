@@ -1,4 +1,4 @@
-package com.example.licencjat_projekt
+package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +11,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.licencjat_projekt.Projekt.Activities.CommunityActivity
 import com.example.licencjat_projekt.Projekt.Activities.QuizMainActivity
 import com.example.licencjat_projekt.Projekt.Activities.SignInActivity
+import com.example.licencjat_projekt.R
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawerLayout: DrawerLayout
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
-        drawerLayout.addDrawerListener(toggle);
+        drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navigationView.setNavigationItemSelectedListener(this)
     }
@@ -78,11 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.drawer_menu_logout -> run {
-                val intent = Intent(
-                    this,
-                    SignInActivity::class.java
-                )
-                startActivity(intent)
+                finish()
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)

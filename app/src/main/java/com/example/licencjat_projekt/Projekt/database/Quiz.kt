@@ -19,6 +19,7 @@ class Quiz(id: EntityID<Int>) : IntEntity(id) {
     var correct_answers by Quizes.correct_answers
     var questions by Quizes.questions
     var no_tries by Quizes.no_tries
+    //TODO:quiz blob
     var user by Quiz referencedOn Quizes.user
 }
 

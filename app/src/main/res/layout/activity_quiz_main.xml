@@ -24,7 +24,7 @@
                 android:id="@+id/quizmain_toolbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/purple_04"
+                android:background="@color/purple_05"
                 android:minHeight="?attr/actionBarSize"
                 android:theme="?attr/actionBarTheme"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -87,14 +87,38 @@
                 android:layoutDirection="rtl"
                 android:text="@string/quizmain_privacy"
                 android:textColor="@color/white"
-                android:textSize="13dp" />
+                android:textSize="13sp" />
 
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <TextView
+                android:id="@+id/quizmain_time"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:paddingTop="10dp"
+                android:paddingStart="15dp"
+                android:text="@string/quizmain_time"
+                android:textColor="@color/purple_07"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/quizmain_timer"
+                android:layout_width="135dp"
+                android:layout_height="50dp"
+                android:hint="@string/quizmain_minutues"
+                android:inputType="number"
+                />
+        </LinearLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="380dp"
             android:background="@color/white"
-            android:padding="8dp">
+            android:padding="2dp">
 
             <EditText
                 android:id="@+id/quizmain_description"
@@ -104,7 +128,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/purple_07"

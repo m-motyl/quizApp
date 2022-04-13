@@ -5,12 +5,7 @@
     android:orientation="vertical"
     android:gravity="bottom"
     android:padding="17dp"
-    android:background="@color/purple_06">
-
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_baseline_person_24_black"/>
+    android:background="@color/purple_05">
 
     <TextView
         android:layout_width="wrap_content"
