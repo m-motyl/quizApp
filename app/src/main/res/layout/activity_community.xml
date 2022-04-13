@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Projekt.Activities.Community">
+    tools:context=".Projekt.Activities.CommunityActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="550dp"
         android:background="@color/white"
         android:padding="20dp">
 
@@ -39,6 +39,7 @@
             android:layout_height="match_parent">
 
             <GridLayout
+                android:id="@+id/community_grid_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="2">
@@ -62,13 +63,44 @@
                     android:backgroundTint="@color/purple_07"
                     android:text="@string/community_class"/>
 
+
             </GridLayout>
         </ScrollView>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/community_add_new_group_linear_layout"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/community_decline_btn"
+                android:layout_width="110dp"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/purple_06"
+                android:text="@string/community_decline"
+                />
+
+        <EditText
+            android:id="@+id/community_new_group_name_text_edit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/colorAccent"
+            android:layout_margin="10dp"
+            android:layout_weight="1"/>
+            <Button
+                android:id="@+id/community_accept_btn"
+                android:layout_width="110dp"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/purple_06"
+                android:text="@string/community_accept"
+                />
+        </LinearLayout>
 
         <Button
             android:id="@+id/community_add_btn"

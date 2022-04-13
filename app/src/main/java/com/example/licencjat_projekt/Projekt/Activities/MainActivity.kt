@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
 
 
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar)
         navigationView = findViewById(R.id.main_nav_view)
         drawerLayout = findViewById(R.id.main_drawer_layout)
 
@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     this,
                     CommunityActivity::class.java
                 )
+                startActivity(intent)
             }
             R.id.drawer_menu_logout -> run {
                 val intent = Intent(
