@@ -8,12 +8,10 @@ import android.widget.Button
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
-import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.GroupModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
-import kotlinx.android.synthetic.main.activity_questions.*
+
 
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener{
@@ -25,6 +23,10 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
         community_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+        community_add_btn.setOnClickListener(this)
+        community_accept_btn.setOnClickListener(this)
+        community_decline_btn.setOnClickListener(this)
+
     }
 
     override fun onClick(v: View?) {
