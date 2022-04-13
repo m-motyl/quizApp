@@ -1,17 +1,22 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
-import android.R
 import android.os.Bundle
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.licencjat_projekt.Projekt.Models.GroupModel
-import kotlinx.android.synthetic.main.activity_community.*
+import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community_detail.*
 
 class CommunityDetailActivity : AppCompatActivity() {
-    //lateinit var binding: ActivityCommunityDetailBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_community_detail)
+        community_detail_toolbar.setNavigationOnClickListener{
+            onBackPressed()
+        }
+    }
+}
+
+
+//lateinit var binding: ActivityCommunityDetailBinding
 
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
@@ -44,4 +49,4 @@ class CommunityDetailActivity : AppCompatActivity() {
 //            }
 //        }
 //    }
-}
+//}
