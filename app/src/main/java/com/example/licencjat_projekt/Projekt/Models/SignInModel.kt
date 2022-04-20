@@ -1,6 +1,6 @@
 package com.example.licencjat_projekt.Projekt.Models
 
-class LoginModel (
+data class SignInModel (
     var login: String,
     var password: String
 )

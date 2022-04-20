@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
+import com.example.licencjat_projekt.Projekt.Models.SignUpModel
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -26,7 +27,7 @@ import java.io.IOException
 class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     private var isImage: Boolean = false
     private lateinit var user_image: ByteArray
-
+    private lateinit var signUpModel: SignUpModel
     companion object {
         internal const val GALLERY_CODE = 1
     }
@@ -73,6 +74,13 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                         ).show()
                     }
                     else -> {
+                        signUpModel = SignUpModel(
+                            signup_username.text.toString(),
+                            signup_email.text.toString(),
+                            signup_password.text.toString(),
+                            user_image
+                        )
+
                         val intent = Intent(this, SignInActivity::class.java)
                         startActivity(intent)
                     }

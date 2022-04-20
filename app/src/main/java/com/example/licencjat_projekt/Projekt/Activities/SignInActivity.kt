@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import com.example.licencjat_projekt.Projekt.Models.LoginModel
+import com.example.licencjat_projekt.Projekt.Models.SignInModel
 import com.example.licencjat_projekt.Projekt.database.Questions
 import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.Projekt.database.User
@@ -22,7 +22,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import java.util.*
 
 class SignInActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var loginModel: LoginModel
+    private lateinit var signInModel: SignInModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
@@ -66,11 +66,11 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
                         ).show()
                     }
                     else -> {
-                        loginModel = LoginModel(
+                        signInModel = SignInModel(
                             signin_username.text.toString(),
                             signin_password.text.toString()
                         )
-                        if (validateUserAndUpdateToken(loginModel)) {
+                        if (validateUserAndUpdateToken(signInModel)) {
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                         }
@@ -85,11 +85,11 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun validateUserAndUpdateToken(loginModel: LoginModel): Boolean {
+    private fun validateUserAndUpdateToken(signInModel: SignInModel): Boolean {
         return runBlocking {
             val result = newSuspendedTransaction(Dispatchers.IO) {
                 val resultado =
-                    User.find { Users.login eq loginModel.login and (Users.password eq loginModel.password) }
+                    User.find { Users.login eq signInModel.login and (Users.password eq signInModel.password) }
                         .toList()
                 if (resultado.isNotEmpty())
                     resultado.elementAt(0).token = UUID.randomUUID()
