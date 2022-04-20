@@ -12,6 +12,9 @@
             android:id="@+id/drawer_menu_profile"
             android:title="@string/drawer_menu_profile" />
         <item
+            android:id="@+id/drawer_menu_community"
+            android:title="@string/drawer_menu_community" />
+        <item
             android:id="@+id/drawer_menu_logout"
             android:title="@string/drawer_menu_logout" />
     </group>

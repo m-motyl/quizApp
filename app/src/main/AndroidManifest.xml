@@ -28,6 +28,12 @@
             android:name=".Projekt.Activities.SignUpActivity"
             android:exported="true" />
         <activity
+            android:name=".Projekt.Activities.CommunityActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Projekt.Activities.CommunityDetailActivity"
+            android:exported="true" />
+        <activity
             android:name=".Projekt.Activities.SignInActivity"
             android:exported="true">
             <intent-filter>
