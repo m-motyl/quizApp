@@ -71,13 +71,13 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    quizmain_timer.text.isNullOrEmpty() -> {
+                    /*quizmain_timer.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
                             "Podaj długość testu!",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }
+                    }*/
                     quizmain_description.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,

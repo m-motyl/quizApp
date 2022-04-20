@@ -11,6 +11,7 @@ import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_questions.*
+import kotlinx.android.synthetic.main.question_item.*
 
 class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
@@ -40,7 +41,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                     }
                     else -> { //TODO: repair adding models, just testing
                         val ans = AnswerModel(
-                            questions_add_answer.text.toString()
+                            questions_add_answer.text.toString(),
+                            false
                         )
                         questions_add_answer.text.clear()
                         answersList.add(ans)
@@ -53,12 +55,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                 alert.setTitle("Usuń:")
                 val items = arrayOf(
                     "Pytanie",
-                    "Ostatnia odpowiedź"
+                    "Zaznaczone odpowiedzi"
                 )
                 alert.setItems(items) { _, n ->
                     when (n) {
                         0 -> removeQuestion()
-                        1 -> removeLastAnswer()
+                        1 -> removeMarkedAnswers()
                     }
                 }
                 alert.show()
@@ -74,12 +76,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             answersRecyclerView(answersList)
         }
     }
-    private fun removeLastAnswer(){
-        //TODO: remove last answer repair
-        if(answersList.size > 0) {
-            answersList.removeLast()
-            answersRecyclerView(answersList)
-        }
+    private fun removeMarkedAnswers(){
+        //TODO: remove answers repair
     }
 
     private fun answersRecyclerView(answers: ArrayList<AnswerModel>){
@@ -91,7 +89,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
         answersList.setOnClickListener(object: AnswersList.OnClickListener{
             override fun onClick(position:Int, model: AnswerModel) {
-                Log.e("item", model.answer)
             }
         })
     }

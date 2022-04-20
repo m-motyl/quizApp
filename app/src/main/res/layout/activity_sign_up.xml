@@ -95,25 +95,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/signup_add_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/signup_image"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="21dp"
-        android:backgroundTint="@color/purple_03"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/signup_add_image"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.45"
-        app:layout_constraintStart_toEndOf="@+id/signup_image"
-        app:layout_constraintVertical_bias="0.019" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signup_sign_up"
@@ -122,7 +103,7 @@
         android:layout_below="@id/signup_password"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="41dp"
-        android:layout_marginEnd="84dp"
+        android:layout_marginEnd="70dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/purple_03"
         android:text="@string/signup_sign_up" />
@@ -133,8 +114,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/signup_sign_up"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="41dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="75dp"
         android:layout_marginBottom="20dp"
         android:text="@string/signup_info"
         android:textColor="@color/white"
@@ -147,7 +128,7 @@
         android:layout_below="@id/signup_info"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="101dp"
+        android:layout_marginEnd="95dp"
         android:layout_marginBottom="20dp"
         android:text="@string/signup_sign_in"
         android:textColor="@color/white"
