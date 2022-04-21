@@ -71,7 +71,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     private fun groupsRecyclerView(groups: ArrayList<GroupModel>){
-        community_recycler_view.layoutManager = GridLayoutManager(this, numberOfColumns)
+        community_recycler_view.layoutManager = GridLayoutManager(this, numberOfColumns, GridLayoutManager.VERTICAL, false)
         community_recycler_view.setHasFixedSize(true)
 
         val groupsList = GroupsList(this, groups)
