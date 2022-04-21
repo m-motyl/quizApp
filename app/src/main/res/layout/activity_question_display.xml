@@ -44,7 +44,9 @@
             android:layout_marginStart="110dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="110dp"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@mipmap/ic_launcher_round"
+            android:visibility="gone" />
+
 
         <TextView
             android:id="@+id/question_display_title"
@@ -106,6 +108,7 @@
             android:layout_marginStart="60dp"
             android:backgroundTint="@color/purple_05"
             android:text="@string/question_display_btn_back" />
+
         <Button
             android:id="@+id/question_display_btn_next"
             android:layout_width="wrap_content"
