@@ -9,14 +9,20 @@ import android.widget.Button
 import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.GroupModel
+import com.example.licencjat_projekt.Projekt.utils.AnswersList
+import com.example.licencjat_projekt.Projekt.utils.GroupsList
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
-
+import kotlinx.android.synthetic.main.activity_questions.*
 
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener{
-    private var groupList = ArrayList<GroupModel>()
+    private var groupsList = ArrayList<GroupModel>()
+    private val numberOfColumns = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +33,6 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
         community_add_btn.setOnClickListener(this)
         community_accept_btn.setOnClickListener(this)
         community_decline_btn.setOnClickListener(this)
-        community_group_btn.setOnClickListener(this)
 
     }
 
@@ -52,8 +57,9 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
                         )
                         community_add_new_group_linear_layout.visibility = View.INVISIBLE
                         community_new_group_name_text_edit.text.clear()
-                        groupList.add(group)
-                        addGroup(groupName)
+                        groupsList.add(group)
+                        groupsRecyclerView(groupsList)
+
                     }
                 }
             }
@@ -61,24 +67,20 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
                 community_new_group_name_text_edit.text.clear()
                 community_add_new_group_linear_layout.visibility = View.INVISIBLE
             }
-            R.id.community_group_btn -> {
-                val intent = Intent(
-                    this,
-                    CommunityDetailActivity::class.java
-                )
-                startActivity(intent)
-            }
         }
     }
 
-    fun addGroup(groupName: String) {
-        val gridLayout: GridLayout = findViewById(R.id.community_grid_layout)
+    private fun groupsRecyclerView(groups: ArrayList<GroupModel>){
+        community_recycler_view.layoutManager = GridLayoutManager(this, numberOfColumns)
+        community_recycler_view.setHasFixedSize(true)
 
-        val layoutParams: GridLayout.LayoutParams = GridLayout.LayoutParams()
+        val groupsList = GroupsList(this, groups)
+        community_recycler_view.adapter = groupsList
 
-        lateinit var newBtn: Button
-        newBtn.text = groupName
-
-        gridLayout.addView(newBtn, layoutParams)
+        groupsList.setOnClickListener(object: GroupsList.OnClickListener{
+            override fun onClick(position: Int, model: GroupModel) {
+            }
+        })
     }
+
 }

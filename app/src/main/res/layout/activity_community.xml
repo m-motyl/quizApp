@@ -44,25 +44,10 @@
                 android:layout_height="wrap_content"
                 android:columnCount="2">
 
-                <Button
-                    android:id="@+id/community_group_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"
-                    android:layout_gravity="fill"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"
-                    android:backgroundTint="@color/purple_07"
-                    android:text="@string/community_friends"/>
-                <Button
-                    android:id="@+id/community_group_btn1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100dp"
-                    android:layout_gravity="fill"
-                    android:layout_columnWeight="1"
-                    android:layout_rowWeight="1"
-                    android:backgroundTint="@color/purple_07"
-                    android:text="@string/community_class"/>
-
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/community_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
             </GridLayout>
         </ScrollView>
@@ -71,11 +56,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
+            android:id="@+id/community_add_new_group_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:id="@+id/community_add_new_group_linear_layout"
             android:visibility="invisible">
 
             <Button
@@ -83,23 +69,22 @@
                 android:layout_width="110dp"
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/purple_06"
-                android:text="@string/community_decline"
-                />
+                android:text="@string/community_decline" />
 
-        <EditText
-            android:id="@+id/community_new_group_name_text_edit"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@color/colorAccent"
-            android:layout_margin="10dp"
-            android:layout_weight="1"/>
+            <EditText
+                android:id="@+id/community_new_group_name_text_edit"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="@color/colorAccent" />
+
             <Button
                 android:id="@+id/community_accept_btn"
                 android:layout_width="110dp"
                 android:layout_height="match_parent"
                 android:backgroundTint="@color/purple_06"
-                android:text="@string/community_accept"
-                />
+                android:text="@string/community_accept" />
         </LinearLayout>
 
         <Button
