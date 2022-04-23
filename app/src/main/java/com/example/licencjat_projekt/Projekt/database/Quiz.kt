@@ -19,7 +19,7 @@ class Quiz(id: EntityID<Int>) : IntEntity(id) {
     var correct_answers by Quizes.correct_answers
     var questions by Quizes.questions
     var no_tries by Quizes.no_tries
-    //TODO:quiz blob
+    var image by Quizes.image
     var user by Quiz referencedOn Quizes.user
 }
 
@@ -33,6 +33,7 @@ object Quizes : IntIdTable("Quizes") {
     val correct_answers = integer("correct_answers")
     val questions = integer("questions")
     val no_tries = integer("no_tries")
+    val image = blob("image")
     val user = reference("user",Users, onDelete = ReferenceOption.CASCADE)
 
 }
