@@ -16,7 +16,7 @@ class Question(id: EntityID<Int>) : IntEntity(id) {
     var quiz by Quiz referencedOn Questions.quiz
 }
 
-object Questions : IntIdTable("questions") {
+object Questions : IntIdTable("Questions") {
     val number = integer("number")
     val question_text = varchar("question_text", 50).nullable()
     val question_image = blob("question_image").nullable()
