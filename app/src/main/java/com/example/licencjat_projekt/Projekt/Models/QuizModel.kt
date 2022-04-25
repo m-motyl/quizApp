@@ -1,5 +1,7 @@
 package com.example.licencjat_projekt.Projekt.Models
 
+import java.io.Serializable
+
 data class QuizModel(
     var title: String,
     var time_limit: Int,
@@ -10,6 +12,5 @@ data class QuizModel(
     var correct_answers: Int,
     var questions: Int,
     var no_tries: Int,
-    var image: ByteArray,
-    var user: Int
-)
+    var image: ByteArray
+): Serializable

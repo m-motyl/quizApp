@@ -58,7 +58,7 @@
                     android:src="@drawable/ic_baseline_save_24" />
 
                 <ImageButton
-                    android:id="@+id/next_question"
+                    android:id="@+id/questions_next_question"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
@@ -93,7 +93,7 @@
                     android:textSize="15sp" />
 
                 <EditText
-                    android:id="@+id/question_points"
+                    android:id="@+id/questions_points"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:paddingStart="5dp"
@@ -116,7 +116,7 @@
                 android:src="@drawable/add_screen_image_placeholder" />
 
             <EditText
-                android:id="@+id/questions_description"
+                android:id="@+id/questions_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/questions_image"

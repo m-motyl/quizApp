@@ -1,6 +1,7 @@
 package com.example.licencjat_projekt.Projekt.Models
 
-data class AnswerModel (
-    val answer: String,
-    var isCorrect: Boolean
-        )
+data class AnswerModel(
+    var answer_text: String,
+    var answer_image: ByteArray,
+    var is_Correct: Boolean
+)
