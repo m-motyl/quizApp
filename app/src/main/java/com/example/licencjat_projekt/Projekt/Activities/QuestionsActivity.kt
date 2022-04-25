@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.CreateQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.CreateQuizModel
-import com.example.licencjat_projekt.Projekt.Models.QuizModel
 import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
@@ -27,8 +27,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_questions.*
-import kotlinx.android.synthetic.main.activity_quiz_main.*
-import kotlinx.android.synthetic.main.question_item.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -41,6 +39,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
     private var questionsList = arrayListOf<CreateQuestionModel>()
     private lateinit var question_image: ByteArray
     private var isImage: Boolean = false
+    private var selectCorrect: Boolean = false
 
     companion object{
         internal const val GALLERY_CODE = 1
@@ -63,10 +62,21 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
         questions_prev_question.setOnClickListener(this)
         questions_next_question.setOnClickListener(this)
         questions_image.setOnClickListener(this)
+        questions_save_correct_ans.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when(v!!.id){
+            R.id.questions_save_correct_ans -> {
+
+                if(selectCorrect){
+                    questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24)
+                    selectCorrect = false
+                }else{
+                    questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24_black)
+                    selectCorrect = true
+                }
+            }
             R.id.questions_image -> {
                 chooseImageFromGalery()
             }
@@ -92,6 +102,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                 }
 
                 if(questionsList.getOrNull(noQuestions) != null){ //read element if exists
+
                     isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
                     questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
@@ -123,6 +134,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                 }
 
                 if(questionsList.getOrNull(noQuestions) != null){ //read element if exists
+
                     isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
                     questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
@@ -189,6 +201,17 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
         answersList.setOnClickListener(object: AnswersList.OnClickListener{
             override fun onClick(position:Int, model: AnswerModel) {
+                if(selectCorrect){
+
+                    if(model.is_Correct){ //temporary
+                        model.answer_text = model.answer_text.dropLast(9)
+                        model.is_Correct = false
+                    }else{
+                        model.answer_text += "(correct)"
+                        model.is_Correct = true
+                    }
+                    questions_recycler_view.adapter = answersList
+                }
             }
         })
     }
