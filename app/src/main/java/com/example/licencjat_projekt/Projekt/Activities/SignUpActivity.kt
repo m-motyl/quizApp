@@ -13,6 +13,8 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.SignUpModel
+import com.example.licencjat_projekt.Projekt.database.User
+import com.example.licencjat_projekt.Projekt.database.Users
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -21,13 +23,24 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_quiz_main.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.*
 
 class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     private var isImage: Boolean = false
     private lateinit var user_image: ByteArray
     private lateinit var signUpModel: SignUpModel
+
     companion object {
         internal const val GALLERY_CODE = 1
     }
@@ -42,9 +55,9 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        when(v!!.id){
+        when (v!!.id) {
             R.id.signup_sign_up -> {
-                when{
+                when {
                     signup_username.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
@@ -56,6 +69,13 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(
                             this,
                             "Podaj e-mail!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    !isEmailValid(signup_email.text.toString()) -> {
+                        Toast.makeText(
+                            this,
+                            "Niepoprawny mail!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -80,11 +100,25 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                             signup_password.text.toString(),
                             user_image
                         )
-
+                        if (checkIfUserExists(signUpModel)) {
+                            registerUser(signUpModel)
+                            Toast.makeText(
+                                this,
+                                "Konto utworzone pomyślnie!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            finish()
+                        } else
+                            Toast.makeText(
+                                this,
+                                "Użytkownik o podanym loginie lub emailu już istnieje!",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         val intent = Intent(this, SignInActivity::class.java)
                         startActivity(intent)
                     }
-                }            }
+                }
+            }
             R.id.signup_sign_in -> {
                 finish()
             }
@@ -93,7 +127,34 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    private fun chooseImageFromGalery(){
+
+    private fun checkIfUserExists(m: SignUpModel): Boolean {
+        return !runBlocking {
+            val result = newSuspendedTransaction(Dispatchers.IO) {
+                User.find { Users.login eq m.login or (Users.email eq m.e_mail) }.toList()
+            }
+            return@runBlocking result.isNotEmpty()
+        }
+    }
+
+    private fun registerUser(m: SignUpModel) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            User.new {
+                login = m.login
+                password = m.password
+                email = m.e_mail
+                profile_picture = ExposedBlob(m.image)
+                creation_time = LocalDateTime.now()
+                token = UUID.randomUUID()
+            }
+        }
+    }
+
+    private fun isEmailValid(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun chooseImageFromGalery() {
         Dexter.withContext(this)
             .withPermissions(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -124,6 +185,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }).onSameThread().check()
     }
+
     private fun permissionDeniedDialog() {
         AlertDialog.Builder(this).setMessage("Brak uprawnień")
             .setPositiveButton("Przejdz do USTAWIEŃ")
@@ -133,7 +195,8 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                     val uri = Uri.fromParts(
                         "package",
                         packageName,
-                        null)
+                        null
+                    )
                     intent.data = uri
                     startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
@@ -144,6 +207,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                 dialog.dismiss()
             }.show()
     }
+
     public override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -179,9 +243,10 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
     private fun saveImageByteArray(
         bitmap: Bitmap
-    ): ByteArray{
+    ): ByteArray {
         val stream = ByteArrayOutputStream()
         bitmap.compress(
             Bitmap.CompressFormat.JPEG,

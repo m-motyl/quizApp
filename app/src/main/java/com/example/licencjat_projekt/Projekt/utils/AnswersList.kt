@@ -37,7 +37,7 @@ open class AnswersList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfAnswers[position]
         if(holder is OwnViewHolder){
-            holder.itemView.item_answer.text = ptr.answer
+            holder.itemView.item_answer.text = ptr.answer_text
         }
         //passing which position was clicked on rv
         //passing ptr

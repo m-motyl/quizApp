@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.quizapp"
-        minSdk 21
+        minSdk 26
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -64,7 +64,4 @@ dependencies {
     implementation "org.jetbrains.exposed:exposed-jdbc:0.34.1"
     implementation "org.jetbrains.exposed:exposed-java-time:0.34.1"
     implementation "org.postgresql:postgresql:42.2.2"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC3"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
 }

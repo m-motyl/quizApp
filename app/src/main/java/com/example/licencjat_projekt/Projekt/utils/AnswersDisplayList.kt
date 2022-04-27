@@ -1,6 +1,10 @@
 package com.example.licencjat_projekt.Projekt.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,11 +36,10 @@ open class AnswersDisplayList(
         val ptr = listOfAnswers[position]
         if (holder is OwnViewHolder) {
             if (!holder.itemView.answer_item_text_btn.text.isNullOrEmpty()) {
-                holder.itemView.answer_item_text_btn.text = ptr.answer
+                holder.itemView.answer_item_text_btn.text = ptr.answer_text
                 holder.itemView.answer_item_text_btn.visibility = View.VISIBLE
             } else if (null != holder.itemView.answer_item_image_btn.drawable) {
-                //TODO: fix this
-                //holder.itemView.answer_item_image_btn.drawable = ptr.image
+                holder.itemView.answer_item_image_btn.setImageBitmap(byteArrayToBitmap(ptr.answer_image))
                 holder.itemView.answer_item_image_btn.visibility = View.VISIBLE
             }
         }
@@ -59,5 +62,9 @@ open class AnswersDisplayList(
 
     interface OnClickListener {
         fun onClick(position: Int, model: AnswerModel)
+    }
+
+    fun byteArrayToBitmap(data: ByteArray): Bitmap {
+        return BitmapFactory.decodeByteArray(data, 0, data.size)
     }
 }

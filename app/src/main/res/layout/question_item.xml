@@ -48,10 +48,6 @@
                     android:background="@color/white"
                     android:src="@drawable/ic_baseline_check_24" />
                 -->
-                <CheckBox
-                    android:id="@+id/item_cb"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"/>
             </LinearLayout>
 
         </LinearLayout>

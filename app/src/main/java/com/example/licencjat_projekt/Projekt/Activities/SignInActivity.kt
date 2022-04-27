@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.SignInModel
-import com.example.licencjat_projekt.Projekt.database.Questions
-import com.example.licencjat_projekt.Projekt.database.Quizes
-import com.example.licencjat_projekt.Projekt.database.User
-import com.example.licencjat_projekt.Projekt.database.Users
+import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_sign_in.*
@@ -42,6 +39,12 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
                 SchemaUtils.create(Questions)
                 SchemaUtils.create(Quizes)
                 SchemaUtils.create(Users)
+                SchemaUtils.create(Answers)
+                SchemaUtils.create(QuizStatuses)
+                SchemaUtils.create(QuizTags)
+                SchemaUtils.create(QuizVotes)
+                SchemaUtils.create(Tags)
+                SchemaUtils.create(UserQuestionAnswers)
             }
         }
     }
