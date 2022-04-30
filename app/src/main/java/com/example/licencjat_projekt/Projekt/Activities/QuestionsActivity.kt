@@ -33,7 +33,6 @@ import java.io.IOException
 class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
     private var answersList = ArrayList<AnswerModel>()
-    private var nullAnswersList = ArrayList<AnswerModel>()
     private val emptyByteArray: ByteArray = ByteArray(1)
     private var quizModel: CreateQuizModel? = null
     private var noQuestions = 0
@@ -41,6 +40,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var question_image: ByteArray
     private var isImage: Boolean = false
     private var selectCorrect: Boolean = false
+    private var removeAnswers:Boolean = false
 
     companion object{
         internal const val GALLERY_CODE = 1
@@ -64,10 +64,26 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
         questions_next_question.setOnClickListener(this)
         questions_image.setOnClickListener(this)
         questions_save_correct_ans.setOnClickListener(this)
+        questions_finish_quiz.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when(v!!.id){
+            R.id.questions_finish_quiz -> {
+                val alert = AlertDialog.Builder(this)
+                alert.setTitle("Czy na pewno chcesz zakończyć tworzenie quizu?")
+                val items = arrayOf(
+                    "Tak",
+                    "Nie"
+                )
+                alert.setItems(items) { _, n ->
+                    when (n) {
+                        0 -> saveQuizToDB()
+                        1 -> goBack()
+                    }
+                }
+                alert.show()
+            }
             R.id.questions_save_correct_ans -> {
 
                 if(selectCorrect){
@@ -208,7 +224,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
         }
     }
     private fun removeMarkedAnswers(){
-        //TODO: remove answers repair
+        if(removeAnswers){
+            questions_delete.setImageResource(R.drawable.ic_baseline_delete_24)
+            removeAnswers = false
+        }else{
+            questions_delete.setImageResource(R.drawable.ic_baseline_delete_24_black)
+            removeAnswers = true
+        }
     }
 
     private fun answersRecyclerView(answers: ArrayList<AnswerModel>){
@@ -221,7 +243,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
         answersList.setOnClickListener(object: AnswersList.OnClickListener{
             override fun onClick(position:Int, model: AnswerModel) {
                 if(selectCorrect){
-
                     if(model.is_Correct){ //temporary
                         model.answer_text = model.answer_text.dropLast(9)
                         model.is_Correct = false
@@ -342,5 +363,11 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             data.size
         )
     }
+    private fun saveQuizToDB(){
+        //TODO: Witold zapis do bazy
+        //quizModel: CreateQuizModel
+        //questionsList: CreateQuestionModel
+    }
 
+    private fun goBack(){}
 }
