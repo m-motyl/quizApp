@@ -20,12 +20,12 @@ class Quiz(id: EntityID<Int>) : IntEntity(id) {
     var questions by Quizes.questions
     var no_tries by Quizes.no_tries
     var image by Quizes.image
-    var user by Quiz referencedOn Quizes.user
+    var user by User referencedOn Quizes.user
 }
 
 object Quizes : IntIdTable("Quizes") {
     val title = varchar("title",20)
-    val time_limit = time("time_limit")
+    val time_limit = integer("time_limit")
     val description = varchar("description",200)
     val gz_text = varchar("gz_text",200)
     val private = bool("private")

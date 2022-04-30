@@ -19,7 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.CreateQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.CreateQuizModel
+import com.example.licencjat_projekt.Projekt.database.Answer
+import com.example.licencjat_projekt.Projekt.database.Question
+import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.utils.AnswersList
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -27,10 +31,16 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_questions.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import kotlin.time.Duration.Companion.minutes
 
-class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
+class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
     private var answersList = ArrayList<AnswerModel>()
     private val emptyByteArray: ByteArray = ByteArray(1)
@@ -40,9 +50,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var question_image: ByteArray
     private var isImage: Boolean = false
     private var selectCorrect: Boolean = false
-    private var removeAnswers:Boolean = false
+    private var removeAnswers: Boolean = false
 
-    companion object{
+    companion object {
         internal const val GALLERY_CODE = 1
     }
 
@@ -50,12 +60,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_questions)
 
-        questions_toolbar.setNavigationOnClickListener{
+        questions_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
 
-        if(intent.hasExtra(QuizMainActivity.QUIZ_DETAILS)){
-            quizModel = intent.getSerializableExtra(QuizMainActivity.QUIZ_DETAILS) as CreateQuizModel
+        if (intent.hasExtra(QuizMainActivity.QUIZ_DETAILS)) {
+            quizModel =
+                intent.getSerializableExtra(QuizMainActivity.QUIZ_DETAILS) as CreateQuizModel
         }
 
         questions_add_button.setOnClickListener(this)
@@ -68,7 +79,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     override fun onClick(v: View?) {
-        when(v!!.id){
+        when (v!!.id) {
             R.id.questions_finish_quiz -> {
                 val alert = AlertDialog.Builder(this)
                 alert.setTitle("Czy na pewno chcesz zakończyć tworzenie quizu?")
@@ -78,7 +89,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                 )
                 alert.setItems(items) { _, n ->
                     when (n) {
-                        0 -> saveQuizToDB()
+                        0 -> saveQuizToDB(quizModel!!, questionsList)
                         1 -> goBack()
                     }
                 }
@@ -86,10 +97,10 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             }
             R.id.questions_save_correct_ans -> {
 
-                if(selectCorrect){
+                if (selectCorrect) {
                     questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24)
                     selectCorrect = false
-                }else{
+                } else {
                     questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24_black)
                     selectCorrect = true
                 }
@@ -99,8 +110,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             }
             R.id.questions_prev_question -> {
                 //if not empty
-                if(!questions_question.text.isNullOrEmpty() && isImage && !questions_points.text.isNullOrEmpty()){
-                    if(questionsList.getOrNull(noQuestions) == null) { //create new if not exists
+                if (!questions_question.text.isNullOrEmpty() && isImage && !questions_points.text.isNullOrEmpty()) {
+                    if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
                         val questionModel = CreateQuestionModel(
                             questions_question.text.toString(),
                             question_image,
@@ -109,34 +120,36 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                         )
                         answersList.clear()
                         questionsList.add(questionModel)
-                    }else{ //update if exists
-                        questionsList[noQuestions].question_text = questions_question.text.toString()
+                    } else { //update if exists
+                        questionsList[noQuestions].question_text =
+                            questions_question.text.toString()
                         questionsList[noQuestions].question_image = question_image
-                        questionsList[noQuestions].question_pts = Integer.parseInt(questions_points.text.toString())
+                        questionsList[noQuestions].question_pts =
+                            Integer.parseInt(questions_points.text.toString())
                         questionsList[noQuestions].question_answers += answersList
                         answersList.clear()
                     }
-                }else {
+                } else {
                     answersList.clear()
                 }
 
-                if(noQuestions > 0){
+                if (noQuestions > 0) {
                     noQuestions -= 1
                 }
 
-                if(questionsList.getOrNull(noQuestions) != null){ //read element if exists
+                if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
                     isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
                     questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
                     questions_points.setText(questionsList[noQuestions].question_pts.toString())
                     answersRecyclerView(questionsList[noQuestions].question_answers)
-                }else{
+                } else {
                     answersRecyclerView(answersList)
                 }
             }
             R.id.questions_next_question -> {
-                if(!questions_question.text.isNullOrEmpty() && isImage && !questions_points.text.isNullOrEmpty()){
-                    if(questionsList.getOrNull(noQuestions) == null) { //create new if not exists
+                if (!questions_question.text.isNullOrEmpty() && isImage && !questions_points.text.isNullOrEmpty()) {
+                    if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
                         val questionModel = CreateQuestionModel(
                             questions_question.text.toString(),
                             question_image,
@@ -145,10 +158,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                         )
                         answersList.clear()
                         questionsList.add(questionModel)
-                    }else{ //update if exists
-                        questionsList[noQuestions].question_text = questions_question.text.toString()
+                    } else { //update if exists
+                        questionsList[noQuestions].question_text =
+                            questions_question.text.toString()
                         questionsList[noQuestions].question_image = question_image
-                        questionsList[noQuestions].question_pts = Integer.parseInt(questions_points.text.toString())
+                        questionsList[noQuestions].question_pts =
+                            Integer.parseInt(questions_points.text.toString())
                         questionsList[noQuestions].question_answers += answersList
                         answersList.clear()
                     }
@@ -160,14 +175,14 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                     noQuestions += 1
                 }
 
-                if(questionsList.getOrNull(noQuestions) != null){ //read element if exists
+                if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
 
                     isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
                     questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
                     questions_points.setText(questionsList[noQuestions].question_pts.toString())
                     answersRecyclerView(questionsList[noQuestions].question_answers)
-                }else{
+                } else {
                     answersRecyclerView(answersList)
                 }
             }
@@ -188,10 +203,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                         )
                         questions_add_answer.text.clear()
                         answersList.add(ans)
-                        if(questionsList.getOrNull(noQuestions) != null){
-                            answersRecyclerView((questionsList[noQuestions].question_answers + answersList)
-                                    as ArrayList<AnswerModel>)
-                        }else {
+                        if (questionsList.getOrNull(noQuestions) != null) {
+                            answersRecyclerView(
+                                (questionsList[noQuestions].question_answers + answersList)
+                                        as ArrayList<AnswerModel>
+                            )
+                        } else {
                             answersRecyclerView(answersList)
                         }
                     }
@@ -214,39 +231,41 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             }
         }
     }
-    private fun removeQuestion(){
+
+    private fun removeQuestion() {
         //TODO: remove question repair
         questions_question.text.clear()
         questions_add_answer.text.clear()
-        if(answersList.size > 0) {
+        if (answersList.size > 0) {
             answersList.clear()
             answersRecyclerView(answersList)
         }
     }
-    private fun removeMarkedAnswers(){
-        if(removeAnswers){
+
+    private fun removeMarkedAnswers() {
+        if (removeAnswers) {
             questions_delete.setImageResource(R.drawable.ic_baseline_delete_24)
             removeAnswers = false
-        }else{
+        } else {
             questions_delete.setImageResource(R.drawable.ic_baseline_delete_24_black)
             removeAnswers = true
         }
     }
 
-    private fun answersRecyclerView(answers: ArrayList<AnswerModel>){
+    private fun answersRecyclerView(answers: ArrayList<AnswerModel>) {
         questions_recycler_view.layoutManager = LinearLayoutManager(this)
         questions_recycler_view.setHasFixedSize(true)
 
         val answersList = AnswersList(this, answers)
         questions_recycler_view.adapter = answersList
 
-        answersList.setOnClickListener(object: AnswersList.OnClickListener{
-            override fun onClick(position:Int, model: AnswerModel) {
-                if(selectCorrect){
-                    if(model.is_Correct){ //temporary
+        answersList.setOnClickListener(object : AnswersList.OnClickListener {
+            override fun onClick(position: Int, model: AnswerModel) {
+                if (selectCorrect) {
+                    if (model.is_Correct) { //temporary
                         model.answer_text = model.answer_text.dropLast(9)
                         model.is_Correct = false
-                    }else{
+                    } else {
                         model.answer_text += "(correct)"
                         model.is_Correct = true
                     }
@@ -255,7 +274,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             }
         })
     }
-    private fun chooseImageFromGalery(){
+
+    private fun chooseImageFromGalery() {
         Dexter.withContext(this)
             .withPermissions(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -296,7 +316,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                     val uri = Uri.fromParts(
                         "package",
                         packageName,
-                        null)
+                        null
+                    )
                     intent.data = uri
                     startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
@@ -307,6 +328,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                 dialog.dismiss()
             }.show()
     }
+
     public override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -342,9 +364,10 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
             }
         }
     }
+
     private fun saveImageByteArray(
         bitmap: Bitmap
-    ): ByteArray{
+    ): ByteArray {
         val stream = ByteArrayOutputStream()
         bitmap.compress(
             Bitmap.CompressFormat.JPEG,
@@ -356,18 +379,57 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
     private fun byteArrayToBitmap(
         data: ByteArray
-    ): Bitmap{
+    ): Bitmap {
         return BitmapFactory.decodeByteArray(
             data,
             0,
             data.size
         )
     }
-    private fun saveQuizToDB(){
+
+    private fun saveQuizToDB(q: CreateQuizModel, ql: ArrayList<CreateQuestionModel>) = runBlocking {
         //TODO: Witold zapis do bazy
         //quizModel: CreateQuizModel
         //questionsList: CreateQuestionModel
+        Database.connect(
+            "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
+            user = "postgres", password = "123"
+        )
+        newSuspendedTransaction(Dispatchers.IO) {
+            val newQuiz = Quiz.new {
+                title = q.title
+                time_limit = q.time_limit
+                description = q.description
+                gz_text = q.gz_text
+                private = q.private
+                invitation_code = q.invitation_code
+                correct_answers = 0
+                questions = ql.size
+                no_tries = 0
+                image = ExposedBlob(q.image)
+                user = currentUser!!
+            }
+            var n = -1
+            for (i in ql) {
+                n++
+                var newQuestion = Question.new {
+                    number = n
+                    question_text = i.question_text
+                    question_image = ExposedBlob(i.question_image)
+                    points = i.question_pts
+                    quiz = newQuiz
+                }
+                for (j in i.question_answers){
+                    Answer.new{
+                        answer_text = j.answer_text
+                        answer_image = ExposedBlob(j.answer_image)
+                        is_correct = j.is_Correct
+                        question = newQuestion
+                    }
+                }
+            }
+        }
     }
 
-    private fun goBack(){}
+    private fun goBack() {}
 }
