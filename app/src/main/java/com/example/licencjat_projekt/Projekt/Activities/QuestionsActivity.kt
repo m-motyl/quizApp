@@ -33,6 +33,7 @@ import java.io.IOException
 class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
 
     private var answersList = ArrayList<AnswerModel>()
+    private var nullAnswersList = ArrayList<AnswerModel>()
     private val emptyByteArray: ByteArray = ByteArray(1)
     private var quizModel: CreateQuizModel? = null
     private var noQuestions = 0
@@ -87,14 +88,20 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                         val questionModel = CreateQuestionModel(
                             questions_question.text.toString(),
                             question_image,
-                            Integer.parseInt(questions_points.text.toString())
+                            Integer.parseInt(questions_points.text.toString()),
+                            ArrayList(answersList)
                         )
+                        answersList.clear()
                         questionsList.add(questionModel)
                     }else{ //update if exists
                         questionsList[noQuestions].question_text = questions_question.text.toString()
                         questionsList[noQuestions].question_image = question_image
                         questionsList[noQuestions].question_pts = Integer.parseInt(questions_points.text.toString())
+                        questionsList[noQuestions].question_answers += answersList
+                        answersList.clear()
                     }
+                }else {
+                    answersList.clear()
                 }
 
                 if(noQuestions > 0){
@@ -102,11 +109,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                 }
 
                 if(questionsList.getOrNull(noQuestions) != null){ //read element if exists
-
                     isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
                     questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
                     questions_points.setText(questionsList[noQuestions].question_pts.toString())
+                    answersRecyclerView(questionsList[noQuestions].question_answers)
+                }else{
+                    answersRecyclerView(answersList)
                 }
             }
             R.id.questions_next_question -> {
@@ -115,15 +124,17 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                         val questionModel = CreateQuestionModel(
                             questions_question.text.toString(),
                             question_image,
-                            Integer.parseInt(questions_points.text.toString())
-
-
+                            Integer.parseInt(questions_points.text.toString()),
+                            ArrayList(answersList)
                         )
+                        answersList.clear()
                         questionsList.add(questionModel)
                     }else{ //update if exists
                         questionsList[noQuestions].question_text = questions_question.text.toString()
                         questionsList[noQuestions].question_image = question_image
                         questionsList[noQuestions].question_pts = Integer.parseInt(questions_points.text.toString())
+                        questionsList[noQuestions].question_answers += answersList
+                        answersList.clear()
                     }
 
                     questions_question.text.clear()
@@ -139,6 +150,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                     questions_question.setText(questionsList[noQuestions].question_text)
                     questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
                     questions_points.setText(questionsList[noQuestions].question_pts.toString())
+                    answersRecyclerView(questionsList[noQuestions].question_answers)
+                }else{
+                    answersRecyclerView(answersList)
                 }
             }
             R.id.questions_add_button -> {
@@ -150,7 +164,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    else -> { //TODO: repair adding models, just testing
+                    else -> {
                         val ans = AnswerModel(
                             questions_add_answer.text.toString(),
                             emptyByteArray,
@@ -158,7 +172,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener{
                         )
                         questions_add_answer.text.clear()
                         answersList.add(ans)
-                        answersRecyclerView(answersList)
+                        if(questionsList.getOrNull(noQuestions) != null){
+                            answersRecyclerView((questionsList[noQuestions].question_answers + answersList)
+                                    as ArrayList<AnswerModel>)
+                        }else {
+                            answersRecyclerView(answersList)
+                        }
                     }
                 }
             }
