@@ -120,12 +120,22 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 //if not empty
                 if (!questions_question.text.isNullOrEmpty()&& !questions_points.text.isNullOrEmpty()) {
                     if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
-                        val questionModel = CreateQuestionModel(
-                            questions_question.text.toString(),
-                            question_image,
-                            Integer.parseInt(questions_points.text.toString()),
-                            ArrayList(answersList)
-                        )
+                        lateinit var questionModel: CreateQuestionModel
+                        if(isImage) {
+                            questionModel = CreateQuestionModel(
+                                questions_question.text.toString(),
+                                question_image,
+                                Integer.parseInt(questions_points.text.toString()),
+                                ArrayList(answersList)
+                            )
+                        }else{
+                            questionModel = CreateQuestionModel(
+                                questions_question.text.toString(),
+                                emptyByteArray,
+                                Integer.parseInt(questions_points.text.toString()),
+                                ArrayList(answersList)
+                            )
+                        }
                         question_image = emptyByteArray
                         isImage = false
                         answersList.clear()
@@ -170,12 +180,22 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             R.id.questions_next_question -> {
                 if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()) {
                     if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
-                        val questionModel = CreateQuestionModel(
-                            questions_question.text.toString(),
-                            question_image,
-                            Integer.parseInt(questions_points.text.toString()),
-                            ArrayList(answersList)
-                        )
+                        lateinit var questionModel: CreateQuestionModel
+                        if(isImage) {
+                                questionModel = CreateQuestionModel(
+                                questions_question.text.toString(),
+                                question_image,
+                                Integer.parseInt(questions_points.text.toString()),
+                                ArrayList(answersList)
+                            )
+                        }else{
+                                questionModel = CreateQuestionModel(
+                                questions_question.text.toString(),
+                                emptyByteArray,
+                                Integer.parseInt(questions_points.text.toString()),
+                                ArrayList(answersList)
+                            )
+                        }
                         question_image = emptyByteArray
                         isImage = false
                         answersList.clear()

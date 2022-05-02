@@ -115,16 +115,16 @@
                     app:icon="@drawable/ic_baseline_first_24"
                     app:iconGravity="textStart"
                     android:layout_marginRight="2dp"
-                    android:backgroundTint="@color/purple_03"/>
+                    android:backgroundTint="@color/gray"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/main_backPage"
                     android:layout_width="95dp"
                     android:layout_height="30dp"
-                    android:layout_marginRight="2dp"
+                    android:layout_marginRight="3dp"
                     app:icon="@drawable/ic_baseline_navigate_before_24"
                     app:iconGravity="textStart"
-                    android:backgroundTint="@color/purple_03" />
+                    android:backgroundTint="@color/gray" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/main_nextPage"
@@ -133,7 +133,7 @@
                     android:layout_marginRight="2dp"
                     app:icon="@drawable/ic_baseline_navigate_next_24"
                     app:iconGravity="textStart"
-                    android:backgroundTint="@color/purple_03" />
+                    android:backgroundTint="@color/gray" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/main_lastPage"
@@ -142,7 +142,7 @@
                     android:layout_marginRight="2dp"
                     app:icon="@drawable/ic_baseline_last_24"
                     app:iconGravity="textStart"
-                    android:backgroundTint="@color/purple_03"
+                    android:backgroundTint="@color/gray"
                     />
             </LinearLayout>
         </LinearLayout>

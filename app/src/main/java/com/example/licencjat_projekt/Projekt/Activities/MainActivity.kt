@@ -177,6 +177,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         var QUIZ_DETAILS = "quiz_details"
-        var QUIZ_CODE = 3
+        var QUIZ_CODE = 1
     }
 }
