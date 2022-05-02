@@ -38,7 +38,6 @@ import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import kotlin.time.Duration.Companion.minutes
 
 class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -49,7 +48,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var questionsList = arrayListOf<CreateQuestionModel>()
     private  var question_image: ByteArray = ByteArray(1)
     private var selectCorrect: Boolean = false
-    private var removeAnswers: Boolean = false
     private var isImage: Boolean = false
 
     companion object {
@@ -83,7 +81,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.questions_image_delete -> {
                 questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
-                questionsList[noQuestions].question_image = emptyByteArray
+                if(questionsList.getOrNull(noQuestions) != null) {
+                    questionsList[noQuestions].question_image = emptyByteArray
+                }
                 questions_image_delete.visibility = View.GONE
                 isImage = false
             }
@@ -264,24 +264,11 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun removeQuestion() {
-        //TODO: remove question repair
-        questions_question.text.clear()
-        questions_add_answer.text.clear()
-        if (answersList.size > 0) {
-            answersList.clear()
-            answersRecyclerView(answersList)
-        }
+    private fun removeQuestion() { //TODO: usuwanie pytania
+
     }
 
-    private fun removeMarkedAnswers() {
-        if (removeAnswers) {
-            questions_delete.setImageResource(R.drawable.ic_baseline_delete_24)
-            removeAnswers = false
-        } else {
-            questions_delete.setImageResource(R.drawable.ic_baseline_delete_24_black)
-            removeAnswers = true
-        }
+    private fun removeMarkedAnswers() { //TODO: zaznaczanie odpowiedzi i usuwanie
     }
 
     private fun answersRecyclerView(answers: ArrayList<AnswerModel>) {
@@ -436,7 +423,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             ql.add(questionModel)
         }
 
-
         newSuspendedTransaction(Dispatchers.IO) {
             val newQuiz = Quiz.new {
                 title = q.title
@@ -454,7 +440,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             var n = -1
             for (i in ql) {
                 n++
-                var newQuestion = Question.new {
+                val newQuestion = Question.new {
                     number = n
                     question_text = i.question_text
                     question_image = ExposedBlob(i.question_image)

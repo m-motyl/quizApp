@@ -66,6 +66,8 @@
     <string name="questions_point">Liczba punktów</string>
     <string name="question_points">pkt</string>
     <string name="quizmain_minutue">10</string>
+    <string name="main_search">Wyszukaj</string>
+    <string name="main_no_quizes">Brak quizów!</string>
 
 
 </resources>

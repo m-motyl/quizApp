@@ -5,28 +5,39 @@
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".Projekt.Activities.MainActivity"
     tools:openDrawer="start">
 
-    <LinearLayout
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_search"
+        android:layout_width="241dp"
+        android:layout_height="53dp"
+        android:layout_marginStart="48dp"
+        app:layout_constraintBottom_toBottomOf="@+id/toolbar_search"
+        app:layout_constraintStart_toStartOf="@+id/toolbar_search"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/main_rv_quizes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@color/purple_05"
-            android:elevation="5dp" />
-
-        <FrameLayout
-            android:id="@+id/main_fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
-
+        android:visibility="gone"
+        tools:visibility="gone"
+        android:paddingTop="90dp"
+        />
+    <TextView
+        android:id="@+id/main_no_quizes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/main_no_quizes"
+        android:textSize="16sp"
+        android:visibility="visible"
+        />
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/main_nav_view"
         android:layout_width="wrap_content"
@@ -35,4 +46,106 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu" />
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/purple_05">
+
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="#00FFFFFF"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="?attr/actionBarTheme"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:navigationIcon="@drawable/ic_baseline_menu_24" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/main_search"
+                    android:layout_width="303dp"
+                    android:layout_height="43dp"
+                    android:hint="@string/main_search"
+                    android:inputType="text"
+                    android:textColor="@color/primary_text_color"
+                    android:textColorHint="@color/secondary_text_color"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/toolbar"
+                    app:layout_constraintStart_toStartOf="@+id/toolbar"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/main_btn_search"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="#00FFFFFF"
+                    app:drawableStartCompat="@drawable/ic_baseline_search_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/main_search"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="2dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/main_firstPage"
+                    android:layout_width="95dp"
+                    android:layout_height="30dp"
+                    app:icon="@drawable/ic_baseline_first_24"
+                    app:iconGravity="textStart"
+                    android:layout_marginRight="2dp"
+                    android:backgroundTint="@color/purple_03"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/main_backPage"
+                    android:layout_width="95dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="2dp"
+                    app:icon="@drawable/ic_baseline_navigate_before_24"
+                    app:iconGravity="textStart"
+                    android:backgroundTint="@color/purple_03" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/main_nextPage"
+                    android:layout_width="95dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="2dp"
+                    app:icon="@drawable/ic_baseline_navigate_next_24"
+                    app:iconGravity="textStart"
+                    android:backgroundTint="@color/purple_03" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/main_lastPage"
+                    android:layout_width="95dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="2dp"
+                    app:icon="@drawable/ic_baseline_last_24"
+                    app:iconGravity="textStart"
+                    android:backgroundTint="@color/purple_03"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
