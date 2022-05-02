@@ -47,10 +47,10 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var quizModel: CreateQuizModel? = null
     private var noQuestions = 0
     private var questionsList = arrayListOf<CreateQuestionModel>()
-    private lateinit var question_image: ByteArray
-    private var isImage: Boolean = false
+    private  var question_image: ByteArray = ByteArray(1)
     private var selectCorrect: Boolean = false
     private var removeAnswers: Boolean = false
+    private var isImage: Boolean = false
 
     companion object {
         internal const val GALLERY_CODE = 1
@@ -76,10 +76,18 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         questions_image.setOnClickListener(this)
         questions_save_correct_ans.setOnClickListener(this)
         questions_finish_quiz.setOnClickListener(this)
+        questions_image_delete.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
+            R.id.questions_image_delete -> {
+                questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                questionsList[noQuestions].question_image = emptyByteArray
+                questions_image_delete.visibility = View.GONE
+                isImage = false
+            }
+
             R.id.questions_finish_quiz -> {
                 val alert = AlertDialog.Builder(this)
                 alert.setTitle("Czy na pewno chcesz zakończyć tworzenie quizu?")
@@ -110,7 +118,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.questions_prev_question -> {
                 //if not empty
-                if (!questions_question.text.isNullOrEmpty() && isImage && !questions_points.text.isNullOrEmpty()) {
+                if (!questions_question.text.isNullOrEmpty()&& !questions_points.text.isNullOrEmpty()) {
                     if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
                         val questionModel = CreateQuestionModel(
                             questions_question.text.toString(),
@@ -118,12 +126,17 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                             Integer.parseInt(questions_points.text.toString()),
                             ArrayList(answersList)
                         )
+                        question_image = emptyByteArray
+                        isImage = false
                         answersList.clear()
                         questionsList.add(questionModel)
                     } else { //update if exists
                         questionsList[noQuestions].question_text =
                             questions_question.text.toString()
-                        questionsList[noQuestions].question_image = question_image
+                        if(isImage) {
+                            questionsList[noQuestions].question_image = question_image
+                            isImage = false
+                        }
                         questionsList[noQuestions].question_pts =
                             Integer.parseInt(questions_points.text.toString())
                         questionsList[noQuestions].question_answers += answersList
@@ -138,17 +151,24 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
-                    isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
-                    questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
+                    if(!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
+                        questions_image_delete.visibility = View.VISIBLE
+                        questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
+                    }
+                    else{
+                        questions_image_delete.visibility = View.GONE
+                        questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                    }
                     questions_points.setText(questionsList[noQuestions].question_pts.toString())
                     answersRecyclerView(questionsList[noQuestions].question_answers)
                 } else {
+                    questions_image_delete.visibility = View.GONE
                     answersRecyclerView(answersList)
                 }
             }
             R.id.questions_next_question -> {
-                if (!questions_question.text.isNullOrEmpty() && isImage && !questions_points.text.isNullOrEmpty()) {
+                if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()) {
                     if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
                         val questionModel = CreateQuestionModel(
                             questions_question.text.toString(),
@@ -156,12 +176,17 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                             Integer.parseInt(questions_points.text.toString()),
                             ArrayList(answersList)
                         )
+                        question_image = emptyByteArray
+                        isImage = false
                         answersList.clear()
                         questionsList.add(questionModel)
                     } else { //update if exists
                         questionsList[noQuestions].question_text =
                             questions_question.text.toString()
-                        questionsList[noQuestions].question_image = question_image
+                        if(isImage) {
+                            questionsList[noQuestions].question_image = question_image
+                            isImage = false
+                        }
                         questionsList[noQuestions].question_pts =
                             Integer.parseInt(questions_points.text.toString())
                         questionsList[noQuestions].question_answers += answersList
@@ -177,12 +202,19 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
                 if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
 
-                    isImage = true
                     questions_question.setText(questionsList[noQuestions].question_text)
-                    questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
+                    if(!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
+                        questions_image_delete.visibility = View.VISIBLE
+                        questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
+                    }
+                    else{
+                        questions_image_delete.visibility = View.GONE
+                        questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                    }
                     questions_points.setText(questionsList[noQuestions].question_pts.toString())
                     answersRecyclerView(questionsList[noQuestions].question_answers)
                 } else {
+                    questions_image_delete.visibility = View.GONE
                     answersRecyclerView(answersList)
                 }
             }
@@ -350,6 +382,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                                 contentURI
                             )
                         question_image = saveImageByteArray(selectedImage)
+                        questions_image_delete.visibility = View.VISIBLE
                         isImage = true
                         questions_image.setImageBitmap(selectedImage)
                     } catch (e: IOException) {
@@ -388,13 +421,22 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun saveQuizToDB(q: CreateQuizModel, ql: ArrayList<CreateQuestionModel>) = runBlocking {
-        //TODO: Witold zapis do bazy
-        //quizModel: CreateQuizModel
-        //questionsList: CreateQuestionModel
+
         Database.connect(
             "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
             user = "postgres", password = "123"
         )
+        if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()) {
+            val questionModel = CreateQuestionModel(
+                questions_question.text.toString(),
+                question_image,
+                Integer.parseInt(questions_points.text.toString()),
+                ArrayList(answersList)
+            )
+            ql.add(questionModel)
+        }
+
+
         newSuspendedTransaction(Dispatchers.IO) {
             val newQuiz = Quiz.new {
                 title = q.title
@@ -429,6 +471,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+        finish()
     }
 
     private fun goBack() {}

@@ -103,6 +103,19 @@
 
             </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/questions_image_delete"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/questions_image"
+                android:layout_alignEnd="@+id/questions_image"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="-60dp"
+                android:layout_marginRight="3dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_delete_24" />
+
             <ImageView
                 android:id="@+id/questions_image"
                 android:layout_width="278dp"

@@ -129,6 +129,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                         startActivity(intent)
+                        finish()
                     }
                 }
             }
