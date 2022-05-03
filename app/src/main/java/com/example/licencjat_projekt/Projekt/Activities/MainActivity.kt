@@ -65,7 +65,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         main_backPage.setOnClickListener(this)
         main_nextPage.setOnClickListener(this)
         main_lastPage.setOnClickListener(this)
+
+        getQuizesNumber()
         firstFive()
+        quizesRecyclerView(quizesList)
     }
 
     override fun onBackPressed() {
@@ -141,11 +144,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         if (list.isNotEmpty())
             exposedToModel(list)
-        for (i in list){
-            Log.e("quiz", i.title)
-        }
-
-        Log.e("first", "$offsetId")
     }
 
     private fun nextFive() {
@@ -224,11 +222,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
             )
         }
-
         quizesList = quizesArrayList
     }
 
     private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
+
         main_rv_quizes.layoutManager = LinearLayoutManager(this)
         main_rv_quizes.setHasFixedSize(true)
         val quizesList = QuizesList(this, quizes)
@@ -238,36 +236,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onClick(position: Int, model: ReadQuizModel) {
                 val intent = Intent(
                     this@MainActivity,
-                    DetailQuizActivity::class.java
+                    DetailQuizActivity1::class.java
                 )
 
                 intent.putExtra( //passing object to activity
                     QUIZ_DETAILS,
                     model
                 )
-                startActivityForResult(intent, QUIZ_CODE)
+                startActivity(intent)
             }
         })
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == QUIZ_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                firstFive()
-                getQuizesNumber()
-                if (quizesList.size > 0) {
-                    //changing no places string with the recycler view list
-                    main_rv_quizes.visibility = View.VISIBLE
-                    main_no_quizes.visibility = View.GONE
-                    quizesRecyclerView(quizesList)
-                } else {
-                    //when there are no places right announcement shown
-                    main_rv_quizes.visibility = View.GONE
-                    main_no_quizes.visibility = View.VISIBLE
-                }
-            }
-        }
     }
 
     companion object {

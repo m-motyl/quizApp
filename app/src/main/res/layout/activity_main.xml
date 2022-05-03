@@ -25,11 +25,11 @@
         android:id="@+id/main_rv_quizes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        tools:visibility="gone"
+        android:visibility="visible"
+        tools:visibility="visible"
         android:paddingTop="90dp"
         />
-    <TextView
+   <!--><TextView
         android:id="@+id/main_no_quizes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +37,7 @@
         android:text="@string/main_no_quizes"
         android:textSize="16sp"
         android:visibility="visible"
-        />
+        />-->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/main_nav_view"
         android:layout_width="wrap_content"
