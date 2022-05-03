@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -15,10 +16,17 @@ import com.example.licencjat_projekt.Projekt.Activities.CommunityActivity
 import com.example.licencjat_projekt.Projekt.Activities.QuizMainActivity
 import com.example.licencjat_projekt.Projekt.Activities.SignInActivity
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.database.Quiz
+import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
 import com.example.licencjat_projekt.R
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private lateinit var drawerLayout: DrawerLayout
@@ -57,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         main_backPage.setOnClickListener(this)
         main_nextPage.setOnClickListener(this)
         main_lastPage.setOnClickListener(this)
+        firstFive()
     }
 
     override fun onBackPressed() {
@@ -123,14 +132,100 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     } //TODO: read pages WITEK
-    private fun firstFive() {}
-    private fun previousFive() {}
-    private fun nextFive() {}
-    private fun lastFive() {}
+    private fun firstFive() {
+        this.offsetId = 0L
+        val list = runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                Quiz.all().limit(5).toList()
+            }
+        }
+        if (list.isNotEmpty())
+            exposedToModel(list)
+        for (i in list){
+            Log.e("quiz", i.title)
+        }
+
+        Log.e("first", "$offsetId")
+    }
+
+    private fun nextFive() {
+        this.offsetId += 5L
+        val list = runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                Quiz.all().limit(5, offsetId).toList()
+            }
+        }
+        if (list.isNotEmpty())
+            exposedToModel(list)
+        else
+            this.offsetId -= 5L
+        Log.e("next", "$offsetId")
+    }
+
+    private fun previousFive() {
+        this.offsetId -= 5L
+        val list = runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                Quiz.all().limit(5, offsetId).toList()
+            }
+        }
+        if (list.isNotEmpty())
+            exposedToModel(list)
+        else
+            this.offsetId += 5L
+        Log.e("prev", "$offsetId")
+    }
+
+    private fun lastFive() {
+        if(quizesCount.mod(5) != 0) {
+            this.offsetId = quizesCount - quizesCount.mod(5)
+        }
+        else{
+            this.offsetId = quizesCount - 5
+        }
+        Log.e("last", "$offsetId")
+        val list = runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                if(quizesCount.mod(5) != 0) {
+                    Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit((quizesCount.mod(5)))
+                        .toList()
+                }else{
+                    Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit(5)
+                        .toList()
+                }
+            }
+        }
+        if (list.isNotEmpty())
+            exposedToModel(list.reversed())
+    }
 
     //TODO: get number of quizes WITEK
     private fun getQuizesNumber(){
-        quizesCount = 0
+        val n = runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                Quiz.all().count()
+            }
+        }
+        quizesCount = n
+    }
+    private fun exposedToModel(list: List<Quiz>) {
+        val quizesArrayList = ArrayList<ReadQuizModel>()
+        for (i in list) {
+            quizesArrayList.add(
+                ReadQuizModel(
+                    i.title,
+                    i.time_limit,
+                    i.description,
+                    "xd",
+                    i.gz_text,
+                    true,
+                    i.invitation_code,
+                    i.image.bytes,
+                )
+            )
+        }
+
+        quizesList = quizesArrayList
     }
 
     private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
