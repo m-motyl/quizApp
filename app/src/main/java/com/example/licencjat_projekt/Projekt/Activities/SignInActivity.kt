@@ -77,9 +77,10 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent)
                         }
+                        signin_username.text.clear()
+                        signin_password.text.clear()
                     }
                 }
-
             }
             R.id.signin_sign_up -> {
                 val intent = Intent(this, SignUpActivity::class.java)

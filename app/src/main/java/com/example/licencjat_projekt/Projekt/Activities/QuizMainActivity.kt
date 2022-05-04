@@ -108,11 +108,11 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                         invitation_code = generateInvitationCode() //TODO: check if not in DB (WITEK)
 
                         quizModel = CreateQuizModel(
-                            quizmain_title.toString(),
+                            quizmain_title.text.toString(),
                             Integer.parseInt(quizmain_timer.text.toString()),
-                            quizmain_description.toString(),
-                            quizmain_tags.toString(),
-                            quizmain_final_comment.toString(),
+                            quizmain_description.text.toString(),
+                            quizmain_tags.text.toString(),
+                            quizmain_final_comment.text.toString(),
                             isPrivate,
                             invitation_code,
                             quiz_image
@@ -129,6 +129,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             )
                         }
                         startActivity(intent)
+                        finish()
                     }
                 }
             }

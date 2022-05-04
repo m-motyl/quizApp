@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Licencjatprojekt">
         <activity
+            android:name=".Projekt.Activities.DetailQuizActivity1"
+            android:exported="true" />
+        <activity
             android:name=".Projekt.Activities.ReportActivity"
             android:exported="true" />
         <activity
