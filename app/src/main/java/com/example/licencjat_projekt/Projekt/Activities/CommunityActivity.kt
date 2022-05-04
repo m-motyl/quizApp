@@ -1,23 +1,14 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
-import android.app.ActionBar
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.GroupModel
-import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.Projekt.utils.GroupsList
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
-import kotlinx.android.synthetic.main.activity_questions.*
 
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener{
@@ -53,7 +44,8 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
                     else -> {
                         val groupName: String = community_new_group_name_text_edit.text.toString()
                         val group = GroupModel(
-                            groupName
+                            groupName,
+                            null
                         )
                         community_add_new_group_linear_layout.visibility = View.INVISIBLE
                         community_new_group_name_text_edit.text.clear()
