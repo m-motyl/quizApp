@@ -61,20 +61,20 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
         when(v!!.id){
             R.id.quizmain_start_creating ->{
                 when {
-                    /*quizmain_title.text.isNullOrEmpty() -> {
+                    quizmain_title.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
                             "Podaj tytuł!",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }*/
+                    }
                     quizmain_timer.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
-                            "Podaj czas testu!",
+                            "Podaj czas trwania testu!",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }/*
+                    }
                     quizmain_description.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
@@ -102,10 +102,10 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             "Dodaj zdjęcie!",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }*/
+                    }
                     else -> {
 
-                        invitation_code = generateInvitationCode() //TODO: check if not in DB (WITEK)
+                        invitation_code = generateInvitationCode()
 
                         quizModel = CreateQuizModel(
                             quizmain_title.text.toString(),
