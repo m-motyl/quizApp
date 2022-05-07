@@ -23,6 +23,7 @@ open class GroupsList(
     private var listOfGroups: ArrayList<GroupModel>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     private var onClickListener: OnClickListener? = null
+    private var onLongClickListener: OnLongClickListener? = null
 
     private class OwnViewHolder(
         view: View
@@ -58,7 +59,15 @@ open class GroupsList(
         this.onClickListener = onClickListener
     }
 
+    fun setOnLongClickListener(onLongClickListener: OnLongClickListener){
+        this.onLongClickListener = onLongClickListener
+    }
+
     interface OnClickListener {
         fun onClick(position: Int, model: GroupModel)
+    }
+
+    interface OnLongClickListener {
+        fun onLongClick(position: Int, model: GroupModel)
     }
 }

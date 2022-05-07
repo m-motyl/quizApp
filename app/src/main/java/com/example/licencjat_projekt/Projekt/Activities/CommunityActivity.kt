@@ -1,5 +1,6 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -9,6 +10,7 @@ import com.example.licencjat_projekt.Projekt.Models.GroupModel
 import com.example.licencjat_projekt.Projekt.utils.GroupsList
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
+import java.text.FieldPosition
 
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener{
@@ -71,6 +73,20 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener{
 
         groupsList.setOnClickListener(object: GroupsList.OnClickListener{
             override fun onClick(position: Int, model: GroupModel) {
+                val intent = Intent(
+                    this@CommunityActivity,
+                    CommunityDetailActivity::class.java
+                )
+
+                intent.putExtra( //passing object to activity
+                    CommunityActivity,
+                    model
+                )
+                startActivity(intent)
+            }
+        })
+        groupsList.setOnLongClickListener(object: GroupsList.OnLongClickListener{
+            override fun onLongClick(position: Int, model: GroupModel) {
             }
         })
     }
