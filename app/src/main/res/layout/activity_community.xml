@@ -28,76 +28,33 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <RelativeLayout
+    <androidx.drawerlayout.widget.DrawerLayout
         android:layout_width="match_parent"
-        android:layout_height="550dp"
-        android:background="@color/white"
-        android:padding="20dp">
+        android:layout_height="match_parent"
+        android:id="@+id/community_drawer_layout"
+        tools:openDrawer="start">
+
+        <SearchView
+            android:id="@+id/community_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Wyszukaj znajomego"
+            android:visibility="gone" />
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <GridLayout
-                android:id="@+id/community_grid_layout"
+            <view
+                android:id="@+id/community_recycle"
+                class="androidx.appcompat.app.AlertController$RecycleListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnCount="2">
+                tools:listitem="@layout/item_contact" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/community_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-            </GridLayout>
         </ScrollView>
-    </RelativeLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/community_add_new_group_linear_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:visibility="invisible">
-
-            <Button
-                android:id="@+id/community_decline_btn"
-                android:layout_width="110dp"
-                android:layout_height="match_parent"
-                android:backgroundTint="@color/purple_06"
-                android:text="@string/community_decline" />
-
-            <EditText
-                android:id="@+id/community_new_group_name_text_edit"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/colorAccent" />
-
-            <Button
-                android:id="@+id/community_accept_btn"
-                android:layout_width="110dp"
-                android:layout_height="match_parent"
-                android:backgroundTint="@color/purple_06"
-                android:text="@string/community_accept" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/community_add_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-
-            android:layout_marginStart="60dp"
-            android:backgroundTint="@color/purple_05"
-            android:text="@string/community_add_btn" />
-
-
-    </RelativeLayout>
 </LinearLayout>

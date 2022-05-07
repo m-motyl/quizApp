@@ -68,6 +68,8 @@
     <string name="quizmain_minutue">10</string>
     <string name="main_search">Wyszukaj</string>
     <string name="main_no_quizes">Brak quizów!</string>
+    <string name="community_toolbar_invitation">invitation</string>
+    <string name="community_toolbar_add">add_friend</string>
 
 
 </resources>
