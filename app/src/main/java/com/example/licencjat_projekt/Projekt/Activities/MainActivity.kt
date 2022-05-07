@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 quizesRecyclerView(quizesList)
             }
         }
-    } //TODO: read pages WITEK
+    }
     private fun firstFive() {
         this.offsetId = 0L
         val list = runBlocking {
@@ -197,7 +197,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             exposedToModel(list.reversed())
     }
 
-    //TODO: get number of quizes WITEK
     private fun getQuizesNumber(){
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {

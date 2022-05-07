@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.activity_questions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
@@ -48,6 +49,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var questionsList = arrayListOf<CreateQuestionModel>()
     private  var question_image: ByteArray = ByteArray(1)
     private var selectCorrect: Boolean = false
+    private var removeAnswers: Boolean = false
     private var isImage: Boolean = false
 
     companion object {
@@ -75,10 +77,20 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         questions_save_correct_ans.setOnClickListener(this)
         questions_finish_quiz.setOnClickListener(this)
         questions_image_delete.setOnClickListener(this)
+        questions_end_del.setOnClickListener(this)
+        questions_end_correct_ans.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
+            R.id.questions_end_correct_ans -> {
+                selectCorrect = false
+                questions_end_correct_ans.visibility = View.GONE
+            }
+            R.id.questions_end_del -> {
+                removeAnswers = false
+                questions_end_del.visibility = View.GONE
+            }
             R.id.questions_image_delete -> {
                 questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
                 if(questionsList.getOrNull(noQuestions) != null) {
@@ -104,14 +116,15 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 alert.show()
             }
             R.id.questions_save_correct_ans -> {
-
-                if (selectCorrect) {
+                selectCorrect = true
+                questions_end_correct_ans.visibility = View.VISIBLE
+                /*if (selectCorrect) {
                     questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24)
                     selectCorrect = false
                 } else {
                     questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24_black)
                     selectCorrect = true
-                }
+                }*/
             }
             R.id.questions_image -> {
                 chooseImageFromGalery()
@@ -271,7 +284,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 alert.setTitle("Usuń:")
                 val items = arrayOf(
                     "Pytanie",
-                    "Zaznaczone odpowiedzi"
+                    "Odpowiedzi"
                 )
                 alert.setItems(items) { _, n ->
                     when (n) {
@@ -284,21 +297,60 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun removeQuestion() { //TODO: usuwanie pytania
+    private fun removeQuestion() {
+        if(questionsList.getOrNull(noQuestions) != null){
+            questionsList.removeAt(noQuestions)
 
+            if(questionsList.getOrNull(0) != null){
+                noQuestions = 0
+                questions_question.setText(questionsList[0].question_text)
+                questions_points.setText(questionsList[0].question_pts.toString())
+                answersRecyclerView(questionsList[0].question_answers)
+                if(!questionsList[0].question_image.contentEquals(emptyByteArray)) {
+                    questions_image_delete.visibility = View.VISIBLE
+                    questions_image.setImageBitmap(byteArrayToBitmap(questionsList[0].question_image))
+                }
+                else{
+                    questions_image_delete.visibility = View.GONE
+                    questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                }
+            }else if (questionsList.getOrNull(0) == null){
+                questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                questions_image_delete.visibility = View.GONE
+                isImage = false
+                questions_question.text.clear()
+                questions_points.text.clear()
+                answersList.clear()
+                answersRecyclerView(answersList)
+            }
+        }else if(questionsList.getOrNull(noQuestions) == null){
+            questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+            questions_image_delete.visibility = View.GONE
+            isImage = false
+            questions_question.text.clear()
+            questions_points.text.clear()
+            answersList.clear()
+            answersRecyclerView(answersList)
+        }
     }
 
-    private fun removeMarkedAnswers() { //TODO: zaznaczanie odpowiedzi i usuwanie
+    private fun removeMarkedAnswers() {
+        removeAnswers = true
+        questions_end_del.visibility = View.VISIBLE
+        if(questionsList.getOrNull(noQuestions) != null){
+            questionsList[noQuestions].question_answers += answersList
+            answersList.clear()
+        }
     }
 
     private fun answersRecyclerView(answers: ArrayList<AnswerModel>) {
         questions_recycler_view.layoutManager = LinearLayoutManager(this)
         questions_recycler_view.setHasFixedSize(true)
 
-        val answersList = AnswersList(this, answers)
-        questions_recycler_view.adapter = answersList
+        val ansList = AnswersList(this, answers)
+        questions_recycler_view.adapter = ansList
 
-        answersList.setOnClickListener(object : AnswersList.OnClickListener {
+        ansList.setOnClickListener(object : AnswersList.OnClickListener {
             override fun onClick(position: Int, model: AnswerModel) {
                 if (selectCorrect) {
                     if (model.is_Correct) { //temporary
@@ -308,7 +360,20 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                         model.answer_text += "(correct)"
                         model.is_Correct = true
                     }
-                    questions_recycler_view.adapter = answersList
+                    questions_recycler_view.adapter = ansList
+                }
+                if(removeAnswers){
+                    if (questionsList.getOrNull(noQuestions) != null){
+                        if(answersList.size == 0) {
+                            answersList = ArrayList(questionsList[noQuestions].question_answers)
+                        }
+                        answersList.removeAt(position)
+                        questionsList[noQuestions].question_answers.clear()
+                        answersRecyclerView(answersList)
+                    }else if(questionsList.getOrNull(noQuestions) == null){
+                        answersList.removeAt(position)
+                        answersRecyclerView(answersList)
+                    }
                 }
             }
         })
@@ -433,7 +498,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
             user = "postgres", password = "123"
         )
-        if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()) {
+        if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()
+            && questionsList.getOrNull(noQuestions) == null) {
             val questionModel = CreateQuestionModel(
                 questions_question.text.toString(),
                 question_image,
@@ -441,6 +507,18 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 ArrayList(answersList)
             )
             ql.add(questionModel)
+        }else if(!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()
+            && questionsList.getOrNull(noQuestions) != null){
+
+            if(isImage) {
+                questionsList[noQuestions].question_image = question_image
+                isImage = false
+            }
+            questionsList[noQuestions].question_text =
+                questions_question.text.toString()
+            questionsList[noQuestions].question_pts =
+                Integer.parseInt(questions_points.text.toString())
+            questionsList[noQuestions].question_answers += answersList
         }
 
         newSuspendedTransaction(Dispatchers.IO) {
