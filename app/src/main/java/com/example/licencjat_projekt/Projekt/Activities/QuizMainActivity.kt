@@ -14,8 +14,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.licencjat_projekt.Projekt.Models.CreateQuizModel
-import com.example.licencjat_projekt.Projekt.Models.QuizModel
+import com.example.licencjat_projekt.Projekt.Models.*
 import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.R
