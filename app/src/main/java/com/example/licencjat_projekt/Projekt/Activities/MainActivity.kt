@@ -210,6 +210,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         for (i in list) {
             quizesArrayList.add(
                 ReadQuizModel(
+                    i.id.value,
                     i.title,
                     i.time_limit,
                     i.description,
