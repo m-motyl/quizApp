@@ -84,22 +84,23 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
             for (j in answers){
                 tmp.add(
                     ReadAnswerModel(
-//                        answer_text = j.answer_text,
-//                        answer_image = j.answer_image!!.bytes,
+                        answer_text = j.answer_text,
+                        answer_image = j.answer_image!!.bytes,
                         is_Correct = j.is_correct
                     )
                 )
             }
             questionsList.add(
                 ReadQuestionModel(
-//                    question_text = i.question_text,
-//                    question_image = i.question_image!!.bytes,
+                    question_text = i.question_text,
+                    question_image = i.question_image!!.bytes,
                     question_pts = i.points,
                     question_answers = tmp,
                     number = i.number,
 
                 )
             )
+            questionsList.sortBy{it.number}
             tmp.clear()
         }
     }
