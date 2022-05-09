@@ -3,6 +3,7 @@ package com.example.licencjat_projekt.Projekt.Models
 import java.io.Serializable
 
 data class ReadQuizModel(
+    var id: Int,
     var title: String,
     var time_limit: Int,
     var description: String,
