@@ -50,8 +50,8 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             exposedToFriendModel(list)
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
 //        val searchItem = menu!!.findItem(R.id.community_search_drawer)
 //        val searchView: SearchView = searchItem.actionView as SearchView
 //
@@ -67,8 +67,8 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 //                return false
 //            }
 //        })
-//        return true
-//    }
+        return true
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
@@ -99,11 +99,11 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         return if (id == R.id.action_community_toolbar_invitation) {
 
             val intent = Intent(
-                this@CommunityActivity,
+                this,
                 CommunityInviteMsg::class.java
             )
             startActivity(intent)
-            true
+            return true
         } else super.onOptionsItemSelected(item)
     }
 
