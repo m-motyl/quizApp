@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/community"
@@ -8,60 +8,52 @@
     android:orientation="vertical"
     tools:context=".Projekt.Activities.CommunityActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/community_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/purple_04"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/community_search_linear"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:visibility="gone">
+
+
+        <SearchView
+            android:id="@+id/community_search_drawer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF">
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Wyszukaj użytkownika" />
 
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/community_toolbar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/purple_04"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/community_btn_add"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="#00FFFFFF"
-                app:drawableStartCompat="@drawable/ic_baseline_add_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/community_toolbar"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/community_drawer_layout"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            tools:openDrawer="start">
-
-
-            <SearchView
-                android:id="@+id/community_search_drawer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:iconifiedByDefault="false"
-                android:queryBackground="@android:color/transparent"
-                android:queryHint="Wyszukaj użytkownika" />
-
-
-        </LinearLayout>
-
+    <LinearLayout
+        android:id="@+id/community_own_friends_linear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/gray_tint">
 
         <SearchView
             android:id="@+id/community_search"
@@ -69,21 +61,21 @@
             android:layout_height="wrap_content"
             android:iconifiedByDefault="false"
             android:queryBackground="@android:color/transparent"
-            android:queryHint="Wyszukaj znajomego" />
+            android:queryHint="Wyszukaj znajomego"
+            android:visibility="visible"/>
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <view
-                android:id="@+id/community_recycle"
-                class="androidx.appcompat.app.AlertController$RecycleListView"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/community_rv_friends"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/item_contact" />
+                android:layout_height="wrap_content">
 
+
+            </androidx.recyclerview.widget.RecyclerView>
         </ScrollView>
     </LinearLayout>
 
-
-</androidx.drawerlayout.widget.DrawerLayout>
+</LinearLayout>

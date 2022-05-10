@@ -5,11 +5,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
-import com.example.licencjat_projekt.Projekt.Models.GroupModel
 import com.example.licencjat_projekt.Projekt.utils.AnswersList
-import com.example.licencjat_projekt.Projekt.utils.GroupsList
 import com.example.licencjat_projekt.R
-import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.android.synthetic.main.activity_question_display.*
 import kotlinx.android.synthetic.main.activity_quiz_main.*
 
