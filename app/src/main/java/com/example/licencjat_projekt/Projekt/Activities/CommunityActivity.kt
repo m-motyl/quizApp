@@ -42,7 +42,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private fun getAllFriends() {
         val list = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                //TODO: make filter user.friends
+                //TODO: make return user.friends
                 User.all().toList()
             }
         }
