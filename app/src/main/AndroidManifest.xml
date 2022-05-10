@@ -38,6 +38,9 @@
             android:name=".Projekt.Activities.CommunityInviteMsg"
             android:exported="true" />
         <activity
+            android:name=".Projekt.Activities.ProfileActivityAdd"
+            android:exported="true" />
+        <activity
             android:name=".Projekt.Activities.SignInActivity"
             android:exported="true">
             <intent-filter>

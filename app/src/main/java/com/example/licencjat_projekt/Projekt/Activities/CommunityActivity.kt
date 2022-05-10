@@ -50,25 +50,25 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             exposedToFriendModel(list)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
-        val searchItem = menu!!.findItem(R.id.community_search_drawer)
-        val searchView: SearchView = searchItem.actionView as SearchView
-
-        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                userAdapter.filter.filter(newText)
-                return false
-            }
-        })
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
+//        val searchItem = menu!!.findItem(R.id.community_search_drawer)
+//        val searchView: SearchView = searchItem.actionView as SearchView
+//
+//        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
+//
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                userAdapter.filter.filter(newText)
+//                return false
+//            }
+//        })
+//        return true
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
@@ -92,13 +92,17 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 //                }else{
 //                    ColorDrawable(resources.getColor(R.color.translucent))
 //                }
-            getAllUsers()
-            usersRecyclerView(usersList)
+//            getAllUsers()
+//            usersRecyclerView(usersList)
             return true
         }
         return if (id == R.id.action_community_toolbar_invitation) {
 
-            // Do something
+            val intent = Intent(
+                this@CommunityActivity,
+                CommunityInviteMsg::class.java
+            )
+            startActivity(intent)
             true
         } else super.onOptionsItemSelected(item)
     }
@@ -179,7 +183,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(position: Int, model: ReadUserModel) {
                 val intent = Intent(
                     this@CommunityActivity,
-                    ProfileActivity::class.java
+                    ProfileActivityAdd::class.java
                 )
 
                 intent.putExtra("profile", model)

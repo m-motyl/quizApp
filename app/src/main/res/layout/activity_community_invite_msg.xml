@@ -32,11 +32,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <view class="androidx.appcompat.app.AlertController$RecycleListView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/community_invite_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/community_community_invite_msg_recycle"
-            tools:listitem="@layout/item_message"/>
+            android:layout_height="wrap_content">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </ScrollView>
 
