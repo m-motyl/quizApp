@@ -45,6 +45,17 @@
             android:queryBackground="@android:color/transparent"
             android:queryHint="Wyszukaj użytkownika" />
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/community_rv_users"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </ScrollView>
+
 
     </LinearLayout>
 
