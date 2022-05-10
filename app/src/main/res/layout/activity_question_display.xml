@@ -44,7 +44,9 @@
             android:layout_marginStart="110dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="110dp"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@mipmap/ic_launcher_round"
+            android:visibility="visible" />
+
 
         <TextView
             android:id="@+id/question_display_title"
@@ -78,19 +80,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!--<TextView
-                android:id="@+id/question_display_answer"
+            <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="50dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/purple_07"
-                android:drawablePadding="20dp"
-                android:padding="20dp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white" />-->
+                android:columnCount="2">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/question_display_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </GridLayout>
         </ScrollView>
     </RelativeLayout>
 
@@ -106,6 +105,7 @@
             android:layout_marginStart="60dp"
             android:backgroundTint="@color/purple_05"
             android:text="@string/question_display_btn_back" />
+
         <Button
             android:id="@+id/question_display_btn_next"
             android:layout_width="wrap_content"
