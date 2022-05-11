@@ -38,7 +38,10 @@
             android:name=".Projekt.Activities.CommunityActivity"
             android:exported="true" />
         <activity
-            android:name=".Projekt.Activities.CommunityDetailActivity"
+            android:name=".Projekt.Activities.CommunityInviteMsg"
+            android:exported="true" />
+        <activity
+            android:name=".Projekt.Activities.ProfileActivityAdd"
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.QuestionDisplayActivity"

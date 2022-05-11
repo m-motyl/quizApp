@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Projekt.Activities.CommunityDetailActivity">
+    tools:context=".Projekt.Activities.CommunityInviteMsg">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
 
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/community_detail_toolbar"
+            android:id="@+id/community_invite_msg_toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/purple_04"
@@ -28,21 +28,16 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <SearchView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/community_detail_search"
-        android:queryHint="Wyszukaj znajomego"
-        android:queryBackground="@android:color/transparent"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <view class="androidx.appcompat.app.AlertController$RecycleListView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/community_invite_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/community_detail_recycle"
-            tools:listitem="@layout/item_contact"/>
+            android:layout_height="wrap_content">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </ScrollView>
 

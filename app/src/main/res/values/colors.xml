@@ -17,6 +17,9 @@
     <color name="purple_06">#911e3e</color>
     <color name="purple_07">#9c4862</color>
 
+    <color name="gray_tint">#808080</color>
+    <color name="translucent">#0000ffff</color>
+
     <color name="colorAccent">#adcbe3</color>
 
     <color name="primary_text_color">#212121</color>
