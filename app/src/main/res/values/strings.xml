@@ -71,6 +71,8 @@
     <string name="community_toolbar_invitation">invitation</string>
     <string name="community_toolbar_add">add_friend</string>
     <string name="profile_add_add_friend_btn">Dodaj do znajomych!</string>
+    <string name="item_message_decline">Usuń</string>
+    <string name="item_message_accept">Akceptuj</string>
 
 
 </resources>

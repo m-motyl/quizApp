@@ -41,8 +41,9 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="9dp"
                 android:paddingBottom="9dp"
-                android:text="Akceptuj"
-                android:textColor="@color/black" />
+                android:text="@string/item_message_accept"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/purple_05"/>
 
             <Button
                 android:id="@+id/item_decline_btn"
@@ -50,8 +51,9 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="9dp"
                 android:paddingBottom="9dp"
-                android:text="Usuń"
-                android:textColor="@color/black" />
+                android:text="@string/item_message_decline"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/purple_05"/>
         </LinearLayout>
     </LinearLayout>
 
