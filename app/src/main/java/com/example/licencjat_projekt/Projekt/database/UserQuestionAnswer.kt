@@ -10,8 +10,8 @@ class UserQuestionAnswer(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<UserQuestionAnswer>(UserQuestionAnswers)
 
     var is_correct by UserQuestionAnswers.is_correct
-    var user by Question referencedOn UserQuestionAnswers.user
-    var answer by Question referencedOn UserQuestionAnswers.answer
+    var user by User referencedOn UserQuestionAnswers.user
+    var answer by Answer referencedOn UserQuestionAnswers.answer
     var question by Question referencedOn UserQuestionAnswers.question
 }
 
