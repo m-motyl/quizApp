@@ -99,7 +99,7 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/question_display_btn_back"
+            android:id="@+id/question_display_btn_back1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -107,7 +107,7 @@
             android:backgroundTint="@color/purple_05"
             android:text="@string/question_display_btn_back" />
         <Button
-            android:id="@+id/question_display_btn_next"
+            android:id="@+id/question_display_btn_next1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

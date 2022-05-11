@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     i.title,
                     i.time_limit,
                     i.description,
-                    "xd",
+                    "tagi",
                     i.gz_text,
                     true,
                     i.invitation_code,
