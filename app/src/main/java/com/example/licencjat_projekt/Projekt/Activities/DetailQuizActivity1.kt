@@ -1,5 +1,6 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,10 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
     private var questionsList = arrayListOf<ReadQuestionModel>()
     private var answersList = ArrayList<ReadAnswerModel>()
+
+    companion object {
+        var QUESTION_DETAILS = "question_details"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,45 +68,14 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.question_display_btn_back -> {
-                readQuestions(quizDetails!!)
-            }
-        }
-    }
-
-    private fun readQuestions(R: ReadQuizModel) = runBlocking {
-        Database.connect(
-            "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
-            user = "postgres", password = "123"
-        )
-        var tmp = ArrayList<ReadAnswerModel>()
-        val questions = newSuspendedTransaction(Dispatchers.IO) {
-            Question.find{quiz eq R.id}.toList()
-        }
-        for (i in questions){
-            var answers = newSuspendedTransaction(Dispatchers.IO) {
-                Answer.find{question eq i.id}.toList()
-            }
-            for (j in answers){
-                tmp.add(
-                    ReadAnswerModel(
-                        answer_text = j.answer_text,
-                        answer_image = j.answer_image!!.bytes,
-                        is_Correct = j.is_correct
-                    )
+                val intent = Intent(
+                    this,
+                    QuestionsShowActivity::class.java
                 )
+                intent.putExtra(QUESTION_DETAILS, quizDetails)
+                startActivity(intent)
+                finish()
             }
-            questionsList.add(
-                ReadQuestionModel(
-                    question_text = i.question_text,
-                    question_image = i.question_image!!.bytes,
-                    question_pts = i.points,
-                    question_answers = tmp,
-                    number = i.number,
-
-                )
-            )
-            questionsList.sortBy{it.number}
-            tmp.clear()
         }
     }
 }

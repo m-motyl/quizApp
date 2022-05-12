@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Licencjatprojekt">
         <activity
+            android:name=".Projekt.Activities.QuestionsShowActivity"
+            android:exported="true" />
+        <activity
             android:name=".Projekt.Activities.DetailQuizActivity1"
             android:exported="true" />
         <activity
@@ -39,6 +42,9 @@
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.ProfileActivityAdd"
+            android:exported="true" />
+        <activity
+            android:name=".Projekt.Activities.QuestionDisplayActivity"
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.SignInActivity"

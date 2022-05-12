@@ -11,8 +11,8 @@ import org.jetbrains.exposed.sql.`java-time`.time
 class QuizTag(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<QuizTag>(QuizTags)
 
-    var tag by QuizTag referencedOn QuizTags.tag
-    var quiz by QuizTag referencedOn QuizTags.quiz
+    var tag by Tag referencedOn QuizTags.tag
+    var quiz by Quiz referencedOn QuizTags.quiz
 }
 
 object QuizTags : IntIdTable("QuizTags") {
