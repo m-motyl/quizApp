@@ -31,8 +31,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import java.io.File.separator
 import java.time.format.DateTimeFormatter
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    View.OnClickListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout = findViewById(R.id.main_drawer_layout)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = ""
+        supportActionBar!!.title = "QuizApp"
 
         //navigation drawer menu
 
@@ -109,6 +108,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.drawer_menu_logout -> run {
                 finish()
             }
+            R.id.drawer_menu_search -> run {
+                val intent = Intent(
+                    this,
+                    SearchActivity::class.java
+                )
+                startActivity(intent)
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
@@ -122,13 +128,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.main_backPage -> {
-                if (offsetId >= 5L) {
+                if(offsetId >= 5L) {
                     previousFive()
                     quizesRecyclerView(quizesList)
                 }
             }
             R.id.main_nextPage -> {
-                if (offsetId + 5 <= quizesCount) {
+                if(offsetId + 5 <= quizesCount) {
                     nextFive()
                     quizesRecyclerView(quizesList)
                 }
@@ -139,7 +145,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-
+    //TODO: (WITOLD) ograniczyć wyszukiwanie quizu do publicznych
     private fun firstFive() {
         this.offsetId = 0L
         val list = runBlocking {
@@ -180,18 +186,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun lastFive() {
-        if (quizesCount.mod(5) != 0) {
+        if(quizesCount.mod(5) != 0) {
             this.offsetId = quizesCount - quizesCount.mod(5)
-        } else {
+        }
+        else{
             this.offsetId = quizesCount - 5
         }
         Log.e("last", "$offsetId")
         val list = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                if (quizesCount.mod(5) != 0) {
+                if(quizesCount.mod(5) != 0) {
                     Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit((quizesCount.mod(5)))
                         .toList()
-                } else {
+                }else{
                     Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit(5)
                         .toList()
                 }
@@ -201,7 +208,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             exposedToModel(list.reversed())
     }
 
-    private fun getQuizesNumber() {
+    private fun getQuizesNumber(){
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                 Quiz.all().count()
@@ -221,7 +228,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     i.title,
                     i.time_limit,
                     i.description,
-                    getQuizTags(i),
+                    "tagi",
                     i.gz_text,
                     true,
                     i.invitation_code,

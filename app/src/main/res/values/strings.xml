@@ -71,6 +71,10 @@
     <string name="community_toolbar_invitation">invitation</string>
     <string name="community_toolbar_add">add_friend</string>
     <string name="profile_add_add_friend_btn">Dodaj do znajomych!</string>
+    <string name="drawer_menu_search">Wyszukaj</string>
+    <string name="drawer_menu_user_quizes">Moje quizy</string>
+    <string name="drawer_menu_reports">Raporty</string>
+    <string name="search_checkbox">Wyszukiawnie kodu</string>
 
 
 </resources>
