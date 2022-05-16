@@ -59,6 +59,8 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
             detail_quiz_tags.text = quizDetails!!.tags
         }
         question_display_btn_back.setOnClickListener(this)
+        detail_quiz_author_name.setText(getAuthorName())
+        detail_quiz_number_questions.setText(getNOQuestions())
     }
 
     //decode image read from db
@@ -84,5 +86,11 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
         }
+    }
+    private fun getAuthorName(): String{ //TODO: (WITOLD) autor quizu
+        return "name"
+    }
+    private fun getNOQuestions(): String{ //TODO (WITOLD) liczba pytań quizu
+        return 1.toString()
     }
 }
