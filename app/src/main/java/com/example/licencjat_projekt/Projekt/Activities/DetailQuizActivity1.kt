@@ -39,8 +39,8 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
         if (intent.hasExtra(MainActivity.QUIZ_DETAILS)) {
             quizDetails = intent.getSerializableExtra(MainActivity.QUIZ_DETAILS) as ReadQuizModel
         }
-        if (intent.hasExtra(ReportsActivity.QUIZ_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(ReportsActivity.QUIZ_DETAILS) as ReadQuizModel
+        if (intent.hasExtra(UserQuizesActivity.QUIZ_DETAILS)) {
+            quizDetails = intent.getSerializableExtra(UserQuizesActivity.QUIZ_DETAILS) as ReadQuizModel
         }
         if (intent.hasExtra(SearchActivity.QUIZ_DETAILS)) {
             quizDetails = intent.getSerializableExtra(SearchActivity.QUIZ_DETAILS) as ReadQuizModel

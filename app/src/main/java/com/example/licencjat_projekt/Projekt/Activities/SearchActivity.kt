@@ -107,16 +107,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
 
         quizesList.setOnClickListener(object : QuizesList.OnClickListener {
             override fun onClick(position: Int, model: ReadQuizModel) {
-                val intent = Intent(
-                    this@SearchActivity,
-                    DetailQuizActivity1::class.java
-                )
 
-                intent.putExtra( //passing object to activity
-                    SearchActivity.QUIZ_DETAILS,
-                    model
-                )
-                startActivity(intent)
             }
         })
     }

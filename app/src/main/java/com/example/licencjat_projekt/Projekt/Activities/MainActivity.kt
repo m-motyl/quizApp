@@ -1,6 +1,5 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
-import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,9 +11,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Activities.CommunityActivity
-import com.example.licencjat_projekt.Projekt.Activities.QuizMainActivity
-import com.example.licencjat_projekt.Projekt.Activities.SignInActivity
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
@@ -24,12 +20,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.io.File.separator
-import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private lateinit var drawerLayout: DrawerLayout
@@ -119,6 +111,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(
                     this,
                     ReportsActivity::class.java
+                )
+                startActivity(intent)
+            }
+            R.id.drawer_menu_user_quizes -> run {
+                val intent = Intent(
+                    this,
+                    UserQuizesActivity::class.java
                 )
                 startActivity(intent)
             }
