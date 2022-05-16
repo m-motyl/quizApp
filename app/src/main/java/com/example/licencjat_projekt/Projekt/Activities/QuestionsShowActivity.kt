@@ -40,6 +40,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     private var userScore = 0.0
 
     companion object {
+        var QUIZ_DETAILS = "quiz_details"
         var QUIZ_SCORE = "quiz_score"
         var USER_SCORE = "user_score"
         var FINAL_MESSAGE = "final_message"
@@ -177,6 +178,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     intent.putExtra(QUIZ_SCORE, quizScore)
                     intent.putExtra(USER_SCORE, userScore)
                     intent.putExtra(FINAL_MESSAGE, quizDetails!!.gz_text)
+                    intent.putExtra(QUIZ_DETAILS, quizDetails)
                     startActivity(intent)
                     finish()
                 }

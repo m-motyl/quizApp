@@ -3,7 +3,9 @@ package com.example.licencjat_projekt.Projekt.Activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.example.licencjat_projekt.Projekt.Models.CreateQuizModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.Models.ReportModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_report.*
 
@@ -12,6 +14,8 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private var quizScore = 0
     private var userScore = 0.0
     private var gz_text: String? = null
+    private var reportModel: ReportModel? = null
+    private var quizDetails: ReadQuizModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +37,17 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             gz_text = intent.getSerializableExtra(QuestionsShowActivity.FINAL_MESSAGE) as String
             report_author_message.text = gz_text
         }
-
+        if (intent.hasExtra(QuestionsShowActivity.QUIZ_SCORE)) {
+            quizDetails = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_SCORE)
+                    as ReadQuizModel
+        }
+        if(quizScore != 0){ //TODO: (WITOLD) zapis raportów do bazy
+                            //quizDetails - rozwiązywany quiz
+            reportModel = ReportModel(
+                userScore,
+                quizScore
+            )
+        }
         report_home.setOnClickListener(this)
     }
 

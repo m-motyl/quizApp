@@ -89,7 +89,8 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun validateUserAndUpdateToken(signInModel: SignInModel): Boolean {
+    private fun validateUserAndUpdateToken(signInModel: SignInModel): Boolean { //TODO: (WITOLD) current user powinien być
+                                                                                //signupmodel a nie signin
         return runBlocking {
             val result = newSuspendedTransaction(Dispatchers.IO) {
                 val resultado =

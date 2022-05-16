@@ -115,6 +115,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
                 startActivity(intent)
             }
+            R.id.drawer_menu_reports -> run {
+                val intent = Intent(
+                    this,
+                    ReportsActivity::class.java
+                )
+                startActivity(intent)
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
