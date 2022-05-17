@@ -518,7 +518,10 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 Integer.parseInt(questions_points.text.toString())
             questionsList[noQuestions].question_answers += answersList
         }
-
+        var xd = 0
+        for (i in ql){
+            xd += i.question_pts
+        }
         newSuspendedTransaction(Dispatchers.IO) {
             val newQuiz = Quiz.new {
                 title = q.title
@@ -527,11 +530,11 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 gz_text = q.gz_text
                 private = q.private
                 invitation_code = q.invitation_code
-                correct_answers = 0
                 questions = ql.size
                 no_tries = 0
                 image = ExposedBlob(q.image)
                 user = currentUser!!
+                max_points = xd
             }
             for (i in t) {
                 val findTag = Tag.find { Tags.name eq i }.toList()

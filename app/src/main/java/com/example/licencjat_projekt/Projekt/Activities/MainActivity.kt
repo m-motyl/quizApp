@@ -19,6 +19,7 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -151,12 +152,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-    //TODO: (WITOLD) ograniczyć wyszukiwanie quizu do publicznych
     private fun firstFive() {
         this.offsetId = 0L
         val list = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().limit(5).toList()
+                Quiz.find{Quizes.private eq false}.limit(5).toList()
             }
         }
         if (list.isNotEmpty())
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId += 5L
         val list = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().limit(5, offsetId).toList()
+                Quiz.find{Quizes.private eq false}.limit(5, offsetId).toList()
             }
         }
         if (list.isNotEmpty())
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId -= 5L
         val list = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().limit(5, offsetId).toList()
+                Quiz.find{Quizes.private eq false}.limit(5, offsetId).toList()
             }
         }
         if (list.isNotEmpty())
@@ -202,10 +202,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val list = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                 if(quizesCount.mod(5) != 0) {
-                    Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit((quizesCount.mod(5)))
+                    Quiz.find{Quizes.private eq false}.orderBy(Quizes.id to SortOrder.DESC).limit((quizesCount.mod(5)))
                         .toList()
                 }else{
-                    Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit(5)
+                    Quiz.find{Quizes.private eq false}.orderBy(Quizes.id to SortOrder.DESC).limit(5)
                         .toList()
                 }
             }
@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun getQuizesNumber(){
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().count()
+                Quiz.find{Quizes.private eq false}.count()
             }
         }
         quizesCount = n
@@ -239,12 +239,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     true,
                     i.invitation_code,
                     i.image.bytes,
+                    kurwaMacKlasyk(i.id.value),
+                    i.max_points,
                 )
             )
         }
+        for (i in quizesArrayList){
+            Log.e("xd",i.author)
+        }
         quizesList = quizesArrayList
     }
-
+    private fun kurwaMacKlasyk(q: Int):String{
+        return runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val u = Quiz.findById(q)!!.load(Quiz::user)
+                u.user.login
+            }
+        }
+    }
     private fun getQuizTags(q: Quiz): String {
         val tmp = runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {

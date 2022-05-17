@@ -44,7 +44,8 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
                 SchemaUtils.create(QuizTags)
                 SchemaUtils.create(QuizVotes)
                 SchemaUtils.create(Tags)
-                SchemaUtils.create(UserQuestionAnswers)
+                SchemaUtils.create(Friends)
+                SchemaUtils.create(QuizeResults)
             }
         }
     }
@@ -89,8 +90,7 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun validateUserAndUpdateToken(signInModel: SignInModel): Boolean { //TODO: (WITOLD) current user powinien być
-                                                                                //signupmodel a nie signin
+    private fun validateUserAndUpdateToken(signInModel: SignInModel): Boolean {
         return runBlocking {
             val result = newSuspendedTransaction(Dispatchers.IO) {
                 val resultado =

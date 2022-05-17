@@ -10,10 +10,8 @@ import androidx.annotation.RequiresPermission
 import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
-import com.example.licencjat_projekt.Projekt.database.Answer
-import com.example.licencjat_projekt.Projekt.database.Answers
+import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.database.Answers.question
-import com.example.licencjat_projekt.Projekt.database.Question
 import com.example.licencjat_projekt.Projekt.database.Questions.quiz
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_detail_quiz.*
