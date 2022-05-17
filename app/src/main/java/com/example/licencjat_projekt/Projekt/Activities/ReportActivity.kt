@@ -65,13 +65,10 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             user = "postgres", password = "123"
         )
         newSuspendedTransaction(Dispatchers.IO) {
-            val x = Quiz.findById(1)
-            Log.e("", x!!.invitation_code)
-            Log.e("", currentUser!!.login)
             QuizeResult.new {
                 points = reportModel!!.userPoints
                 user = currentUser!!
-                quiz = x
+                quiz = Quiz.findById(quizDetails!!.id)!!
             }
         }
 
