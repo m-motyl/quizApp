@@ -7,15 +7,26 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class SearchActivity : AppCompatActivity(), View.OnClickListener {
     var searchString: String? = null
     private var offsetId: Long = 0L
+    private var quizesCount: Long = 0L
     private var searchCode: Boolean = false
     private var quizesList = ArrayList<ReadQuizModel>()
 
@@ -24,7 +35,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_search)
         setSupportActionBar(search_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        search_toolbar.setNavigationOnClickListener{
+        search_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
         supportActionBar!!.title = ""
@@ -40,8 +51,10 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.search_btn_search -> {
                 searchString = search_et.text.toString()
-                if(searchString != null){
+                if (searchString != null) {
+                    searchString = searchString!!.lowercase()
                     firstFive(searchString!!)
+                    getQuizesNumber(searchString!!)
                     quizesRecyclerView(quizesList)
                 }
             }
@@ -49,55 +62,188 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 searchCode = search_checkBox.isChecked
             }
             R.id.search_firstPage -> {
-                if(searchString != null){
+                if (searchString != null) {
                     firstFive(searchString!!)
                     quizesRecyclerView(quizesList)
                 }
             }
             R.id.search_backPage -> {
-                if(searchString != null){
+                if (searchString != null) {
                     prevFive(searchString!!)
                     quizesRecyclerView(quizesList)
                 }
             }
             R.id.search_nextPage -> {
-                if(searchString != null){
+                if (searchString != null) {
                     nextFive(searchString!!)
                     quizesRecyclerView(quizesList)
                 }
             }
             R.id.search_lastPage -> {
-                if(searchString != null){
+                if (searchString != null) {
                     lastFive(searchString!!)
                     quizesRecyclerView(quizesList)
                 }
             }
         }
     }
-    //TODO (WITOLD) wyszukiwanie ze stringiem
-    private fun firstFive(str: String){
-        if(searchCode) {
-            //wyszukiwanie prywatnych i publicznych z identycznym kodem zaproszenia (1 wynik)
-            //quizesList
-        }else{
-            //wyszukiwanie publicznych z podobnym stringiem
+
+    private fun firstFive(str: String) {
+        if (searchCode) {
+            searchDBForInviteCode(str)
+        } else {
+            this.offsetId = 0L
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list =
+                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                            .limit(5)
+                            .toList()
+                    if (list.isNotEmpty())
+                        exposedToModel(list)
+                }
+            }
+            Log.e("",quizesList.size.toString())
         }
     }
-    private fun prevFive(str: String){
-        if(searchCode) {
-        }else{
+    private fun nextFive(str: String) {
+        if (searchCode) {
+            searchDBForInviteCode(str)
+        } else {
+            this.offsetId += 5L
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list = Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.limit(5, offsetId).toList()
+                    if (list.isNotEmpty())
+                        exposedToModel(list)
+                    else
+                        offsetId -= 5L
+                }
+            }
         }
     }
-    private fun nextFive(str: String){
-        if(searchCode) {
-        }else{
+    private fun prevFive(str: String) {
+        if (searchCode) {
+            searchDBForInviteCode(str)
+        } else {
+            this.offsetId -= 5L
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list = Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.limit(5, offsetId).toList()
+                    if (list.isNotEmpty())
+                        exposedToModel(list)
+                    else
+                        offsetId += 5L
+                }
+                Log.e("prev", "$offsetId")
+            }
         }
     }
-    private fun lastFive(str: String){
-        if(searchCode) {
-        }else{
+
+    private fun lastFive(str: String) {
+        if (searchCode) {
+            searchDBForInviteCode(str)
+        } else {
+            if (quizesCount.mod(5) != 0) {
+                this.offsetId = quizesCount - quizesCount.mod(5)
+            } else {
+                this.offsetId = quizesCount - 5
+            }
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    var list = emptyList<Quiz>()
+                    if (quizesCount.mod(5) != 0) {
+                        list = Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.orderBy(Quizes.id to SortOrder.DESC)
+                            .limit((quizesCount.mod(5)))
+                            .toList()
+                    } else {
+                        list= Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.orderBy(Quizes.id to SortOrder.DESC)
+                            .limit(5)
+                            .toList()
+                    }
+                    if (list.isNotEmpty())
+                        exposedToModel(list.reversed())
+                }
+            }
         }
     }
+
+    private fun searchDBForInviteCode(s: String) = runBlocking {
+        offsetId = 0
+        newSuspendedTransaction(Dispatchers.IO) {
+            val q = Quiz.find { Quizes.invitation_code eq s }.first()
+            quizesList.clear()
+            quizesList.add(
+                ReadQuizModel(
+                    q.id.value,
+                    q.title,
+                    q.time_limit,
+                    q.description,
+                    getQuizTags(q),
+                    q.gz_text,
+                    q.private,
+                    q.invitation_code,
+                    q.image.bytes,
+                    q.user.login,
+                    q.questions,
+                )
+            )
+        }
+
+    }
+
+    private fun getQuizTags(q: Quiz): String {
+        val tmp = runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val query = Tags.innerJoin(QuizTags).slice(Tags.columns).select {
+                    QuizTags.quiz eq q.id
+                }.withDistinct()
+                return@newSuspendedTransaction Tag.wrapRows(query).toList()
+            }
+        }
+        var xd = ""
+        for (i in tmp) {
+            xd += i.name + " "
+        }
+        return xd
+    }
+
+    private fun getQuizesNumber(str:String) {
+        val n = runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.count()
+            }
+        }
+        quizesCount = n
+    }
+
+    private fun exposedToModel(list: List<Quiz>) {
+
+        val quizesArrayList = ArrayList<ReadQuizModel>()
+        for (i in list) {
+            getQuizTags(i)
+            quizesArrayList.add(
+                ReadQuizModel(
+                    i.id.value,
+                    i.title,
+                    i.time_limit,
+                    i.description,
+                    getQuizTags(i), //halo
+                    i.gz_text,
+                    i.private,
+                    i.invitation_code,
+                    i.image.bytes,
+                    i.user.login,
+                    i.questions,
+                )
+            )
+        }
+        for (i in quizesArrayList) {
+            Log.e("xd", i.author)
+        }
+        quizesList = quizesArrayList
+    }
+
     private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
 
         search_rv_quizes.layoutManager = LinearLayoutManager(this)
@@ -111,6 +257,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
+
     companion object {
         var QUIZ_DETAILS = "quiz_details"
     }

@@ -169,7 +169,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId += 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                val list = Quiz.find { Quizes.private eq false }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -182,7 +182,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId -= 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                val list = Quiz.find { Quizes.private eq false }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     i.description,
                     getQuizTags(i), //halo
                     i.gz_text,
-                    true,
+                    i.private,
                     i.invitation_code,
                     i.image.bytes,
                     i.user.login,

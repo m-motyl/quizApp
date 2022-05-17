@@ -63,7 +63,6 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    //TODO: (WITOLD) quizy użytkownika
     private fun firstFive() {
         this.offsetId = 0L
         runBlocking {
@@ -79,7 +78,7 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId += 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5).toList()
+                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -92,7 +91,7 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId -= 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5).toList()
+                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -148,9 +147,9 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
                     i.title,
                     i.time_limit,
                     i.description,
-                    getQuizTags(i), //halo
+                    getQuizTags(i),
                     i.gz_text,
-                    true,
+                    i.private,
                     i.invitation_code,
                     i.image.bytes,
                     i.user.login,
