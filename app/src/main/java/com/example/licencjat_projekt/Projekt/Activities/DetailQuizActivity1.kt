@@ -85,10 +85,10 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    private fun getAuthorName(): String{ //TODO: (WITOLD) autor quizu
+    private fun getAuthorName(): String{
         return quizDetails!!.author
     }
-    private fun getNOQuestions(): String{ //TODO (WITOLD) liczba pytań quizu
+    private fun getNOQuestions(): String{
         return quizDetails!!.no_questions.toString()
     }
 }

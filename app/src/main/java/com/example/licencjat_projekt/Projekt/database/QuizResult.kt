@@ -16,7 +16,7 @@ class QuizeResult(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object QuizeResults : IntIdTable("QuizResults") {
-    val points = integer("points")
+    val points = double("points")
     val user = reference("user",Users, onDelete = ReferenceOption.CASCADE)
     val quiz = reference("quiz",Quizes, onDelete = ReferenceOption.CASCADE)
 
