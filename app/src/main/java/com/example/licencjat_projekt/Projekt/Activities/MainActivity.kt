@@ -24,7 +24,8 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    View.OnClickListener {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var toolbar: Toolbar
@@ -135,13 +136,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.main_backPage -> {
-                if(offsetId >= 5L) {
+                if (offsetId >= 5L) {
                     previousFive()
                     quizesRecyclerView(quizesList)
                 }
             }
             R.id.main_nextPage -> {
-                if(offsetId + 5 <= quizesCount) {
+                if (offsetId + 5 <= quizesCount) {
                     nextFive()
                     quizesRecyclerView(quizesList)
                 }
@@ -152,72 +153,75 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
+
     private fun firstFive() {
         this.offsetId = 0L
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find{Quizes.private eq false}.limit(5).toList()
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                if (list.isNotEmpty())
+                    exposedToModel(list)
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list)
     }
 
     private fun nextFive() {
         this.offsetId += 5L
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find{Quizes.private eq false}.limit(5, offsetId).toList()
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                if (list.isNotEmpty())
+                    exposedToModel(list)
+                else
+                    offsetId -= 5L
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list)
-        else
-            this.offsetId -= 5L
-        Log.e("next", "$offsetId")
     }
 
     private fun previousFive() {
         this.offsetId -= 5L
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find{Quizes.private eq false}.limit(5, offsetId).toList()
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                if (list.isNotEmpty())
+                    exposedToModel(list)
+                else
+                    offsetId += 5L
             }
+            Log.e("prev", "$offsetId")
         }
-        if (list.isNotEmpty())
-            exposedToModel(list)
-        else
-            this.offsetId += 5L
-        Log.e("prev", "$offsetId")
     }
 
     private fun lastFive() {
-        if(quizesCount.mod(5) != 0) {
+        if (quizesCount.mod(5) != 0) {
             this.offsetId = quizesCount - quizesCount.mod(5)
-        }
-        else{
+        } else {
             this.offsetId = quizesCount - 5
         }
         Log.e("last", "$offsetId")
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                if(quizesCount.mod(5) != 0) {
-                    Quiz.find{Quizes.private eq false}.orderBy(Quizes.id to SortOrder.DESC).limit((quizesCount.mod(5)))
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                var list = emptyList<Quiz>()
+                if (quizesCount.mod(5) != 0) {
+                    list = Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
+                        .limit((quizesCount.mod(5)))
                         .toList()
-                }else{
-                    Quiz.find{Quizes.private eq false}.orderBy(Quizes.id to SortOrder.DESC).limit(5)
+                } else {
+                    list= Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
+                        .limit(5)
                         .toList()
                 }
+                if (list.isNotEmpty())
+                    exposedToModel(list.reversed())
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list.reversed())
+
     }
 
-    private fun getQuizesNumber(){
+    private fun getQuizesNumber() {
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find{Quizes.private eq false}.count()
+                Quiz.find { Quizes.private eq false }.count()
             }
         }
         quizesCount = n
@@ -234,29 +238,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     i.title,
                     i.time_limit,
                     i.description,
-                    "tagi",
+                    getQuizTags(i), //halo
                     i.gz_text,
                     true,
                     i.invitation_code,
                     i.image.bytes,
-                    kurwaMacKlasyk(i.id.value),
-                    i.max_points,
+                    i.user.login,
+                    i.questions,
                 )
             )
         }
-        for (i in quizesArrayList){
-            Log.e("xd",i.author)
+        for (i in quizesArrayList) {
+            Log.e("xd", i.author)
         }
         quizesList = quizesArrayList
     }
-    private fun kurwaMacKlasyk(q: Int):String{
-        return runBlocking {
-            newSuspendedTransaction(Dispatchers.IO) {
-                val u = Quiz.findById(q)!!.load(Quiz::user)
-                u.user.login
-            }
-        }
-    }
+
     private fun getQuizTags(q: Quiz): String {
         val tmp = runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
