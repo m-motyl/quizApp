@@ -103,9 +103,10 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                         exposedToModel(list)
                 }
             }
-            Log.e("",quizesList.size.toString())
+            Log.e("", quizesList.size.toString())
         }
     }
+
     private fun nextFive(str: String) {
         if (searchCode) {
             searchDBForInviteCode(str)
@@ -113,7 +114,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId += 5L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list = Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.limit(5, offsetId).toList()
+                    val list =
+                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                            .limit(5, offsetId).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
                     else
@@ -122,6 +125,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
     private fun prevFive(str: String) {
         if (searchCode) {
             searchDBForInviteCode(str)
@@ -129,7 +133,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId -= 5L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list = Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.limit(5, offsetId).toList()
+                    val list =
+                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                            .limit(5, offsetId).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
                     else
@@ -153,13 +159,17 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 newSuspendedTransaction(Dispatchers.IO) {
                     var list = emptyList<Quiz>()
                     if (quizesCount.mod(5) != 0) {
-                        list = Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.orderBy(Quizes.id to SortOrder.DESC)
-                            .limit((quizesCount.mod(5)))
-                            .toList()
+                        list =
+                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                                .orderBy(Quizes.id to SortOrder.DESC)
+                                .limit((quizesCount.mod(5)))
+                                .toList()
                     } else {
-                        list= Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.orderBy(Quizes.id to SortOrder.DESC)
-                            .limit(5)
-                            .toList()
+                        list =
+                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                                .orderBy(Quizes.id to SortOrder.DESC)
+                                .limit(5)
+                                .toList()
                     }
                     if (list.isNotEmpty())
                         exposedToModel(list.reversed())
@@ -171,23 +181,24 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
     private fun searchDBForInviteCode(s: String) = runBlocking {
         offsetId = 0
         newSuspendedTransaction(Dispatchers.IO) {
-            val q = Quiz.find { Quizes.invitation_code eq s }.first()
+            val q = Quiz.find { Quizes.invitation_code eq s }.toList()
             quizesList.clear()
-            quizesList.add(
-                ReadQuizModel(
-                    q.id.value,
-                    q.title,
-                    q.time_limit,
-                    q.description,
-                    getQuizTags(q),
-                    q.gz_text,
-                    q.private,
-                    q.invitation_code,
-                    q.image.bytes,
-                    q.user.login,
-                    q.questions,
+            if (q.isNotEmpty())
+                quizesList.add(
+                    ReadQuizModel(
+                        q[0].id.value,
+                        q[0].title,
+                        q[0].time_limit,
+                        q[0].description,
+                        getQuizTags(q[0]),
+                        q[0].gz_text,
+                        q[0].private,
+                        q[0].invitation_code,
+                        q[0].image.bytes,
+                        q[0].user.login,
+                        q[0].questions,
+                    )
                 )
-            )
         }
 
     }
@@ -208,10 +219,11 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         return xd
     }
 
-    private fun getQuizesNumber(str:String) {
+    private fun getQuizesNumber(str: String) {
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find {(Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }.count()
+                Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                    .count()
             }
         }
         quizesCount = n
