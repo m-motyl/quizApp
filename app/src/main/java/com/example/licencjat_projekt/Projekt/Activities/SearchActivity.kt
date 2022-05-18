@@ -52,7 +52,6 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             R.id.search_btn_search -> {
                 searchString = search_et.text.toString()
                 if (searchString != null) {
-                    searchString = searchString!!.lowercase()
                     firstFive(searchString!!)
                     getQuizesNumber(searchString!!)
                     quizesRecyclerView(quizesList)
@@ -92,6 +91,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
+            searchString = searchString!!.lowercase()
             this.offsetId = 0L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
@@ -111,6 +111,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
+            searchString = searchString!!.lowercase()
             this.offsetId += 5L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
@@ -130,6 +131,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
+            searchString = searchString!!.lowercase()
             this.offsetId -= 5L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
@@ -150,6 +152,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
+            searchString = searchString!!.lowercase()
             if (quizesCount.mod(5) != 0) {
                 this.offsetId = quizesCount - quizesCount.mod(5)
             } else {
