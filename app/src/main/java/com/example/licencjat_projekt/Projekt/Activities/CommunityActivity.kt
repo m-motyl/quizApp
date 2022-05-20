@@ -62,6 +62,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         for (i in l) {
             friendsList2.add(
                 LoadUserModel(
+                    id = i.to.id.value,
                     login = i.to.login,
                     profile_picture = i.to.profile_picture!!.bytes,
                     creation_time = i.to.creation_time.toString()
