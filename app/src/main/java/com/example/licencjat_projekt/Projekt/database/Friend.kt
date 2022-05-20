@@ -16,7 +16,7 @@ class Friend(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object Friends : IntIdTable("Friends") {
-    val status = char("status", 1)
+    val status = integer("status")
     val from = reference("from", Users, onDelete = ReferenceOption.CASCADE)
     val to = reference("to", Users, onDelete = ReferenceOption.CASCADE)
 
