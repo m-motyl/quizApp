@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +29,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
     private var userIsAuthor: Boolean = false
+    private var timerFlag: Boolean = false
     private var questionsList = arrayListOf<ReadQuestionModel>()
     private val emptyByteArray: ByteArray = ByteArray(1)
     private var noQuestions = 0
@@ -73,7 +75,41 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
 
         question_display_btn_next.setOnClickListener(this)
         question_display_btn_back.setOnClickListener(this)
+
+        if(!userIsAuthor) {
+            object : CountDownTimer((quizDetails!!.time_limit * 60000).toLong(), 1000) {
+                override fun onTick(p0: Long) {
+                    val minutes: Int = (p0/1000/60).toInt()
+                    val seconds: Int = (p0/1000%60).toInt()
+                    questionsshow_minutes.text = minutes.toString()
+                    questionsshow_seconds.text = seconds.toString()
+                    if(timerFlag) {
+                        cancel()
+                    }
+                }
+
+                override fun onFinish() {
+                    cancel()
+
+                    val intent = Intent(this@QuestionsShowActivity, ReportActivity::class.java)
+                    getUserScore()
+                    val score = ReportModel(
+                        userScore,
+                        quizScore
+                    )
+
+                    intent.putExtra(QUIZ_SCORE, score)
+                    intent.putExtra(QUIZ_DETAILS, quizDetails)
+                    intent.putExtra(USER_DETAILS, userIsAuthor)
+                    startActivity(intent)
+                    finish()
+                }
+            }.start()
+        }else{
+            questionsshow_minutes.text = quizDetails!!.time_limit.toString()
+        }
     }
+
     private fun readQuestions(R: ReadQuizModel) = runBlocking {
         Database.connect(
             "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
@@ -180,10 +216,11 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                         userScore,
                         quizScore
                     )
+
                     intent.putExtra(QUIZ_SCORE, score)
                     intent.putExtra(QUIZ_DETAILS, quizDetails)
                     intent.putExtra(USER_DETAILS, userIsAuthor)
-
+                    timerFlag = true
                     startActivity(intent)
                     finish()
                 }

@@ -54,7 +54,7 @@
     <string name="details_quiz_author">Autor:</string>
     <string name="detail_quiz_description">Opis:</string>
     <string name="detail_quiz_tags">Tagi:</string>
-    <string name="detail_quiz_participate">Weź udział!</string>
+    <string name="detail_quiz_participate">Przejdź do quizu!</string>
     <string name="community_add_btn">dodaj</string>
     <string name="community_friends">znajomi</string>
     <string name="community_class">klasa</string>

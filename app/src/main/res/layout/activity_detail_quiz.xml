@@ -52,14 +52,15 @@
             android:layout_alignStart="@id/detail_quiz_image"
             android:layout_alignParentTop="true"
             android:layout_marginStart="140dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="0dp"
             android:drawablePadding="20dp"
             android:padding="20dp"
             android:text="Tytuł"
-            android:textSize="20sp"
             android:textAlignment="center"
             android:textColor="@color/white"
+            android:textSize="20sp"
             android:textStyle="bold" />
+
         <TextView
             android:id="@+id/detail_quiz_questions"
             android:layout_width="wrap_content"
@@ -67,12 +68,41 @@
             android:layout_alignStart="@id/detail_quiz_image"
             android:layout_alignParentTop="true"
             android:layout_marginStart="140dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="60dp"
             android:drawablePadding="20dp"
             android:padding="20dp"
+            android:text="@string/detail_quiz_questions"
             android:textColor="@color/white"
-            android:textStyle="bold"
-            android:text="@string/detail_quiz_questions"/>
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail_quiz_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/detail_quiz_image"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="140dp"
+            android:layout_marginTop="120dp"
+            android:drawablePadding="20dp"
+            android:padding="20dp"
+            android:text="Czas:"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/detail_quiz_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="120dp"
+            android:layout_toEndOf="@+id/detail_quiz_time"
+            android:drawablePadding="20dp"
+            android:padding="20dp"
+            android:text="5 minut"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/detail_quiz_number_questions"
@@ -80,7 +110,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="60dp"
             android:layout_toEndOf="@+id/detail_quiz_questions"
             android:drawablePadding="20dp"
             android:padding="20dp"
