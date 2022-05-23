@@ -1,9 +1,9 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -19,7 +19,6 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.dao.load
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -55,9 +54,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
+
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navigationView.setNavigationItemSelectedListener(this)
+
         main_firstPage.setOnClickListener(this)
         main_backPage.setOnClickListener(this)
         main_nextPage.setOnClickListener(this)
@@ -65,7 +66,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         getQuizesNumber()
         firstFive()
-        quizesRecyclerView(quizesList)
+        if(quizesList.size > 0) {
+            quizesRecyclerView(quizesList)
+        }
     }
 
     override fun onBackPressed() {
@@ -83,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     this,
                     QuizMainActivity::class.java
                 )
-                startActivity(intent)
+                startActivityForResult(intent, QUIZ_CODE)
             }
             R.id.drawer_menu_profile -> run {
                 val intent = Intent(
@@ -131,9 +134,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.main_firstPage -> {
-                firstFive()
-                quizesRecyclerView(quizesList)
-
+                if(offsetId != 0L) {
+                    firstFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.main_backPage -> {
                 if (offsetId >= 5L) {
@@ -148,8 +152,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
             R.id.main_lastPage -> {
-                lastFive()
-                quizesRecyclerView(quizesList)
+                if(offsetId + 5 < quizesCount){
+                    lastFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
         }
     }
@@ -188,7 +194,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 else
                     offsetId += 5L
             }
-            Log.e("prev", "$offsetId")
         }
     }
 
@@ -198,10 +203,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             this.offsetId = quizesCount - 5
         }
-        Log.e("last", "$offsetId")
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                var list = emptyList<Quiz>()
+                var list: List<Quiz>
                 if (quizesCount.mod(5) != 0) {
                     list = Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
                         .limit((quizesCount.mod(5)))
@@ -238,7 +242,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     i.title,
                     i.time_limit,
                     i.description,
-                    getQuizTags(i), //halo
+                    getQuizTags(i),
                     i.gz_text,
                     i.private,
                     i.invitation_code,
@@ -248,9 +252,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
             )
         }
-        for (i in quizesArrayList) {
-            Log.e("xd", i.author)
-        }
+
         quizesList = quizesArrayList
     }
 
@@ -263,13 +265,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return@newSuspendedTransaction Tag.wrapRows(query).toList()
             }
         }
-        var xd = ""
+        var tags = ""
         for (i in tmp) {
-            xd += i.name + " "
+            tags += i.name + " "
         }
-        return xd
+        return tags
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == QUIZ_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                firstFive()
+                getQuizesNumber()
+                if(quizesList.size > 0){
+                    quizesRecyclerView(quizesList)
+                }
+            }
+        }
+    }
 
     private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
 

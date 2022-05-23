@@ -25,14 +25,11 @@ import kotlinx.android.synthetic.main.activity_quiz_main.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -90,6 +87,27 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(
                             this,
                             "Dodaj zdjęcie!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    signup_username.length() > 20 || signup_username.length() < 2 -> {
+                        Toast.makeText(
+                            this,
+                            "Nazwa powinna zawierać od 2 do 20 znaków!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    signup_email.length() > 50 || signup_email.length() < 5 -> {
+                        Toast.makeText(
+                            this,
+                            "E-mail powinien zawierać od 5 do 50 znaków!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    signup_password.length() > 20 || signup_password.length() < 2 -> {
+                        Toast.makeText(
+                            this,
+                            "Hasło powinno zawierać od 2 do 20 znaków!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

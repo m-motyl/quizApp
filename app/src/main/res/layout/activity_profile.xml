@@ -149,9 +149,9 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_below="@id/profile_taken"
-              android:textColor="@color/white"
               android:layout_centerInParent="true"
               android:text="@string/profile_quiz_taken_count"
+              android:textColor="@color/white"
               android:textSize="16sp" />
 
 

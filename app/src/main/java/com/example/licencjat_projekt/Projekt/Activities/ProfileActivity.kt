@@ -29,6 +29,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             tv_profile_password_vis.text = currentUser!!.password
             tv_profile_password_inv.text = currentUser!!.password
             profile_image.setImageBitmap(byteArrayToBitmap(currentUser!!.profile_picture!!.bytes))
+            profile_quiz_taken.text = userQuizTaken()
         }
         profile_show_password.setOnClickListener(this)
     }
@@ -55,5 +56,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             0,
             data.size
         )
+    }
+    private fun userQuizTaken() : String{ //TODO: (WITOLD) liczba rozwiazanych quizów
+        return "1"
     }
 }

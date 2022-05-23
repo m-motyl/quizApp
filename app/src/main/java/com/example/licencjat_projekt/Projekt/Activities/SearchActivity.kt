@@ -253,9 +253,6 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 )
             )
         }
-        for (i in quizesArrayList) {
-            Log.e("xd", i.author)
-        }
         quizesList = quizesArrayList
     }
 

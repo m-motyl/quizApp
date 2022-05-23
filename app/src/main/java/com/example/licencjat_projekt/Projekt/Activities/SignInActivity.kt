@@ -55,7 +55,7 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
             R.id.signin_login -> {
                 when {
                     signin_username.text.isNullOrEmpty() -> {
-                        //xd
+
                         Toast.makeText(
                             this,
                             "Podaj login!",
@@ -84,7 +84,10 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             R.id.signin_sign_up -> {
-                val intent = Intent(this, SignUpActivity::class.java)
+                val intent = Intent(
+                    this,
+                    SignUpActivity::class.java
+                )
                 startActivity(intent)
             }
         }
