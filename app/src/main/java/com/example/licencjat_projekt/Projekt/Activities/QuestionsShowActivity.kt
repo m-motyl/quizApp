@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
@@ -16,6 +17,7 @@ import com.example.licencjat_projekt.Projekt.database.Answers
 import com.example.licencjat_projekt.Projekt.database.Question
 import com.example.licencjat_projekt.Projekt.database.Questions
 import com.example.licencjat_projekt.Projekt.utils.DisplayQuestionsAnswers
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_questions_show.*
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
+    private var userIsAuthor: Boolean = false
     private var questionsList = arrayListOf<ReadQuestionModel>()
     private val emptyByteArray: ByteArray = ByteArray(1)
     private var noQuestions = 0
@@ -34,6 +37,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         var QUIZ_DETAILS = "quiz_details"
         var QUIZ_SCORE = "quiz_score"
+        var USER_DETAILS = "user_details"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +45,8 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_questions_show)
 
 
-        if (intent.hasExtra(DetailQuizActivity1.QUESTION_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(DetailQuizActivity1.QUESTION_DETAILS)
+        if (intent.hasExtra(DetailQuizActivity.QUESTION_DETAILS)) {
+            quizDetails = intent.getSerializableExtra(DetailQuizActivity.QUESTION_DETAILS)
                     as ReadQuizModel
         }
         readQuestions(quizDetails!!)
@@ -64,6 +68,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             questionsshow_no_questions.text = questionsList.size.toString()
         }
         getQuizScore()
+        checkIfUserIsAuthor()
+        showCorrectAnswers()
+
         question_display_btn_next.setOnClickListener(this)
         question_display_btn_back.setOnClickListener(this)
     }
@@ -122,14 +129,16 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
 
         ansList.setOnClickListener(object : DisplayQuestionsAnswers.OnClickListener {
             override fun onClick(position: Int, model: ReadAnswerModel) {
-                if(model.is_Selected){
-                    model.answer_text = model.answer_text!!.dropLast(3)
-                    model.is_Selected = false
-                }else{
-                    model.answer_text += "(*)"
-                    model.is_Selected = true
+                if(!userIsAuthor) {
+                    if (model.is_Selected) {
+                        model.answer_text = model.answer_text!!.dropLast(3)
+                        model.is_Selected = false
+                    } else {
+                        model.answer_text += "(*)"
+                        model.is_Selected = true
+                    }
+                    questions_show_recycler_view.adapter = ansList
                 }
-                questions_show_recycler_view.adapter = ansList
             }
         })
     }
@@ -173,6 +182,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     )
                     intent.putExtra(QUIZ_SCORE, score)
                     intent.putExtra(QUIZ_DETAILS, quizDetails)
+                    intent.putExtra(USER_DETAILS, userIsAuthor)
 
                     startActivity(intent)
                     finish()
@@ -234,5 +244,19 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             userScore += i.question_pts * ((correct / wrong)/ allCorrect)
         }
     }
+    private fun checkIfUserIsAuthor(){ //TODO: (WITOLD) napraf
+        userIsAuthor = (quizDetails!!.author == currentUser!!.login)
+    }
 
+    private fun showCorrectAnswers(){
+        if(!userIsAuthor){
+            for (i in questionsList){
+                for(j in i.question_answers){
+                    if(j.is_Correct){
+                        j.answer_text = j.answer_text!!.dropLast(9)
+                    }
+                }
+            }
+        }
+    }
 }

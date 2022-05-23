@@ -38,7 +38,7 @@
     <string name="drawer_menu_logout">Wyloguj się</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="report_score">Wynik</string>
+    <string name="report_score">Podsumowanie</string>
     <string name="report_user_score">13</string>
     <string name="report_max_score">15</string>
     <string name="report_slash">/</string>

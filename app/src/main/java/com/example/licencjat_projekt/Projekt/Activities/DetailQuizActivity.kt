@@ -10,7 +10,7 @@ import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_detail_quiz.*
 
-class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
+class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
 
     companion object {

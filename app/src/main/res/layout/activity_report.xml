@@ -39,7 +39,8 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="30sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/report_score_table"
@@ -58,9 +59,9 @@
             android:layout_marginStart="70dp"
             android:layout_marginTop="139dp"
             android:text="@string/report_user_score"
-            android:textColor="@color/white"
             android:textAlignment="center"
-            android:textSize="40sp"/>
+            android:textColor="@color/white"
+            android:textSize="40sp" />
 
         <TextView
             android:id="@+id/report_max_score"
@@ -88,7 +89,8 @@
             android:text="@string/report_slash"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/report_author_message"

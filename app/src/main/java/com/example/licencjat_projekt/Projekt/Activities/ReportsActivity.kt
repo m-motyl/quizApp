@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
@@ -111,7 +110,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(position: Int, model: ReadQuizModel) {
                 val intent = Intent(
                     this@ReportsActivity,
-                    DetailQuizActivity1::class.java
+                    DetailQuizActivity::class.java
                 )
 
                 intent.putExtra( //passing object to activity

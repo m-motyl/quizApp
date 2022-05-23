@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_user_quizes.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
@@ -198,7 +197,7 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(position: Int, model: ReadQuizModel) {
                 val intent = Intent(
                     this@UserQuizesActivity,
-                    DetailQuizActivity1::class.java
+                    DetailQuizActivity::class.java
                 )
 
                 intent.putExtra( //passing object to activity

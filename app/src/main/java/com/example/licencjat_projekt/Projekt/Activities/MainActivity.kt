@@ -294,7 +294,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onClick(position: Int, model: ReadQuizModel) {
                 val intent = Intent(
                     this@MainActivity,
-                    DetailQuizActivity1::class.java
+                    DetailQuizActivity::class.java
                 )
 
                 intent.putExtra(

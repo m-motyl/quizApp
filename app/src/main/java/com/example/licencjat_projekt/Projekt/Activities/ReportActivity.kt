@@ -21,17 +21,29 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
 
     private var reportModel: ReportModel? = null
     private var quizDetails: ReadQuizModel? = null
+    private var userIsAuthor: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report)
 
+        if(intent.hasExtra(QuestionsShowActivity.USER_DETAILS)){
+            userIsAuthor = intent.getSerializableExtra(QuestionsShowActivity.USER_DETAILS)
+                    as Boolean
+        }
         if(intent.hasExtra(QuestionsShowActivity.QUIZ_SCORE)) {
-            reportModel = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_SCORE) as ReportModel
-            if(!reportModel!!.userPoints.isNaN()){
-                report_user_score.text = reportModel!!.userPoints.toString()
+            reportModel = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_SCORE)
+                    as ReportModel
+            if(!userIsAuthor) {
+                if (!reportModel!!.userPoints.isNaN()) {
+                    report_user_score.text = reportModel!!.userPoints.toString()
+                } else {
+                    report_user_score.text = "0.0"
+                }
             }else{
-                report_user_score.text = "0.0"
+                report_slash.visibility = View.GONE
+                report_user_score.textSize = 20F
+                report_user_score.text = "Punkty do zdobycia:"
             }
             report_max_score.text = reportModel!!.maxPoints.toString() + ".0"
         }
@@ -42,7 +54,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             report_author_message.text = quizDetails!!.gz_text.toString()
         }
 
-        if(reportModel != null){
+        if(reportModel != null && !userIsAuthor){
             saveQuizResult()
         }
         report_home.setOnClickListener(this)
@@ -61,7 +73,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
 
     override fun onClick(v: View?) {
         when (v!!.id) {

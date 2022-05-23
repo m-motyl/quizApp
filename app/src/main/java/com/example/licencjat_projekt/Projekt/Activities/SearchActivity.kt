@@ -116,7 +116,6 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                         exposedToModel(list)
                 }
             }
-            Log.e("", quizesList.size.toString())
         }
     }
 
@@ -279,7 +278,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(position: Int, model: ReadQuizModel) {
                 val intent = Intent(
                     this@SearchActivity,
-                    DetailQuizActivity1::class.java
+                    DetailQuizActivity::class.java
                 )
 
                 intent.putExtra(

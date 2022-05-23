@@ -26,7 +26,7 @@
             android:name=".Projekt.Activities.QuestionsShowActivity"
             android:exported="true" />
         <activity
-            android:name=".Projekt.Activities.DetailQuizActivity1"
+            android:name=".Projekt.Activities.DetailQuizActivity"
             android:exported="true" />
         <activity
             android:name=".Projekt.Activities.ReportActivity"
