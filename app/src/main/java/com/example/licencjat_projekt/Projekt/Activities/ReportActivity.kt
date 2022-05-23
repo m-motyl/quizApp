@@ -19,9 +19,6 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 class ReportActivity : AppCompatActivity(), View.OnClickListener {
 
-    private var quizScore = 0
-    private var userScore = 0.0
-    private var gz_text: String? = null
     private var reportModel: ReportModel? = null
     private var quizDetails: ReadQuizModel? = null
 
@@ -29,31 +26,23 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report)
 
-        if (intent.hasExtra(QuestionsShowActivity.QUIZ_SCORE)) {
-            quizScore = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_SCORE) as Int
-            report_max_score.text = quizScore.toString() + ".0"
-        }
-        if (intent.hasExtra(QuestionsShowActivity.USER_SCORE)) {
-            userScore = intent.getSerializableExtra(QuestionsShowActivity.USER_SCORE) as Double
-            if (!userScore.isNaN()) {
-                report_user_score.text = userScore.toString()
-            } else {
+        if(intent.hasExtra(QuestionsShowActivity.QUIZ_SCORE)) {
+            reportModel = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_SCORE) as ReportModel
+            if(!reportModel!!.userPoints.isNaN()){
+                report_user_score.text = reportModel!!.userPoints.toString()
+            }else{
                 report_user_score.text = "0.0"
             }
+            report_max_score.text = reportModel!!.maxPoints.toString() + ".0"
         }
-        if (intent.hasExtra(QuestionsShowActivity.FINAL_MESSAGE)) {
-            gz_text = intent.getSerializableExtra(QuestionsShowActivity.FINAL_MESSAGE) as String
-            report_author_message.text = gz_text
-        }
+
         if (intent.hasExtra(QuestionsShowActivity.QUIZ_SCORE)) {
             quizDetails = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_DETAILS)
                     as ReadQuizModel
+            report_author_message.text = quizDetails!!.gz_text.toString()
         }
-        if (quizScore != 0) {
-            reportModel = ReportModel(
-                userScore,
-                quizScore
-            )
+
+        if(reportModel != null){
             saveQuizResult()
         }
         report_home.setOnClickListener(this)
@@ -71,7 +60,6 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
                 quiz = Quiz.findById(quizDetails!!.id)!!
             }
         }
-
     }
 
 

@@ -5,12 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.Models.ReportModel
 import com.example.licencjat_projekt.Projekt.database.Answer
 import com.example.licencjat_projekt.Projekt.database.Answers
 import com.example.licencjat_projekt.Projekt.database.Question
@@ -34,8 +34,6 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         var QUIZ_DETAILS = "quiz_details"
         var QUIZ_SCORE = "quiz_score"
-        var USER_SCORE = "user_score"
-        var FINAL_MESSAGE = "final_message"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +51,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             question_display_title.text = questionsList[0].question_text
             if(!questionsList[0].question_image.contentEquals(emptyByteArray)) {
                 question_display_image.visibility = View.VISIBLE
-                question_display_image.setImageBitmap(byteArrayToBitmap(questionsList[0].question_image!!))
+                question_display_image.setImageBitmap(
+                    byteArrayToBitmap(questionsList[0].question_image!!)
+                )
             }else{
                 question_display_image.visibility = View.GONE
             }
@@ -103,7 +103,6 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    //decode image read from db
     private fun byteArrayToBitmap(
         data: ByteArray
     ): Bitmap {
@@ -153,7 +152,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     questionsshow_points.text = questionsList[noQuestions].question_pts.toString()
                     if(!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
                         question_display_image.visibility = View.VISIBLE
-                        question_display_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image!!))
+                        question_display_image.setImageBitmap(
+                            byteArrayToBitmap(questionsList[noQuestions].question_image!!)
+                        )
                     }else{
                         question_display_image.visibility = View.GONE
                     }
@@ -166,10 +167,13 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                         ReportActivity::class.java
                     )
                     getUserScore()
-                    intent.putExtra(QUIZ_SCORE, quizScore)
-                    intent.putExtra(USER_SCORE, userScore)
-                    intent.putExtra(FINAL_MESSAGE, quizDetails!!.gz_text)
+                    val score = ReportModel(
+                        userScore,
+                        quizScore
+                    )
+                    intent.putExtra(QUIZ_SCORE, score)
                     intent.putExtra(QUIZ_DETAILS, quizDetails)
+
                     startActivity(intent)
                     finish()
                 }
@@ -191,7 +195,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     questionsshow_points.text = questionsList[noQuestions].question_pts.toString()
                     if(!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
                         question_display_image.visibility = View.VISIBLE
-                        question_display_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image!!))
+                        question_display_image.setImageBitmap(byteArrayToBitmap(
+                            questionsList[noQuestions].question_image!!)
+                        )
                     }else{
                         question_display_image.visibility = View.GONE
                     }

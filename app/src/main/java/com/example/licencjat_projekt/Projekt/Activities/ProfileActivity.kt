@@ -58,6 +58,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
         )
     }
     private fun userQuizTaken() : String{ //TODO: (WITOLD) liczba rozwiazanych quizów
-        return "1"
+        var noQT = 0
+        return noQT.toString()
     }
 }

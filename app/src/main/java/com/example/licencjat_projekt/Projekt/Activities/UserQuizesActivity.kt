@@ -46,20 +46,28 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
 
             R.id.userquizes_firstPage -> {
-                firstFive()
-                quizesRecyclerView(quizesList)
+                if(offsetId != 0L) {
+                    firstFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.userquizes_backPage -> {
-                previousFive()
-                quizesRecyclerView(quizesList)
+                if(offsetId >= 5L) {
+                    previousFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.userquizes_nextPage -> {
-                nextFive()
-                quizesRecyclerView(quizesList)
+                if(offsetId + 5 <= quizesCount) {
+                    nextFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.userquizes_lastPage -> {
-                lastFive()
-                quizesRecyclerView(quizesList)
+                if(offsetId + 5 < quizesCount) {
+                    lastFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
         }
     }

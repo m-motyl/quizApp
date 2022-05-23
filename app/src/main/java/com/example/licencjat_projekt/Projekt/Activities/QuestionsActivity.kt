@@ -397,7 +397,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         ansList.setOnClickListener(object : AnswersList.OnClickListener {
             override fun onClick(position: Int, model: AnswerModel) {
                 if (selectCorrect) {
-                    if (model.is_Correct) { //TODO: repair marking corr ans
+                    if (model.is_Correct) { //TODO: (MOTYL) repair marking corr ans
                         model.answer_text = model.answer_text.dropLast(9)
                         model.is_Correct = false
                     } else {
