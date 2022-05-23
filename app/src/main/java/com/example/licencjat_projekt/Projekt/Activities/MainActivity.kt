@@ -44,8 +44,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         supportActionBar!!.title = "QuizApp"
 
-        //navigation drawer menu
-
         navigationView.bringToFront()
         val toggle = ActionBarDrawerToggle(
             this,
@@ -299,7 +297,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     DetailQuizActivity1::class.java
                 )
 
-                intent.putExtra( //passing object to activity
+                intent.putExtra(
                     QUIZ_DETAILS,
                     model
                 )

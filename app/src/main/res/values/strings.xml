@@ -26,7 +26,7 @@
 
     <string name="quizmain_title">Tytuł</string>
     <string name="quizmain_description">Opis</string>
-    <string name="quizmain_tags">Tagi</string>
+    <string name="quizmain_tags">Tagi (rozdzielone spacją)</string>
     <string name="quizmain_final_comment">Uwagi końcowe</string>
     <string name="quizmain_create_quiz">STWÓRZ QUIZ</string>
     <string name="quizmain_privacy">"Czy prywatny?"</string>
