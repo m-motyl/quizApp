@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
@@ -16,19 +15,12 @@ import com.example.licencjat_projekt.Projekt.database.Answer
 import com.example.licencjat_projekt.Projekt.database.Answers
 import com.example.licencjat_projekt.Projekt.database.Question
 import com.example.licencjat_projekt.Projekt.database.Questions
-import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.Projekt.utils.DisplayQuestionsAnswers
 import com.example.licencjat_projekt.R
-import kotlinx.android.synthetic.main.activity_question_display.*
-import kotlinx.android.synthetic.main.activity_question_display.question_display_image
-import kotlinx.android.synthetic.main.activity_question_display.question_display_title
-import kotlinx.android.synthetic.main.activity_questions.*
-import kotlinx.android.synthetic.main.activity_questions.questions_recycler_view
 import kotlinx.android.synthetic.main.activity_questions_show.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
@@ -97,7 +89,6 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     )
                 )
             }
-            Log.e("rozmiar z funkcji: " , tmp.size.toString())
             questionsList.add(
                 ReadQuestionModel(
                     question_text = i.question_text,

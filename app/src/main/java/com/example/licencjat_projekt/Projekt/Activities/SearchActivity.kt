@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
-import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -17,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.select
@@ -38,7 +36,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         search_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+
         supportActionBar!!.title = ""
+
         search_firstPage.setOnClickListener(this)
         search_backPage.setOnClickListener(this)
         search_nextPage.setOnClickListener(this)
@@ -60,28 +60,40 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             R.id.search_checkBox -> {
                 searchCode = search_checkBox.isChecked
             }
+
             R.id.search_firstPage -> {
                 if (searchString != null) {
-                    firstFive(searchString!!)
-                    quizesRecyclerView(quizesList)
+                    if(offsetId != 0L) {
+                        firstFive(searchString!!)
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
+
             R.id.search_backPage -> {
                 if (searchString != null) {
-                    prevFive(searchString!!)
-                    quizesRecyclerView(quizesList)
+                    if(offsetId >= 5L) {
+                        prevFive(searchString!!)
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
+
             R.id.search_nextPage -> {
                 if (searchString != null) {
-                    nextFive(searchString!!)
-                    quizesRecyclerView(quizesList)
+                    if(offsetId + 5 <= quizesCount) {
+                        nextFive(searchString!!)
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
+
             R.id.search_lastPage -> {
                 if (searchString != null) {
-                    lastFive(searchString!!)
-                    quizesRecyclerView(quizesList)
+                    if(offsetId + 5 < quizesCount) {
+                        lastFive(searchString!!)
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
         }
@@ -91,6 +103,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
+            quizesList.clear()
             searchString = searchString!!.lowercase()
             this.offsetId = 0L
             runBlocking {
@@ -143,7 +156,6 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                     else
                         offsetId += 5L
                 }
-                Log.e("prev", "$offsetId")
             }
         }
     }
@@ -215,11 +227,11 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 return@newSuspendedTransaction Tag.wrapRows(query).toList()
             }
         }
-        var xd = ""
+        var tags = ""
         for (i in tmp) {
-            xd += i.name + " "
+            tags += i.name + " "
         }
-        return xd
+        return tags
     }
 
     private fun getQuizesNumber(str: String) {
@@ -243,7 +255,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                     i.title,
                     i.time_limit,
                     i.description,
-                    getQuizTags(i), //halo
+                    getQuizTags(i),
                     i.gz_text,
                     i.private,
                     i.invitation_code,
@@ -270,7 +282,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                     DetailQuizActivity1::class.java
                 )
 
-                intent.putExtra( //passing object to activity
+                intent.putExtra(
                     QUIZ_DETAILS,
                     model
                 )
