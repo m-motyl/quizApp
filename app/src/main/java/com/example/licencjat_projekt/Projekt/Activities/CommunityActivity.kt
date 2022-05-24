@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendModel
 import com.example.licencjat_projekt.Projekt.Models.ReadUserModel
@@ -86,12 +87,12 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     View.VISIBLE
                 }
             //TODO: fix this
-//            community_own_friends_linear.background =
-//                if(community_own_friends_linear.background == ColorDrawable(resources.getColor(R.color.translucent))){
-//                    ColorDrawable(resources.getColor(R.color.gray_tint))
-//                }else{
-//                    ColorDrawable(resources.getColor(R.color.translucent))
-//                }
+            community_own_friends_linear.background =
+                if(community_own_friends_linear.background == ColorDrawable(ContextCompat.getColor(this, R.color.translucent))){
+                    ColorDrawable(ContextCompat.getColor(this, R.color.gray_tint))
+                }else{
+                    ColorDrawable(ContextCompat.getColor(this, R.color.translucent))
+                }
 //            getAllUsers()
 //            usersRecyclerView(usersList)
             return true

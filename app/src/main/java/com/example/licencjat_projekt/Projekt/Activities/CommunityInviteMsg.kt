@@ -25,7 +25,7 @@ class CommunityInviteMsg : AppCompatActivity() {
             onBackPressed()
         }
         //getAllInvitations()
-        //friendInvitesRecyclerView(friendInvitesList)
+        friendInvitesRecyclerView(friendInvitesList)
     }
 
     private fun exposedToInvitationModel(list: List<FriendInvitationModel>) {
