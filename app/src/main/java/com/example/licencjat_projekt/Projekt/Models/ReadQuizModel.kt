@@ -12,4 +12,6 @@ data class ReadQuizModel(
     var private: Boolean,
     var invitation_code: String,
     var image: ByteArray,
+    var author:String,
+    var no_questions: Int,
 ): Serializable

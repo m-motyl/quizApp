@@ -5,34 +5,31 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.Models.ReportModel
 import com.example.licencjat_projekt.Projekt.database.Answer
 import com.example.licencjat_projekt.Projekt.database.Answers
 import com.example.licencjat_projekt.Projekt.database.Question
 import com.example.licencjat_projekt.Projekt.database.Questions
-import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.Projekt.utils.DisplayQuestionsAnswers
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
-import kotlinx.android.synthetic.main.activity_question_display.*
-import kotlinx.android.synthetic.main.activity_question_display.question_display_image
-import kotlinx.android.synthetic.main.activity_question_display.question_display_title
-import kotlinx.android.synthetic.main.activity_questions.*
-import kotlinx.android.synthetic.main.activity_questions.questions_recycler_view
 import kotlinx.android.synthetic.main.activity_questions_show.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
+    private var userIsAuthor: Boolean = false
+    private var timerFlag: Boolean = false
     private var questionsList = arrayListOf<ReadQuestionModel>()
     private val emptyByteArray: ByteArray = ByteArray(1)
     private var noQuestions = 0
@@ -40,9 +37,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     private var userScore = 0.0
 
     companion object {
+        var QUIZ_DETAILS = "quiz_details"
         var QUIZ_SCORE = "quiz_score"
-        var USER_SCORE = "user_score"
-        var FINAL_MESSAGE = "final_message"
+        var USER_DETAILS = "user_details"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +47,8 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_questions_show)
 
 
-        if (intent.hasExtra(DetailQuizActivity1.QUESTION_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(DetailQuizActivity1.QUESTION_DETAILS)
+        if (intent.hasExtra(DetailQuizActivity.QUESTION_DETAILS)) {
+            quizDetails = intent.getSerializableExtra(DetailQuizActivity.QUESTION_DETAILS)
                     as ReadQuizModel
         }
         readQuestions(quizDetails!!)
@@ -60,7 +57,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             question_display_title.text = questionsList[0].question_text
             if(!questionsList[0].question_image.contentEquals(emptyByteArray)) {
                 question_display_image.visibility = View.VISIBLE
-                question_display_image.setImageBitmap(byteArrayToBitmap(questionsList[0].question_image!!))
+                question_display_image.setImageBitmap(
+                    byteArrayToBitmap(questionsList[0].question_image!!)
+                )
             }else{
                 question_display_image.visibility = View.GONE
             }
@@ -71,9 +70,46 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             questionsshow_no_questions.text = questionsList.size.toString()
         }
         getQuizScore()
+        checkIfUserIsAuthor()
+        showCorrectAnswers()
+
         question_display_btn_next.setOnClickListener(this)
         question_display_btn_back.setOnClickListener(this)
+
+        if(!userIsAuthor) {
+            object : CountDownTimer((quizDetails!!.time_limit * 60000).toLong(), 1000) {
+                override fun onTick(p0: Long) {
+                    val minutes: Int = (p0/1000/60).toInt()
+                    val seconds: Int = (p0/1000%60).toInt()
+                    questionsshow_minutes.text = minutes.toString()
+                    questionsshow_seconds.text = seconds.toString()
+                    if(timerFlag) {
+                        cancel()
+                    }
+                }
+
+                override fun onFinish() {
+                    cancel()
+
+                    val intent = Intent(this@QuestionsShowActivity, ReportActivity::class.java)
+                    getUserScore()
+                    val score = ReportModel(
+                        userScore,
+                        quizScore
+                    )
+
+                    intent.putExtra(QUIZ_SCORE, score)
+                    intent.putExtra(QUIZ_DETAILS, quizDetails)
+                    intent.putExtra(USER_DETAILS, userIsAuthor)
+                    startActivity(intent)
+                    finish()
+                }
+            }.start()
+        }else{
+            questionsshow_minutes.text = quizDetails!!.time_limit.toString()
+        }
     }
+
     private fun readQuestions(R: ReadQuizModel) = runBlocking {
         Database.connect(
             "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
@@ -96,7 +132,6 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     )
                 )
             }
-            Log.e("rozmiar z funkcji: " , tmp.size.toString())
             questionsList.add(
                 ReadQuestionModel(
                     question_text = i.question_text,
@@ -111,7 +146,6 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    //decode image read from db
     private fun byteArrayToBitmap(
         data: ByteArray
     ): Bitmap {
@@ -131,14 +165,16 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
 
         ansList.setOnClickListener(object : DisplayQuestionsAnswers.OnClickListener {
             override fun onClick(position: Int, model: ReadAnswerModel) {
-                if(model.is_Selected){
-                    model.answer_text = model.answer_text!!.dropLast(3)
-                    model.is_Selected = false
-                }else{
-                    model.answer_text += "(*)"
-                    model.is_Selected = true
+                if(!userIsAuthor) {
+                    if (model.is_Selected) {
+                        model.answer_text = model.answer_text!!.dropLast(3)
+                        model.is_Selected = false
+                    } else {
+                        model.answer_text += "(*)"
+                        model.is_Selected = true
+                    }
+                    questions_show_recycler_view.adapter = ansList
                 }
-                questions_show_recycler_view.adapter = ansList
             }
         })
     }
@@ -161,7 +197,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     questionsshow_points.text = questionsList[noQuestions].question_pts.toString()
                     if(!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
                         question_display_image.visibility = View.VISIBLE
-                        question_display_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image!!))
+                        question_display_image.setImageBitmap(
+                            byteArrayToBitmap(questionsList[noQuestions].question_image!!)
+                        )
                     }else{
                         question_display_image.visibility = View.GONE
                     }
@@ -174,9 +212,15 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                         ReportActivity::class.java
                     )
                     getUserScore()
-                    intent.putExtra(QUIZ_SCORE, quizScore)
-                    intent.putExtra(USER_SCORE, userScore)
-                    intent.putExtra(FINAL_MESSAGE, quizDetails!!.gz_text)
+                    val score = ReportModel(
+                        userScore,
+                        quizScore
+                    )
+
+                    intent.putExtra(QUIZ_SCORE, score)
+                    intent.putExtra(QUIZ_DETAILS, quizDetails)
+                    intent.putExtra(USER_DETAILS, userIsAuthor)
+                    timerFlag = true
                     startActivity(intent)
                     finish()
                 }
@@ -198,7 +242,9 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     questionsshow_points.text = questionsList[noQuestions].question_pts.toString()
                     if(!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
                         question_display_image.visibility = View.VISIBLE
-                        question_display_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image!!))
+                        question_display_image.setImageBitmap(byteArrayToBitmap(
+                            questionsList[noQuestions].question_image!!)
+                        )
                     }else{
                         question_display_image.visibility = View.GONE
                     }
@@ -235,5 +281,19 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             userScore += i.question_pts * ((correct / wrong)/ allCorrect)
         }
     }
+    private fun checkIfUserIsAuthor(){ //TODO: (WITOLD) napraf
+        userIsAuthor = (quizDetails!!.author == currentUser!!.login)
+    }
 
+    private fun showCorrectAnswers(){
+        if(!userIsAuthor){
+            for (i in questionsList){
+                for(j in i.question_answers){
+                    if(j.is_Correct){
+                        j.answer_text = j.answer_text!!.dropLast(9)
+                    }
+                }
+            }
+        }
+    }
 }

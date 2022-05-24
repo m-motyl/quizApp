@@ -26,7 +26,7 @@
 
     <string name="quizmain_title">Tytuł</string>
     <string name="quizmain_description">Opis</string>
-    <string name="quizmain_tags">Tagi</string>
+    <string name="quizmain_tags">Tagi (rozdzielone spacją)</string>
     <string name="quizmain_final_comment">Uwagi końcowe</string>
     <string name="quizmain_create_quiz">STWÓRZ QUIZ</string>
     <string name="quizmain_privacy">"Czy prywatny?"</string>
@@ -38,7 +38,7 @@
     <string name="drawer_menu_logout">Wyloguj się</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="report_score">Wynik</string>
+    <string name="report_score">Podsumowanie</string>
     <string name="report_user_score">13</string>
     <string name="report_max_score">15</string>
     <string name="report_slash">/</string>
@@ -54,7 +54,7 @@
     <string name="details_quiz_author">Autor:</string>
     <string name="detail_quiz_description">Opis:</string>
     <string name="detail_quiz_tags">Tagi:</string>
-    <string name="detail_quiz_participate">Weź udział!</string>
+    <string name="detail_quiz_participate">Przejdź do quizu!</string>
     <string name="community_add_btn">dodaj</string>
     <string name="community_friends">znajomi</string>
     <string name="community_class">klasa</string>
@@ -71,6 +71,10 @@
     <string name="community_toolbar_invitation">invitation</string>
     <string name="community_toolbar_add">add_friend</string>
     <string name="profile_add_add_friend_btn">Dodaj do znajomych!</string>
+    <string name="drawer_menu_search">Wyszukaj</string>
+    <string name="drawer_menu_user_quizes">Moje quizy</string>
+    <string name="drawer_menu_reports">Raporty</string>
+    <string name="search_checkbox">Wyszukiawnie kodu</string>
     <string name="item_message_decline">Usuń</string>
     <string name="item_message_accept">Akceptuj</string>
 

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -12,9 +11,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Activities.CommunityActivity
-import com.example.licencjat_projekt.Projekt.Activities.QuizMainActivity
-import com.example.licencjat_projekt.Projekt.Activities.SignInActivity
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
@@ -24,12 +20,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.io.File.separator
-import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     View.OnClickListener {
@@ -50,9 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout = findViewById(R.id.main_drawer_layout)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = ""
-
-        //navigation drawer menu
+        supportActionBar!!.title = "QuizApp"
 
         navigationView.bringToFront()
         val toggle = ActionBarDrawerToggle(
@@ -62,9 +52,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
+
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navigationView.setNavigationItemSelectedListener(this)
+
         main_firstPage.setOnClickListener(this)
         main_backPage.setOnClickListener(this)
         main_nextPage.setOnClickListener(this)
@@ -72,7 +64,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         getQuizesNumber()
         firstFive()
-        quizesRecyclerView(quizesList)
+        if(quizesList.size > 0) {
+            quizesRecyclerView(quizesList)
+        }
     }
 
     override fun onBackPressed() {
@@ -90,7 +84,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     this,
                     QuizMainActivity::class.java
                 )
-                startActivity(intent)
+                startActivityForResult(intent, QUIZ_CODE)
             }
             R.id.drawer_menu_profile -> run {
                 val intent = Intent(
@@ -109,6 +103,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.drawer_menu_logout -> run {
                 finish()
             }
+            R.id.drawer_menu_search -> run {
+                val intent = Intent(
+                    this,
+                    SearchActivity::class.java
+                )
+                startActivity(intent)
+            }
+            R.id.drawer_menu_reports -> run {
+                val intent = Intent(
+                    this,
+                    ReportsActivity::class.java
+                )
+                startActivity(intent)
+            }
+            R.id.drawer_menu_user_quizes -> run {
+                val intent = Intent(
+                    this,
+                    UserQuizesActivity::class.java
+                )
+                startActivity(intent)
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
@@ -117,9 +132,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.main_firstPage -> {
-                firstFive()
-                quizesRecyclerView(quizesList)
-
+                if(offsetId != 0L) {
+                    firstFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.main_backPage -> {
                 if (offsetId >= 5L) {
@@ -134,49 +150,49 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
             R.id.main_lastPage -> {
-                lastFive()
-                quizesRecyclerView(quizesList)
+                if(offsetId + 5 < quizesCount){
+                    lastFive()
+                    quizesRecyclerView(quizesList)
+                }
             }
         }
     }
 
     private fun firstFive() {
         this.offsetId = 0L
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().limit(5).toList()
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                if (list.isNotEmpty())
+                    exposedToModel(list)
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list)
     }
 
     private fun nextFive() {
         this.offsetId += 5L
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().limit(5, offsetId).toList()
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val list = Quiz.find { Quizes.private eq false }.limit(5, offsetId).toList()
+                if (list.isNotEmpty())
+                    exposedToModel(list)
+                else
+                    offsetId -= 5L
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list)
-        else
-            this.offsetId -= 5L
-        Log.e("next", "$offsetId")
     }
 
     private fun previousFive() {
         this.offsetId -= 5L
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().limit(5, offsetId).toList()
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val list = Quiz.find { Quizes.private eq false }.limit(5, offsetId).toList()
+                if (list.isNotEmpty())
+                    exposedToModel(list)
+                else
+                    offsetId += 5L
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list)
-        else
-            this.offsetId += 5L
-        Log.e("prev", "$offsetId")
     }
 
     private fun lastFive() {
@@ -185,26 +201,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         } else {
             this.offsetId = quizesCount - 5
         }
-        Log.e("last", "$offsetId")
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+        runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                var list: List<Quiz>
                 if (quizesCount.mod(5) != 0) {
-                    Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit((quizesCount.mod(5)))
+                    list = Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
+                        .limit((quizesCount.mod(5)))
                         .toList()
                 } else {
-                    Quiz.all().orderBy(Quizes.id to SortOrder.DESC).limit(5)
+                    list= Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
+                        .limit(5)
                         .toList()
                 }
+                if (list.isNotEmpty())
+                    exposedToModel(list.reversed())
             }
         }
-        if (list.isNotEmpty())
-            exposedToModel(list.reversed())
+
     }
 
     private fun getQuizesNumber() {
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.all().count()
+                Quiz.find { Quizes.private eq false }.count()
             }
         }
         quizesCount = n
@@ -223,12 +242,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     i.description,
                     getQuizTags(i),
                     i.gz_text,
-                    true,
+                    i.private,
                     i.invitation_code,
                     i.image.bytes,
+                    i.user.login,
+                    i.questions,
                 )
             )
         }
+
         quizesList = quizesArrayList
     }
 
@@ -241,13 +263,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return@newSuspendedTransaction Tag.wrapRows(query).toList()
             }
         }
-        var xd = ""
+        var tags = ""
         for (i in tmp) {
-            xd += i.name + " "
+            tags += i.name + " "
         }
-        return xd
+        return tags
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == QUIZ_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                firstFive()
+                getQuizesNumber()
+                if(quizesList.size > 0){
+                    quizesRecyclerView(quizesList)
+                }
+            }
+        }
+    }
 
     private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
 
@@ -260,10 +294,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onClick(position: Int, model: ReadQuizModel) {
                 val intent = Intent(
                     this@MainActivity,
-                    DetailQuizActivity1::class.java
+                    DetailQuizActivity::class.java
                 )
 
-                intent.putExtra( //passing object to activity
+                intent.putExtra(
                     QUIZ_DETAILS,
                     model
                 )

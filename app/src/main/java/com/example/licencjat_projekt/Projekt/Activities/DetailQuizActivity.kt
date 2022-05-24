@@ -6,27 +6,12 @@ import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.RequiresPermission
-import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
-import com.example.licencjat_projekt.Projekt.Models.ReadQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
-import com.example.licencjat_projekt.Projekt.database.Answer
-import com.example.licencjat_projekt.Projekt.database.Answers
-import com.example.licencjat_projekt.Projekt.database.Answers.question
-import com.example.licencjat_projekt.Projekt.database.Question
-import com.example.licencjat_projekt.Projekt.database.Questions.quiz
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_detail_quiz.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.statements.api.ExposedBlob
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
+class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
-    private var questionsList = arrayListOf<ReadQuestionModel>()
-    private var answersList = ArrayList<ReadAnswerModel>()
 
     companion object {
         var QUESTION_DETAILS = "question_details"
@@ -39,6 +24,13 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
         if (intent.hasExtra(MainActivity.QUIZ_DETAILS)) {
             quizDetails = intent.getSerializableExtra(MainActivity.QUIZ_DETAILS) as ReadQuizModel
         }
+        if (intent.hasExtra(UserQuizesActivity.QUIZ_DETAILS)) {
+            quizDetails = intent.getSerializableExtra(UserQuizesActivity.QUIZ_DETAILS) as ReadQuizModel
+        }
+        if (intent.hasExtra(SearchActivity.QUIZ_DETAILS)) {
+            quizDetails = intent.getSerializableExtra(SearchActivity.QUIZ_DETAILS) as ReadQuizModel
+        }
+
         if (quizDetails != null) {
             setSupportActionBar(detail_quiz_toolbar)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -50,11 +42,13 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
             detail_quiz_title.text = quizDetails!!.title
             detail_quiz_description.text = quizDetails!!.description
             detail_quiz_tags.text = quizDetails!!.tags
+            detail_quiz_timer.text = quizDetails!!.time_limit.toString() + " minut(y)"
         }
-        question_display_btn_back.setOnClickListener(this)
+        question_get_started.setOnClickListener(this)
+        detail_quiz_author_name.text = getAuthorName()
+        detail_quiz_number_questions.text = getNOQuestions()
     }
 
-    //decode image read from db
     private fun byteArrayToBitmap(
         data: ByteArray
     ): Bitmap {
@@ -67,7 +61,7 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.question_display_btn_back -> {
+            R.id.question_get_started -> {
                 val intent = Intent(
                     this,
                     QuestionsShowActivity::class.java
@@ -77,5 +71,12 @@ class DetailQuizActivity1 : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
         }
+    }
+
+    private fun getAuthorName(): String{
+        return quizDetails!!.author
+    }
+    private fun getNOQuestions(): String{
+        return quizDetails!!.no_questions.toString()
     }
 }

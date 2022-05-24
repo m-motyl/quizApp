@@ -3,6 +3,7 @@ package com.example.licencjat_projekt.Projekt.Activities
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -12,21 +13,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendModel
 import com.example.licencjat_projekt.Projekt.Models.ReadUserModel
-import com.example.licencjat_projekt.Projekt.database.Quiz
-import com.example.licencjat_projekt.Projekt.database.User
+import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendsList
 import com.example.licencjat_projekt.Projekt.utils.UsersList
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.format.DateTimeFormatter
 
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private var friendsList = ArrayList<ReadFriendModel>()
+    private var friendsList2 = ArrayList<LoadUserModel>()
+
     private var usersList = ArrayList<ReadUserModel>()
     private lateinit var userAdapter: UsersList
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,20 +44,48 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         community_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-        getAllFriends()
-        friendsRecyclerView(friendsList)
+        firstFiveAccepted()
+//        getAllFriends()
+//        friendsRecyclerView(friendsList)
     }
 
-    private fun getAllFriends() {
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                //TODO: make return user.friends
-                User.all().toList()
-            }
+    //TODO (JASIEK) uzyj modelu LoadUserModel
+    private fun firstFiveAccepted() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+                .limit(5).with(Friend::to).toList()
+            if (list.isNotEmpty())
+                exposedToModel(list)
         }
-        if (list.isNotEmpty())
-            exposedToFriendModel(list)
     }
+
+    private fun exposedToModel(l: List<Friend>) {
+        for (i in l) {
+            friendsList2.add(
+                LoadUserModel(
+                    id = i.to.id.value,
+                    login = i.to.login,
+                    profile_picture = i.to.profile_picture!!.bytes,
+                    creation_time = i.to.creation_time.toString()
+                )
+            )
+        }
+        for (i in friendsList2) {
+            Log.e("", i.login)
+            Log.e("", i.creation_time)
+        }
+    }
+
+//    private fun getAllFriends() {
+//        val list = runBlocking {
+//            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+//                //TODO: make return user.friends
+//                User.all().toList()
+//            }
+//        }
+//        if (list.isNotEmpty())
+//            exposedToFriendModel(list)
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.community_toolbar_menu, menu)
@@ -142,13 +178,13 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private fun exposedToUserModel(list: List<User>) {
         val usersArrayList = ArrayList<ReadUserModel>()
         for (i in list) {
-           usersArrayList.add(
+            usersArrayList.add(
                 ReadUserModel(
                     i.login,
                 )
             )
         }
-       usersList = usersArrayList
+        usersList = usersArrayList
     }
 
 

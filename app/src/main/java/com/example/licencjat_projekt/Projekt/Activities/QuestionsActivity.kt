@@ -6,13 +6,11 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,8 +30,6 @@ import kotlinx.android.synthetic.main.activity_questions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.exists
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
@@ -108,7 +104,58 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 alert.setItems(items) { _, n ->
                     when (n) {
-                        0 -> saveQuizToDB(quizModel!!, questionsList)
+                        0 -> {
+                            if (!questions_question.text.isNullOrEmpty()
+                                && !questions_points.text.isNullOrEmpty()
+                                && questionsList.getOrNull(noQuestions) == null
+                            ) {
+                                val questionModel = CreateQuestionModel(
+                                    questions_question.text.toString(),
+                                    question_image,
+                                    Integer.parseInt(questions_points.text.toString()),
+                                    ArrayList(answersList)
+                                )
+                                questionsList.add(questionModel)
+                            } else if (!questions_question.text.isNullOrEmpty()
+                                && !questions_points.text.isNullOrEmpty()
+                                && questionsList.getOrNull(noQuestions) != null
+                            ) {
+
+                                if (isImage) {
+                                    questionsList[noQuestions].question_image = question_image
+                                    isImage = false
+                                }
+                                questionsList[noQuestions].question_text =
+                                    questions_question.text.toString()
+                                questionsList[noQuestions].question_pts =
+                                    Integer.parseInt(questions_points.text.toString())
+                                questionsList[noQuestions].question_answers += answersList
+                            }
+                            val res = validateQuestions()
+                            if(res == 0){
+                                saveQuizToDB(quizModel!!, questionsList)
+                            }else if (res == 1){
+                                Toast.makeText(
+                                    this,
+                                    "Quiz powinien zawierać co najmniej dwa pytania!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }else if (res == 2){
+                                Toast.makeText(
+                                    this,
+                                    "Każde pytanie powinno zawierać " +
+                                            "co najmniej dwie odpowiedzi!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }else if(res == 3){
+                                Toast.makeText(
+                                    this,
+                                    "Każde pytanie powinno zawierać " +
+                                            "co najmniej jedną poprawną odpowiedź!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                         1 -> goBack()
                     }
                 }
@@ -117,20 +164,14 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             R.id.questions_save_correct_ans -> {
                 selectCorrect = true
                 questions_end_correct_ans.visibility = View.VISIBLE
-                /*if (selectCorrect) {
-                    questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24)
-                    selectCorrect = false
-                } else {
-                    questions_save_correct_ans.setImageResource(R.drawable.ic_baseline_star_24_black)
-                    selectCorrect = true
-                }*/
             }
             R.id.questions_image -> {
                 chooseImageFromGalery()
             }
             R.id.questions_prev_question -> {
                 //if not empty
-                if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()) {
+                if (!questions_question.text.isNullOrEmpty()
+                    && !questions_points.text.isNullOrEmpty()) {
                     if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
                         lateinit var questionModel: CreateQuestionModel
                         if (isImage) {
@@ -176,7 +217,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                     questions_question.setText(questionsList[noQuestions].question_text)
                     if (!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
                         questions_image_delete.visibility = View.VISIBLE
-                        questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
+                        questions_image.setImageBitmap(
+                            byteArrayToBitmap(questionsList[noQuestions].question_image)
+                        )
                     } else {
                         questions_image_delete.visibility = View.GONE
                         questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
@@ -189,7 +232,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             R.id.questions_next_question -> {
-                if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()) {
+                if (!questions_question.text.isNullOrEmpty()
+                    && !questions_points.text.isNullOrEmpty()) {
                     if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
                         lateinit var questionModel: CreateQuestionModel
                         if (isImage) {
@@ -236,7 +280,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                     questions_question.setText(questionsList[noQuestions].question_text)
                     if (!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
                         questions_image_delete.visibility = View.VISIBLE
-                        questions_image.setImageBitmap(byteArrayToBitmap(questionsList[noQuestions].question_image))
+                        questions_image.setImageBitmap(
+                            byteArrayToBitmap(questionsList[noQuestions].question_image)
+                        )
                     } else {
                         questions_image_delete.visibility = View.GONE
                         questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
@@ -305,7 +351,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 answersRecyclerView(questionsList[0].question_answers)
                 if (!questionsList[0].question_image.contentEquals(emptyByteArray)) {
                     questions_image_delete.visibility = View.VISIBLE
-                    questions_image.setImageBitmap(byteArrayToBitmap(questionsList[0].question_image))
+                    questions_image.setImageBitmap(
+                        byteArrayToBitmap(questionsList[0].question_image)
+                    )
                 } else {
                     questions_image_delete.visibility = View.GONE
                     questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
@@ -349,7 +397,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         ansList.setOnClickListener(object : AnswersList.OnClickListener {
             override fun onClick(position: Int, model: AnswerModel) {
                 if (selectCorrect) {
-                    if (model.is_Correct) { //temporary
+                    if (model.is_Correct) { //TODO: (MOTYL) repair marking corr ans
                         model.answer_text = model.answer_text.dropLast(9)
                         model.is_Correct = false
                     } else {
@@ -494,31 +542,11 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
             user = "postgres", password = "123"
         )
-        if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()
-            && questionsList.getOrNull(noQuestions) == null
-        ) {
-            val questionModel = CreateQuestionModel(
-                questions_question.text.toString(),
-                question_image,
-                Integer.parseInt(questions_points.text.toString()),
-                ArrayList(answersList)
-            )
-            ql.add(questionModel)
-        } else if (!questions_question.text.isNullOrEmpty() && !questions_points.text.isNullOrEmpty()
-            && questionsList.getOrNull(noQuestions) != null
-        ) {
 
-            if (isImage) {
-                questionsList[noQuestions].question_image = question_image
-                isImage = false
-            }
-            questionsList[noQuestions].question_text =
-                questions_question.text.toString()
-            questionsList[noQuestions].question_pts =
-                Integer.parseInt(questions_points.text.toString())
-            questionsList[noQuestions].question_answers += answersList
+        var pts = 0
+        for (i in ql){
+            pts += i.question_pts
         }
-
         newSuspendedTransaction(Dispatchers.IO) {
             val newQuiz = Quiz.new {
                 title = q.title
@@ -527,16 +555,16 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 gz_text = q.gz_text
                 private = q.private
                 invitation_code = q.invitation_code
-                correct_answers = 0
                 questions = ql.size
                 no_tries = 0
                 image = ExposedBlob(q.image)
                 user = currentUser!!
+                max_points = pts
             }
             for (i in t) {
                 val findTag = Tag.find { Tags.name eq i }.toList()
                 if (findTag.isEmpty()) {
-                    var newTag = Tag.new {
+                    val newTag = Tag.new {
                         name = i
                     }
                     QuizTag.new {
@@ -574,10 +602,32 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         finish()
     }
 
-    private fun addTagsDB(t: Array<String>) = runBlocking {
+    private fun addTagsDB(t: Array<String>) = runBlocking { //TODO: (WITOLD) ??
         newSuspendedTransaction(Dispatchers.IO) {
 
         }
+    }
+    private fun validateQuestions(): Int {
+        if(questionsList.size < 2){
+            return 1
+        }
+
+        for (i in questionsList){
+            var ansFlag = true
+            if (i.question_answers.size < 2){
+                return 2
+            }
+            for (j in i.question_answers){
+                if(j.is_Correct && ansFlag){
+                    ansFlag = false
+                }
+            }
+
+            if(ansFlag){
+                return 3
+            }
+        }
+        return 0
     }
 
     private fun goBack() {}

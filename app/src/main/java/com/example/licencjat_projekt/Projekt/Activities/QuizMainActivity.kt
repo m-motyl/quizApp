@@ -6,17 +6,13 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.net.wifi.p2p.WifiP2pManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.*
-import com.example.licencjat_projekt.Projekt.database.Quiz
-import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -24,10 +20,8 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_quiz_main.*
-import org.jetbrains.exposed.sql.Op
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.util.jar.Manifest
 
 class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
@@ -36,7 +30,6 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var invitation_code: String
     private lateinit var quiz_image: ByteArray
     private var isImage: Boolean = false
-    private lateinit var user: User
     private var quizModel: CreateQuizModel? = null
 
     companion object {
@@ -67,10 +60,32 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+                    quizmain_title.length() > 20 || quizmain_title.length() < 2 -> {
+                        Toast.makeText(
+                            this,
+                            "Tytuł powinien zawierać od 2 do 20 znaków!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                     quizmain_timer.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
                             "Podaj czas trwania testu!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    Integer.parseInt(quizmain_timer.text.toString()) < 1
+                            || Integer.parseInt(quizmain_timer.text.toString()) > 60 -> {
+                        Toast.makeText(
+                            this,
+                            "Czas trwania testu powinien wynosić od 1 do 60 minut!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    quizmain_description.length() > 200 || quizmain_description.length() < 2 -> {
+                        Toast.makeText(
+                            this,
+                            "Opis powinien zawierać od 2 do 20 znaków!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -84,7 +99,14 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                     quizmain_tags.text.isNullOrEmpty() -> {
                         Toast.makeText(
                             this,
-                            "Podaj tagi!",
+                            "Dodaj tagi!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    quizmain_tags.length() > 100 || quizmain_tags.length() < 2 -> {
+                        Toast.makeText(
+                            this,
+                            "Wiadomość końcowa powininna zawierać od 2 do 100 znaków!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -92,6 +114,13 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(
                             this,
                             "Podaj komentarz końcowy!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    quizmain_final_comment.length() > 200 || quizmain_final_comment.length() < 2 -> {
+                        Toast.makeText(
+                            this,
+                            "Wiadomość końcowa powininna zawierać od 2 do 200 znaków!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -104,7 +133,8 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     else -> {
 
-                        invitation_code = generateInvitationCode()
+                        invitation_code = generateInvitationCode() //TODO: (WITOLD) check if
+                                                                    // not in db
 
                         quizModel = CreateQuizModel(
                             quizmain_title.text.toString(),
@@ -121,20 +151,26 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             this,
                             QuestionsActivity::class.java
                         )
+
                         if(quizModel != null) {
                             intent.putExtra(
                                 QUIZ_DETAILS,
                                 quizModel
                             )
                         }
+
                         startActivity(intent)
+
+                        setResult(Activity.RESULT_OK)
                         finish()
                     }
                 }
             }
+
             R.id.quizmain_privacy -> {
                 isPrivate = quizmain_privacy.isChecked
             }
+
             R.id.quizmain_image -> {
                 chooseImageFromGalery()
             }
@@ -145,10 +181,6 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
         return ((1..codeLen)
             .map{i->kotlin.random.Random.nextInt(0, charPool.size)}
             .map(charPool::get).joinToString(""))
-    }
-
-    private fun getCurrentUser(): User{
-        return user
     }
 
     private fun chooseImageFromGalery(){
