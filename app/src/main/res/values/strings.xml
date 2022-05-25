@@ -77,6 +77,8 @@
     <string name="search_checkbox">Wyszukiawnie kodu</string>
     <string name="item_message_decline">Usuń</string>
     <string name="item_message_accept">Akceptuj</string>
+    <string name="community_invite_msg_friends">Znajomi</string>
+    <string name="community_invite_msg_quizes">Quizy</string>
 
 
 </resources>

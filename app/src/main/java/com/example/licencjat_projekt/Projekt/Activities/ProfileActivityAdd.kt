@@ -22,14 +22,18 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
         supportActionBar!!.title = "Profil"
     }
 
+    private fun exposeToInvitationModel(){
+        invitationModel = ReadFriendInvitationModel(
+            fromUser = "from",
+            toUser = "to",
+            isAccepted = false
+        )
+    }
+
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.profile_add_add_friend -> {
-                invitationModel = ReadFriendInvitationModel(
-                    fromUser = "from",
-                    toUser = "to",
-                    isAccepted = false
-                )
+                exposeToInvitationModel()
                 Toast.makeText(
                     this,
                     "Zaprosiłeś użytkownika do znajomych.",

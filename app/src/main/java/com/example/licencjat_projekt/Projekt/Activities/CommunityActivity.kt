@@ -47,6 +47,10 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         community_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+
+        community_own_friends_linear.setOnClickListener(this)
+        community_search_btn.setOnClickListener(this)
+
         getAllFriends()
         friendsRecyclerView(friendsList)
     }

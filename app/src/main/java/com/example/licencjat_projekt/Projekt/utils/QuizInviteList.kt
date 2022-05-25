@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
+import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
 
 
-open class FriendInviteList(
+open class QuizInviteList(
     private val context: Context,
-    private var listOfFriendInvitations: ArrayList<ReadFriendInvitationModel>
+    private var listOfFriendInvitations: ArrayList<ReadQuizInvitationModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
 
@@ -53,6 +54,6 @@ open class FriendInviteList(
     }
 
     interface OnClickListener {
-        fun onClick(position: Int, model: ReadFriendInvitationModel)
+        fun onClick(position: Int, model: ReadQuizInvitationModel)
     }
 }
