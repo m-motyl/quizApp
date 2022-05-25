@@ -1,5 +1,6 @@
 package com.example.licencjat_projekt.Projekt.Models
 
+import java.io.Serializable
 import java.util.*
 
 data class LoadUserModel(
@@ -9,4 +10,4 @@ data class LoadUserModel(
     var password: String? = null,
     var profile_picture: ByteArray,
     var creation_time: String,
-)
+):Serializable

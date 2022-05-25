@@ -1,23 +1,17 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.FriendInvitationModel
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendModel
-import com.example.licencjat_projekt.Projekt.database.User
-import com.example.licencjat_projekt.Projekt.utils.FriendInvite
-import com.example.licencjat_projekt.Projekt.utils.FriendsList
+import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
+import com.example.licencjat_projekt.Projekt.utils.FriendInviteList
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.android.synthetic.main.activity_community_invite_msg.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class CommunityInviteMsg : AppCompatActivity() {
-    private var friendInvitesList = ArrayList<FriendInvitationModel>()
+    private var friendInvitesList = ArrayList<ReadFriendInvitationModel>()
+    private lateinit var friendInvitesAdapter: FriendInviteList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community_invite_msg)
@@ -28,11 +22,11 @@ class CommunityInviteMsg : AppCompatActivity() {
         friendInvitesRecyclerView(friendInvitesList)
     }
 
-    private fun exposedToInvitationModel(list: List<FriendInvitationModel>) {
-        val friendInvitationsArrayList = ArrayList<FriendInvitationModel>()
+    private fun exposedToInvitationModel(list: List<ReadFriendInvitationModel>) {
+        val friendInvitationsArrayList = ArrayList<ReadFriendInvitationModel>()
         for (i in list) {
             friendInvitationsArrayList.add(
-                FriendInvitationModel(
+                ReadFriendInvitationModel(
                     i.fromUser,
                     i.toUser,
                     i.isAccepted
@@ -53,15 +47,15 @@ class CommunityInviteMsg : AppCompatActivity() {
 //            exposedToInvitationModel(list)
 //    }
 
-    private fun friendInvitesRecyclerView(friendInvites: ArrayList<FriendInvitationModel>) {
+    private fun friendInvitesRecyclerView(friendInvites: ArrayList<ReadFriendInvitationModel>) {
         community_invite_rv.layoutManager = LinearLayoutManager(this)
         community_invite_rv.setHasFixedSize(true)
-        val friendInvitesList = FriendInvite(this, friendInvites)
+        val friendInvitesList = FriendInviteList(this, friendInvites)
         community_rv_friends.adapter = friendInvitesList
 
-        friendInvitesList.setOnClickListener(object : FriendInvite.OnClickListener {
+        friendInvitesList.setOnClickListener(object : FriendInviteList.OnClickListener {
 
-            override fun onClick(position: Int, model: FriendInvitationModel) {
+            override fun onClick(position: Int, model: ReadFriendInvitationModel) {
             }
         })
     }

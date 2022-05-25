@@ -34,21 +34,43 @@
         android:id="@+id/community_search_linear"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
 
-        <SearchView
-            android:id="@+id/community_search_drawer"
+        <LinearLayout
+            android:id="@+id/community_search_linear_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:iconifiedByDefault="false"
-            android:queryBackground="@android:color/transparent"
-            android:queryHint="Wyszukaj użytkownika" />
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/search_et"
+                android:layout_width="303dp"
+                android:layout_height="43dp"
+                android:hint="@string/main_search"
+                android:inputType="text"
+                android:textColor="@color/primary_text_color"
+                android:textColorHint="@color/secondary_text_color"
+                android:textSize="16sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/community_search_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/translucent"
+                app:icon="@drawable/ic_baseline_search_24_black"
+                app:iconTint="@color/black"
+                app:iconGravity="end"/>
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/community_rv_users"
                 android:layout_width="match_parent"
@@ -64,17 +86,9 @@
         android:id="@+id/community_own_friends_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/translucent">
+        android:background="@color/translucent"
+        android:orientation="vertical">
 
-        <SearchView
-            android:id="@+id/community_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:iconifiedByDefault="false"
-            android:queryBackground="@android:color/transparent"
-            android:queryHint="Wyszukaj znajomego"
-            android:visibility="visible"/>
 
         <ScrollView
             android:layout_width="match_parent"
