@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
+import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
 
 class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private var invitationModel: ReadFriendInvitationModel? = null
+    private var visitingUserString: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_add)
@@ -19,10 +21,14 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
 
+        if (intent.getStringExtra("profil") != null){
+            visitingUserString = intent.getStringExtra("profil")
+        }
+
         supportActionBar!!.title = "Profil"
     }
 
-    //:TODO (WITEK) edytować i dopasować pola w ReadFriendInvitationModel
+    //:TODO (WITEK) edytować i dopasować pola w ReadFriendInvitationModel dane zapraszającego usera masz w visitingUserString
     private fun exposeToInvitationModel(){
         invitationModel = ReadFriendInvitationModel(
             fromUser = "from",
