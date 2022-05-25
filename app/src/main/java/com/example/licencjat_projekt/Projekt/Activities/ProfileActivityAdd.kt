@@ -12,7 +12,7 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private var invitationModel: ReadFriendInvitationModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        setContentView(R.layout.activity_profile_add)
         setSupportActionBar(profile_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         profile_toolbar.setNavigationOnClickListener {
@@ -22,6 +22,7 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
         supportActionBar!!.title = "Profil"
     }
 
+    //:TODO (WITEK) edytować i dopasować pola w ReadFriendInvitationModel
     private fun exposeToInvitationModel(){
         invitationModel = ReadFriendInvitationModel(
             fromUser = "from",
@@ -30,10 +31,16 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
         )
     }
 
+    //:TODO (WITEK) wysłać invitationModel do bazy
+//    private fun sendInvitationToDB(){
+//        invitationModel
+//    }
+
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.profile_add_add_friend -> {
                 exposeToInvitationModel()
+                //sendInvitationToDB()
                 Toast.makeText(
                     this,
                     "Zaprosiłeś użytkownika do znajomych.",

@@ -87,6 +87,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             Log.e("", i.creation_time)
         }
     }
+//:TODO (WITEK) odkomentuj i zobaczysz o co chodzi
 
 //    private fun exposedToUserModel(l: List<User>){
 //        for (i in l) {
@@ -165,7 +166,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(position: Int, model: LoadUserModel) {
                 val intent = Intent(
                     this@CommunityActivity,
-                    ProfileActivity::class.java
+                    ProfileFriendActivity::class.java
                 )
 
                 intent.putExtra("profile", model)
