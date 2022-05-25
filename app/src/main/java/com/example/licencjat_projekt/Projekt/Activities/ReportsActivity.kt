@@ -8,8 +8,10 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.Models.ReadReportModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
+import com.example.licencjat_projekt.Projekt.utils.ReportsList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_reports.*
@@ -26,7 +28,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     private var userReports: Boolean = true
     private var othersReports: Boolean = false
-    private var quizesList = ArrayList<ReadQuizModel>()
+    private var quizesList = ArrayList<ReadReportModel>()
     private var offsetId = 0L
     private var quizesCount = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +56,8 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.report_user_reports -> {
                 if(!userReports) {
+                    quizesList.clear()
+                    quizesRecyclerView(quizesList)
                     userReports = true
                     othersReports = false
 
@@ -66,6 +70,8 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.report_others_reports -> {
                 if(!othersReports) {
+                    quizesList.clear()
+                    quizesRecyclerView(quizesList)
                     othersReports = true
                     userReports = false
 
@@ -99,7 +105,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId = 0L
         if(userReports){
             //quizesList = raporty z quizow rozwiazanych przez usera
-            runBlocking {
+            /*runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = Quizes.innerJoin(QuizeResults).slice(Quizes.columns).select {
                         QuizeResults.by eq currentUser!!.id
@@ -108,11 +114,11 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     if(x.isNotEmpty())
                         exposedToModel(x)
                 }
-            }
+            }*/
         }
         if(othersReports){
             //quizesList = raporty z quizów usera rozwiązanych przez innych
-            runBlocking {
+            /*runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = Quizes.innerJoin(QuizeResults).slice(Quizes.columns).select {
                         Quizes.user eq currentUser!!.id
@@ -121,7 +127,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     if(x.isNotEmpty())
                         exposedToModel(x)
                 }
-            }
+            }*/
         }
 
 
@@ -135,22 +141,23 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     private fun lastFive(){
 
     }
-    private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
+    //TODO (M) powinno działać?
+    private fun quizesRecyclerView(quizes: ArrayList<ReadReportModel>) {
 
         report_rv_quizes.layoutManager = LinearLayoutManager(this)
         report_rv_quizes.setHasFixedSize(true)
-        val quizesList = QuizesList(this, quizes)
+        val quizesList = ReportsList(this, quizes)
         report_rv_quizes.adapter = quizesList
 
-        quizesList.setOnClickListener(object : QuizesList.OnClickListener {
-            override fun onClick(position: Int, model: ReadQuizModel) {
+        quizesList.setOnClickListener(object : ReportsList.OnClickListener {
+            override fun onClick(position: Int, model: ReadReportModel) {
                 val intent = Intent(
                     this@ReportsActivity,
                     DetailQuizActivity::class.java
                 )
 
                 intent.putExtra( //passing object to activity
-                    ReportsActivity.QUIZ_DETAILS,
+                    QUIZ_DETAILS,
                     model
                 )
                 startActivity(intent)
@@ -182,7 +189,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         }
         quizesCount = n
     }
-
+/*
     private fun exposedToModel(list: List<Quiz>) {
 
         val quizesArrayList = ArrayList<ReadQuizModel>()
@@ -205,7 +212,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             )
         }
         quizesList = quizesArrayList
-    }
+    }*/
     companion object {
         var QUIZ_DETAILS = "quiz_details"
     }
