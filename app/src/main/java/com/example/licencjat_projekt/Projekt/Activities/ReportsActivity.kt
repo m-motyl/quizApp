@@ -28,6 +28,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     private var userReports: Boolean = true
     private var othersReports: Boolean = false
+    private var searchString: String? = null
     private var quizesList = ArrayList<ReadReportModel>()
     private var offsetId = 0L
     private var quizesCount = 0L
@@ -39,21 +40,32 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         report_toolbar.setNavigationOnClickListener{
             onBackPressed()
         }
-        supportActionBar!!.title = "Raporty"
+        supportActionBar!!.title = ""
         report_firstPage.setOnClickListener(this)
         report_backPage.setOnClickListener(this)
         report_nextPage.setOnClickListener(this)
         report_lastPage.setOnClickListener(this)
         report_user_reports.setOnClickListener(this)
         report_others_reports.setOnClickListener(this)
+        report_btn_search.setOnClickListener(this)
 
         report_user_reports.setBackgroundColor(Color.RED)
-        firstFive()
-        quizesRecyclerView(quizesList)
+        //firstFive()
+        //quizesRecyclerView(quizesList)
     }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
+            R.id.report_btn_search -> {
+                searchString = report_et.text.toString()
+                if(searchString != null) {
+                    if(userReports){
+                        findUserReports(searchString!!)
+                    }else if(othersReports){
+                        findOthersReports(searchString!!)
+                    }
+                }
+            }
             R.id.report_user_reports -> {
                 if(!userReports) {
                     quizesList.clear()
@@ -215,5 +227,11 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     }*/
     companion object {
         var QUIZ_DETAILS = "quiz_details"
+    }
+    private fun findOthersReports(str: String){
+        //TODO(WITOLD) wyszukiwanie raportów po nazwie usera i tytule quizu
+    }
+    private fun findUserReports(str: String){
+        //TODO(WITOLD) wyszukiwanie raportów po tytule quizu
     }
 }

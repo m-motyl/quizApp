@@ -46,6 +46,33 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white"/>
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/report_et"
+                    android:layout_width="303dp"
+                    android:layout_height="43dp"
+                    android:hint="@string/main_search"
+                    android:inputType="text"
+                    android:textColor="@color/primary_text_color"
+                    android:textColorHint="@color/secondary_text_color"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/report_toolbar"
+                    app:layout_constraintStart_toStartOf="@+id/report_toolbar"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/report_btn_search"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="#00FFFFFF"
+                    android:padding="2dp"
+                    app:icon="@drawable/ic_baseline_search_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/report_et"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout

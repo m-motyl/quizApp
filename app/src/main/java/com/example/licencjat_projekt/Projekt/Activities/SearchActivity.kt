@@ -22,7 +22,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class SearchActivity : AppCompatActivity(), View.OnClickListener {
-    var searchString: String? = null
+    private var searchString: String? = null
     private var offsetId: Long = 0L
     private var quizesCount: Long = 0L
     private var searchCode: Boolean = false
