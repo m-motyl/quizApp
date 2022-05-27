@@ -5,6 +5,6 @@ import java.io.Serializable
 
 class ReadFriendInvitationModel(
     var fromUser: User?,
-    var toUser: LoadUserModel?,
+    var toUser: User?,
     var status: Int,
     ): Serializable

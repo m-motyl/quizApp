@@ -32,7 +32,7 @@ open class FriendInviteList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfFriendInvitations[position]
         if (holder is OwnViewHolder) {
-            holder.itemView.item_invite_name.text = ptr.fromUser
+            holder.itemView.item_invite_name.text = ptr.fromUser?.login.toString()
         }
 
         //passing which position was clicked on rv
