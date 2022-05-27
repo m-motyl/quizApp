@@ -20,6 +20,7 @@ import com.example.licencjat_projekt.Projekt.database.Questions
 import com.example.licencjat_projekt.Projekt.utils.DisplayQuestionsAnswers
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_questions_show.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -72,6 +73,15 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         getQuizScore()
         checkIfUserIsAuthor()
         showCorrectAnswers()
+        if(userIsAuthor){
+            questionsshow_toolbar_cl.visibility = View.VISIBLE
+            setSupportActionBar(questionsshow_toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            questionsshow_toolbar.setNavigationOnClickListener{
+                onBackPressed()
+            }
+            supportActionBar!!.title = ""
+        }
 
         question_display_btn_next.setOnClickListener(this)
         question_display_btn_back.setOnClickListener(this)

@@ -41,8 +41,6 @@ open class ReportsList(
         if(holder is OwnViewHolder){
             holder.itemView.reportitem_title.text = ptr.title
             holder.itemView.reportitem_image.setImageBitmap(byteArrayToBitmap(ptr.image))
-            holder.itemView.reportitem_description.text = ptr.description
-            holder.itemView.reportitem_invitation_code.text = ptr.invitation_code
         }
 
         //passing which position was clicked on rv

@@ -137,14 +137,14 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                             }else if (res == 1){
                                 Toast.makeText(
                                     this,
-                                    "Quiz powinien zawierać co najmniej dwa pytania!",
+                                    "Quiz powinien zawierać od 2 do 20 pytań!",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }else if (res == 2){
                                 Toast.makeText(
                                     this,
                                     "Każde pytanie powinno zawierać " +
-                                            "co najmniej dwie odpowiedzi!",
+                                            "od 2 do 10 odpowiedzi!",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }else if(res == 3){
@@ -602,13 +602,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun validateQuestions(): Int {
-        if(questionsList.size < 2){
+        if(questionsList.size < 2 || questionsList.size > 20){
             return 1
         }
 
         for (i in questionsList){
             var ansFlag = true
-            if (i.question_answers.size < 2){
+            if (i.question_answers.size < 2 || i.question_answers.size > 10){
                 return 2
             }
             for (j in i.question_answers){
