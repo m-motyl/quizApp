@@ -34,11 +34,11 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
     private var friendsList = ArrayList<LoadUserModel>()
     private lateinit var layoutColorInitial: Drawable
     private lateinit var friendsLinearLayout: LinearLayout
-    private var toast: Toast = Toast.makeText(
-        this,
-        "Zaprosiłeś użytkownika do quizu",
-        Toast.LENGTH_SHORT
-    )
+//    private var toast: Toast = Toast.makeText(
+//        this,
+//        "Zaprosiłeś użytkownika do quizu",
+//        Toast.LENGTH_SHORT
+//    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community)
@@ -83,11 +83,6 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
-        return true
-    }
-
     private fun exposeToQuizInvitationModel(invitatedUser: LoadUserModel) {
         var invitatedUserID = invitatedUser.id
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
@@ -118,7 +113,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             override fun onClick(position: Int, model: LoadUserModel) {
                 exposeToQuizInvitationModel(model)
                 sendInvitationtoDataBase()
-                toast.show()
+                //toast.show()
             }
         })
     }
