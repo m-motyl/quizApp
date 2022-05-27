@@ -9,6 +9,7 @@ import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
+import kotlinx.android.synthetic.main.item_quiz_message.view.*
 
 
 open class QuizInviteList(
@@ -33,7 +34,8 @@ open class QuizInviteList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfFriendInvitations[position]
         if (holder is OwnViewHolder) {
-            holder.itemView.item_invite_name.text = ptr.fromUser
+            holder.itemView.item_quiz_invite_quiz_name.text = ptr.quizID //TODO: (Witek) get quiz name from ID
+            holder.itemView.item_quiz_invite_name.text = ptr.fromUser.login
         }
 
         //passing which position was clicked on rv

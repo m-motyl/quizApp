@@ -80,6 +80,7 @@
     <string name="community_invite_msg_friends">Znajomi</string>
     <string name="community_invite_msg_quizes">Quizy</string>
     <string name="detail_quiz_invite">zaproś</string>
+    <string name="item_quiz_invite_from_text">od:</string>
 
 
 </resources>
