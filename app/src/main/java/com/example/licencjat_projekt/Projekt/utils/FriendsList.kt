@@ -1,6 +1,8 @@
 package com.example.licencjat_projekt.Projekt.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +36,7 @@ open class FriendsList(
         val ptr = listOfFriends[position]
         if (holder is OwnViewHolder) {
             holder.itemView.item_contact_name.text = ptr.login
-            //TODO: avatar
+            holder.itemView.item_contact_avatar.setImageBitmap(byteArrayToBitmap(ptr.profile_picture))
             //passing which position was clicked on rv
             //passing ptr
             holder.itemView.setOnClickListener {
@@ -55,5 +57,8 @@ open class FriendsList(
 
     interface OnClickListener {
         fun onClick(position: Int, model: LoadUserModel)
+    }
+    fun byteArrayToBitmap(data: ByteArray): Bitmap {
+        return BitmapFactory.decodeByteArray(data, 0, data.size)
     }
 }
