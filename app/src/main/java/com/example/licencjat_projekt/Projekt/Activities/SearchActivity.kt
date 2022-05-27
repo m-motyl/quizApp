@@ -38,7 +38,6 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         supportActionBar!!.title = ""
-
         search_firstPage.setOnClickListener(this)
         search_backPage.setOnClickListener(this)
         search_nextPage.setOnClickListener(this)
@@ -51,7 +50,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.search_btn_search -> {
                 searchString = search_et.text.toString()
-                if (searchString != null) {
+                if (searchString!!.isNotEmpty()) {
                     firstFive(searchString!!)
                     getQuizesNumber(searchString!!)
                     quizesRecyclerView(quizesList)
@@ -62,7 +61,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.search_firstPage -> {
-                if (searchString != null) {
+                if (searchString!!.isNotEmpty()) {
                     if(offsetId != 0L) {
                         firstFive(searchString!!)
                         quizesRecyclerView(quizesList)
@@ -71,7 +70,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.search_backPage -> {
-                if (searchString != null) {
+                if (searchString!!.isNotEmpty()) {
                     if(offsetId >= 5L) {
                         prevFive(searchString!!)
                         quizesRecyclerView(quizesList)
@@ -80,7 +79,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.search_nextPage -> {
-                if (searchString != null) {
+                if (searchString!!.isNotEmpty()) {
                     if(offsetId + 5 <= quizesCount) {
                         nextFive(searchString!!)
                         quizesRecyclerView(quizesList)
@@ -89,7 +88,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.search_lastPage -> {
-                if (searchString != null) {
+                if (searchString!!.isNotEmpty()) {
                     if(offsetId + 5 < quizesCount) {
                         lastFive(searchString!!)
                         quizesRecyclerView(quizesList)
@@ -109,7 +108,8 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list =
-                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and
+                                (Quizes.private eq false) }
                             .limit(5)
                             .toList()
                     if (list.isNotEmpty())
@@ -174,13 +174,15 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                     var list = emptyList<Quiz>()
                     if (quizesCount.mod(5) != 0) {
                         list =
-                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and
+                                    (Quizes.private eq false) }
                                 .orderBy(Quizes.id to SortOrder.DESC)
                                 .limit((quizesCount.mod(5)))
                                 .toList()
                     } else {
                         list =
-                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
+                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and
+                                    (Quizes.private eq false) }
                                 .orderBy(Quizes.id to SortOrder.DESC)
                                 .limit(5)
                                 .toList()
