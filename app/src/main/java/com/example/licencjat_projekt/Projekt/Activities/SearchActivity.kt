@@ -99,7 +99,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun firstFive(str: String) {
+    private fun firstFive(str: String) { //TODO (WITOLD) albo wywalić tagi albo zrobić wyszukiwanie z tagami
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
