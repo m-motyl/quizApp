@@ -7,4 +7,5 @@ class ReadQuizInvitationModel(
     var toUser: String,
     var isAccepted: Boolean,
     var quizID: String,
+    var quizCode: String,
     ): Serializable

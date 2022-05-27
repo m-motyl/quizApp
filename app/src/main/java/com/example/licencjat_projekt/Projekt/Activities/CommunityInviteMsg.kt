@@ -67,7 +67,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    //:TODO(Witek) zrobić FriendInvitation tabele, ReadQuizInvitationModel jest tylko trzeba go edytować
+    //:TODO(Witek) zrobić QuziInvitation i dać tam kod quizu i id chyba
 //    private fun exposedToQuizInvitationModel(list: List<QuizInvitation>) {
 //        for (i in list) {
 //            quizInvitesList.add(
@@ -75,7 +75,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 //                    i.from,
 //                    i.to,
 //                    i.status,
-//                    i.quiz_id
+//                    i.quizID,
+//                    i.quizCode
 //                )
 //            )
 //        }

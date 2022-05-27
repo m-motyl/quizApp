@@ -15,6 +15,7 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         var QUESTION_DETAILS = "question_details"
+        var QUIZ_DETAILS = "quiz_details"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +70,13 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
                 intent.putExtra(QUESTION_DETAILS, quizDetails)
                 startActivity(intent)
                 finish()
+            }
+            R.id.detail_quiz_invite_btn -> {
+                val intent = Intent(this,
+                CommunityQuizInviteActivity::class.java
+                )
+                intent.putExtra(QUIZ_DETAILS, quizDetails)
+                startActivity(intent)
             }
         }
     }

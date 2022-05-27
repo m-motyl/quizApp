@@ -21,11 +21,22 @@
             android:background="@color/purple_05"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:titleTextColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white" />
+            app:navigationIcon="@drawable/ic_baseline_arrow_back_24_white"
+            app:titleTextColor="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/detail_quiz_invite_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/detail_quiz_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:icon="@drawable/ic_baseline_add_24"
+            android:background="@color/translucent"
+            android:text="@string/detail_quiz_invite"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -147,6 +158,7 @@
             android:textStyle="bold" />
 
     </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -155,44 +167,43 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/detail_quiz_description"
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
-            android:textSize="20sp"/>
+            android:text="@string/detail_quiz_description"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/detail_quiz_description"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_margin="20dp"
-            android:padding="5dp"
             android:background="#B8B8B8"
-            />
+            android:padding="5dp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/detail_quiz_tags"
             android:layout_marginStart="15dp"
-            android:textSize="15sp"/>
+            android:text="@string/detail_quiz_tags"
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/detail_quiz_tags"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_margin="20dp"
-            android:padding="5dp"
             android:background="#B8B8B8"
-            />
+            android:padding="5dp" />
 
         <Button
             android:id="@+id/question_get_started"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal"
             android:backgroundTint="@color/purple_05"
-            android:text="@string/detail_quiz_participate"
-            android:layout_gravity="center_horizontal"/>
+            android:text="@string/detail_quiz_participate" />
     </LinearLayout>
-
 
 
 </LinearLayout>
