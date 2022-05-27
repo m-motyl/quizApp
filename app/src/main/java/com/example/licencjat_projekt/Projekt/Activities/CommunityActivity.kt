@@ -189,10 +189,13 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     ProfileActivityAdd::class.java
                 )
 
-                intent.putExtra("profile", model)
+                intent.putExtra(PROFILE_DETAILS, model)
                 startActivity(intent)
             }
         })
+    }
+    companion object {
+        var PROFILE_DETAILS = "profile_details"
     }
 
 }

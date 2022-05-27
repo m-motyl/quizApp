@@ -4,14 +4,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
-import com.example.licencjat_projekt.Projekt.database.User
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
 
 class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private var invitationModel: ReadFriendInvitationModel? = null
-    private var visitingUserString: String? = null
+    private var visitatedUser: LoadUserModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_add)
@@ -21,20 +22,21 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
 
-        if (intent.getStringExtra("profil") != null){
-            visitingUserString = intent.getStringExtra("profil")
+        if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
+            visitatedUser = intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS) as LoadUserModel
         }
 
         supportActionBar!!.title = "Profil"
     }
 
-    //:TODO (WITEK) edytować i dopasować pola w ReadFriendInvitationModel dane zapraszającego usera masz w visitingUserString
-    private fun exposeToInvitationModel(){
-        invitationModel = ReadFriendInvitationModel(
-            fromUser = "from",
-            toUser = "to",
-            isAccepted = false
-        )
+    private fun exposeToInvitationModel() {
+        if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
+            invitationModel = ReadFriendInvitationModel(
+                status = 0,
+                fromUser = currentUser,
+                toUser = visitatedUser,
+            )
+        }
     }
 
     //:TODO (WITEK) wysłać invitationModel do bazy

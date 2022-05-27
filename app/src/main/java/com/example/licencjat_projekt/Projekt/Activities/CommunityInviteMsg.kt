@@ -1,7 +1,5 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -9,19 +7,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
-import com.example.licencjat_projekt.Projekt.database.Friend
-import com.example.licencjat_projekt.Projekt.database.Friends
 import com.example.licencjat_projekt.Projekt.utils.FriendInviteList
-import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
-import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.android.synthetic.main.activity_community_invite_msg.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private var friendInvitesList = ArrayList<ReadFriendInvitationModel>()
