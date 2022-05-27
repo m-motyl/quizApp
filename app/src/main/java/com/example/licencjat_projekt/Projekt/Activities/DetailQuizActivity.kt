@@ -46,6 +46,7 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
             detail_quiz_timer.text = quizDetails!!.time_limit.toString() + " minut(y)"
         }
         question_get_started.setOnClickListener(this)
+        detail_quiz_invite_btn.setOnClickListener(this)
         detail_quiz_author_name.text = getAuthorName()
         detail_quiz_number_questions.text = getNOQuestions()
     }
