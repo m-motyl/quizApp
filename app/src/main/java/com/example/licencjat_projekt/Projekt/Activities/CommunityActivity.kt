@@ -87,24 +87,23 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             Log.e("", i.creation_time)
         }
     }
-//:TODO (WITEK) odkomentuj i zobaczysz o co chodzi
 
-//    private fun exposedToUserModel(l: List<User>){
-//        for (i in l) {
-//            usersList.add(
-//                LoadUserModel(
-//                    id = i.to.id.value,
-//                    login = i.to.login,
-//                    profile_picture = i.to.profile_picture!!.bytes,
-//                    creation_time = i.to.creation_time.toString()
-//                )
-//            )
-//        }
-//        for (i in usersList) {
-//            Log.e("", i.login)
-//            Log.e("", i.creation_time)
-//        }
-//    }
+    private fun exposedToUserModel(l: List<Friend>) {
+        for (i in l) {
+            usersList.add(
+                LoadUserModel(
+                    id = i.to.id.value,
+                    login = i.to.login,
+                    profile_picture = i.to.profile_picture!!.bytes,
+                    creation_time = i.to.creation_time.toString()
+                )
+            )
+        }
+        for (i in usersList) {
+            Log.e("", i.login)
+            Log.e("", i.creation_time)
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.community_toolbar_menu, menu)
