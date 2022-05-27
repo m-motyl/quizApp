@@ -67,7 +67,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    //:TODO(Witek) zrobić QuziInvitation i dać tam kod quizu i id chyba
+    //:TODO(Witek) zrobić QuziInvitation i dać tam kod quizu i id chyba -- jest w bazie i masz juz funkcje ktora dodaje
 //    private fun exposedToQuizInvitationModel(list: List<QuizInvitation>) {
 //        for (i in list) {
 //            quizInvitesList.add(

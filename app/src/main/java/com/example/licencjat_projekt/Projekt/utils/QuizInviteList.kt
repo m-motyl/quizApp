@@ -7,9 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
+import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.item_quiz_message.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 
 open class QuizInviteList(
@@ -46,7 +50,11 @@ open class QuizInviteList(
             }
         }
     }
-
+    private fun getQuizNamexd(quizID:Int)= runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            Quiz.findById(quizID)
+        }
+    }
     override fun getItemCount(): Int {
         return listOfFriendInvitations.size
     }

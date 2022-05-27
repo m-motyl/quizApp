@@ -32,7 +32,7 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private fun exposeToInvitationModel() {
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
             var visitatedUserID = visitatedUser?.id
-            //TODO: (WITEK) get user from id
+            //TODO: (WITEK) get user from id -- ??? exposeToInvitationModel
 //            invitationModel = ReadFriendInvitationModel(
 //                status = 0,
 //                fromUser = currentUser,

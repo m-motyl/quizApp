@@ -25,7 +25,10 @@ import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.lowerCase
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 
@@ -63,12 +66,33 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 exposedToFriendModel(list)
         }
     }
-    //:TODO (WITOLD) pobierać z bazy userów o podobnym lub pasującym loginie/nicku
-    private fun getLikeUsers(){
-        usersList.clear()
-        searchUserString = searchUserString!!.lowercase()
-        //exposedToUserModel(list)
-        return
+
+    private fun getLikeUsers() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+                .toList()
+            val xd = list.map { it.to.id }
+            val x =
+                User.find { (Users.login like "$searchUserString%") and (Users.id notInList xd) and (Users.id neq currentUser!!.id) }
+                    .toList()
+            for (i in x) {
+                Log.e("", i.login)
+            }
+            exposedToFriendModel2(x)
+        }
+    }
+
+    private fun exposedToFriendModel2(l: List<User>) {
+        for (i in l) {
+            friendsList.add(
+                LoadUserModel(
+                    id = i.id.value,
+                    login = i.login,
+                    profile_picture = i.profile_picture!!.bytes,
+                    creation_time = i.creation_time.toString()
+                )
+            )
+        }
     }
 
     private fun exposedToFriendModel(l: List<Friend>) {
@@ -120,9 +144,9 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     View.VISIBLE
                 }
             community_own_friends_linear.background =
-                if(community_own_friends_linear.background != layoutColorInitial){
+                if (community_own_friends_linear.background != layoutColorInitial) {
                     layoutColorInitial
-                }else{
+                } else {
                     ColorDrawable(ContextCompat.getColor(this, R.color.gray_tint))
                 }
             return true
@@ -146,7 +170,9 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.community_search_btn -> {
                 searchUserString = search_et.text.toString()
-                if (searchUserString != null){
+                if (searchUserString != null) {
+                    usersList.clear()
+                    searchUserString = searchUserString!!.lowercase()
                     getLikeUsers()
                     usersRecyclerView(usersList)
                 }
@@ -193,6 +219,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
+
     companion object {
         var PROFILE_DETAILS = "profile_details"
     }

@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.LocalDateTime
 
 
 class CommunityQuizInviteActivity : AppCompatActivity() {
@@ -34,7 +35,8 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
     private var friendsList = ArrayList<LoadUserModel>()
     private lateinit var layoutColorInitial: Drawable
     private lateinit var friendsLinearLayout: LinearLayout
-//    private var toast: Toast = Toast.makeText(
+
+    //    private var toast: Toast = Toast.makeText(
 //        this,
 //        "Zaprosiłeś użytkownika do quizu",
 //        Toast.LENGTH_SHORT
@@ -49,7 +51,8 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
 
         if (intent.hasExtra(DetailQuizActivity.QUIZ_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(DetailQuizActivity.QUIZ_DETAILS) as ReadQuizModel
+            quizDetails =
+                intent.getSerializableExtra(DetailQuizActivity.QUIZ_DETAILS) as ReadQuizModel
         }
 
         getAllFriends()
@@ -86,7 +89,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
     private fun exposeToQuizInvitationModel(invitatedUser: LoadUserModel) {
         var invitatedUserID = invitatedUser.id
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
-            //TODO: (WITEK) get user from id
+            //TODO: (WITEK) get user from id -- ze co exposeToQuizInvitationModel
 //            quizInvitation = ReadQuizInvitationModel(
 //                status = 0,
 //                fromUser = currentUser,
@@ -96,9 +99,17 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 //            )
         }
     }
-//:TODO(Witek) wysłać zaproszenie do bazy
-    private fun sendInvitationtoDataBase(){
-        quizInvitation
+
+    private fun sendInvitationtoDataBase(userId: Int, quizId : Int) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            QuizInvitation.new {
+                status = 0
+                from = currentUser!!
+                to = User.findById(userId)!!
+                quiz = Quiz.findById(quizId)!!
+                time_sent = LocalDateTime.now()
+            }
+        }
     }
 
 
@@ -112,7 +123,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 
             override fun onClick(position: Int, model: LoadUserModel) {
                 exposeToQuizInvitationModel(model)
-                sendInvitationtoDataBase()
+                sendInvitationtoDataBase(quizInvitation!!.fromUser.id.value, quizInvitation!!.quizID.toInt())
                 //toast.show()
             }
         })
