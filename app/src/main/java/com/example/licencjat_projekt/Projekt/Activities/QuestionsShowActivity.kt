@@ -281,7 +281,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             userScore += i.question_pts * ((correct / wrong)/ allCorrect)
         }
     }
-    private fun checkIfUserIsAuthor(){ //TODO: (WITOLD) napraf
+    private fun checkIfUserIsAuthor(){
         userIsAuthor = (quizDetails!!.author == currentUser!!.login)
     }
 

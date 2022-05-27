@@ -13,6 +13,8 @@ import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.*
+import com.example.licencjat_projekt.Projekt.database.Quiz
+import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -20,11 +22,14 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_quiz_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
-    private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
     private var isPrivate: Boolean = false
     private lateinit var invitation_code: String
@@ -41,7 +46,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz_main)
 
-        quizmain_toolbar.setNavigationOnClickListener{
+        quizmain_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
         quizmain_start_creating.setOnClickListener(this)
@@ -50,8 +55,8 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        when(v!!.id){
-            R.id.quizmain_start_creating ->{
+        when (v!!.id) {
+            R.id.quizmain_start_creating -> {
                 when {
                     quizmain_title.text.isNullOrEmpty() -> {
                         Toast.makeText(
@@ -133,8 +138,10 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     else -> {
 
-                        invitation_code = generateInvitationCode() //TODO: (WITOLD) check if
-                                                                    // not in db
+                        invitation_code = generateInvitationCode()
+                        while(checkIfInvitationCodeExists()){
+                            invitation_code = generateInvitationCode()
+                        }
 
                         quizModel = CreateQuizModel(
                             quizmain_title.text.toString(),
@@ -152,7 +159,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             QuestionsActivity::class.java
                         )
 
-                        if(quizModel != null) {
+                        if (quizModel != null) {
                             intent.putExtra(
                                 QUIZ_DETAILS,
                                 quizModel
@@ -176,14 +183,24 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    private fun generateInvitationCode(): String{
+
+    private fun checkIfInvitationCodeExists(): Boolean {
+        return runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                return@newSuspendedTransaction Quiz.find { Quizes.invitation_code eq invitation_code }
+                    .toList().isNotEmpty()
+            }
+        }
+    }
+
+    private fun generateInvitationCode(): String {
         var codeLen = 6
         return ((1..codeLen)
-            .map{i->kotlin.random.Random.nextInt(0, charPool.size)}
+            .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
             .map(charPool::get).joinToString(""))
     }
 
-    private fun chooseImageFromGalery(){
+    private fun chooseImageFromGalery() {
         Dexter.withContext(this)
             .withPermissions(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -214,6 +231,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }).onSameThread().check()
     }
+
     private fun permissionDeniedDialog() {
         AlertDialog.Builder(this).setMessage("Brak uprawnień")
             .setPositiveButton("Przejdz do USTAWIEŃ")
@@ -223,7 +241,8 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                     val uri = Uri.fromParts(
                         "package",
                         packageName,
-                        null)
+                        null
+                    )
                     intent.data = uri
                     startActivity(intent)
                 } catch (e: ActivityNotFoundException) {
@@ -234,6 +253,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                 dialog.dismiss()
             }.show()
     }
+
     public override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
@@ -269,9 +289,10 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
     private fun saveImageByteArray(
         bitmap: Bitmap
-    ): ByteArray{
+    ): ByteArray {
         val stream = ByteArrayOutputStream()
         bitmap.compress(
             Bitmap.CompressFormat.JPEG,

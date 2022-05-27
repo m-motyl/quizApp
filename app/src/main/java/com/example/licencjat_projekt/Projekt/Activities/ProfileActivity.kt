@@ -7,9 +7,14 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.View
+import com.example.licencjat_projekt.Projekt.database.QuizeResult
+import com.example.licencjat_projekt.Projekt.database.QuizeResults
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class ProfileActivity : AppCompatActivity(), View.OnClickListener{
 
@@ -57,8 +62,11 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             data.size
         )
     }
-    private fun userQuizTaken() : String{ //TODO: (WITOLD) liczba rozwiazanych quizów
-        var noQT = 0
-        return noQT.toString()
+    private fun userQuizTaken() : String{
+        return runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO){
+                return@newSuspendedTransaction QuizeResult.find{QuizeResults.by eq currentUser!!.id}.count().toString()
+            }
+        }
     }
 }

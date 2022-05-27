@@ -598,15 +598,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
-        addTagsDB(q.tags.split(" ").toTypedArray())
         finish()
     }
 
-    private fun addTagsDB(t: Array<String>) = runBlocking { //TODO: (WITOLD) ??
-        newSuspendedTransaction(Dispatchers.IO) {
-
-        }
-    }
     private fun validateQuestions(): Int {
         if(questionsList.size < 2){
             return 1

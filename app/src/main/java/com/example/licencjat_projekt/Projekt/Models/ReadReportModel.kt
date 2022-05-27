@@ -2,7 +2,7 @@ package com.example.licencjat_projekt.Projekt.Models
 
 import java.io.Serializable
 
-data class ReadReportModel( //TODO (WITOLD) nie wiem czy wszystko jest co potrzebne
+data class ReadReportModel(
     var id: Int,
     var title: String,
     var time_limit: Int,

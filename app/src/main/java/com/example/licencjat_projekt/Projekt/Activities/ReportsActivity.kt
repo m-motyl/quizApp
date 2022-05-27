@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_reports.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.and
@@ -36,7 +37,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_reports)
         setSupportActionBar(report_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        report_toolbar.setNavigationOnClickListener{
+        report_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
         supportActionBar!!.title = "Raporty"
@@ -55,7 +56,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.report_user_reports -> {
-                if(!userReports) {
+                if (!userReports) {
                     quizesList.clear()
                     quizesRecyclerView(quizesList)
                     userReports = true
@@ -69,7 +70,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             R.id.report_others_reports -> {
-                if(!othersReports) {
+                if (!othersReports) {
                     quizesList.clear()
                     quizesRecyclerView(quizesList)
                     othersReports = true
@@ -100,47 +101,142 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    //TODO: (WITOLD) reports display
-    private fun firstFive(){
+
+
+    private fun firstFive() {
         this.offsetId = 0L
-        if(userReports){
-            //quizesList = raporty z quizow rozwiazanych przez usera
-            /*runBlocking {
+        if (userReports) {
+            runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val query = Quizes.innerJoin(QuizeResults).slice(Quizes.columns).select {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
                         QuizeResults.by eq currentUser!!.id
-                    }.limit(5).withDistinct()
-                    val x = Quiz.wrapRows(query).toList()
-                    if(x.isNotEmpty())
+                    }.limit(5)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
                         exposedToModel(x)
                 }
-            }*/
+            }
         }
-        if(othersReports){
-            //quizesList = raporty z quizów usera rozwiązanych przez innych
-            /*runBlocking {
+        if (othersReports) {
+            runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val query = Quizes.innerJoin(QuizeResults).slice(Quizes.columns).select {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
                         Quizes.user eq currentUser!!.id
-                    }.limit(5).withDistinct()
-                    val x = Quiz.wrapRows(query).toList()
-                    if(x.isNotEmpty())
+                    }.limit(5)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
                         exposedToModel(x)
                 }
-            }*/
+            }
         }
 
 
     }
-    private fun prevFive(){
+
+    private fun nextFive() {
+        this.offsetId += 5L
+        if (userReports) {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
+                    }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId -= 5L
+                }
+            }
+        }
+        if (othersReports) {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        Quizes.user eq currentUser!!.id
+                    }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId -= 5L
+                }
+            }
+        }
+
 
     }
-    private fun nextFive(){
+
+    private fun prevFive() {
+        this.offsetId -= 5L
+        if (userReports) {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
+                    }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId += 5L
+                }
+            }
+        }
+        if (othersReports) {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        Quizes.user eq currentUser!!.id
+                    }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId += 5L
+                }
+            }
+        }
+
 
     }
-    private fun lastFive(){
+
+    private fun lastFive() {
+        if (quizesCount.mod(5) != 0) {
+            this.offsetId = quizesCount - quizesCount.mod(5)
+        } else {
+            this.offsetId = quizesCount - 5
+        }
+        if (userReports) {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
+                    }.orderBy(QuizeResults.id to SortOrder.DESC)
+                        .limit((quizesCount.mod(5)))
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                }
+            }
+        }
+        if (othersReports) {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        Quizes.user eq currentUser!!.id
+                    }.orderBy(QuizeResults.id to SortOrder.DESC)
+                        .limit((quizesCount.mod(5)))
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                }
+            }
+        }
+
 
     }
+
     //TODO (M) powinno działać?
     private fun quizesRecyclerView(quizes: ArrayList<ReadReportModel>) {
 
@@ -164,6 +260,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
+
     private fun getQuizTags(q: Quiz): String {
         val tmp = runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
@@ -189,30 +286,30 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         }
         quizesCount = n
     }
-/*
-    private fun exposedToModel(list: List<Quiz>) {
 
-        val quizesArrayList = ArrayList<ReadQuizModel>()
+    private fun exposedToModel(list: List<QuizeResult>) {
+
+        val quizesArrayList = ArrayList<ReadReportModel>()
         for (i in list) {
-            getQuizTags(i)
             quizesArrayList.add(
-                ReadQuizModel(
-                    i.id.value,
-                    i.title,
-                    i.time_limit,
-                    i.description,
-                    getQuizTags(i),
-                    i.gz_text,
-                    i.private,
-                    i.invitation_code,
-                    i.image.bytes,
-                    i.user.login,
-                    i.questions,
+                ReadReportModel(
+                    id = i.quiz.id.value,
+                    title = i.quiz.title,
+                    time_limit = i.quiz.time_limit,
+                    description = i.quiz.description,
+                    tags = getQuizTags(i.quiz),
+                    invitation_code = i.quiz.invitation_code,
+                    image = i.quiz.image.bytes,
+                    author = i.quiz.user.login,
+                    no_questions = i.quiz.questions,
+                    points = i.points, //todo ew latwo dolozyc jeszcze max, wczytuje uzyskane
+                    by = i.by.id.value,
                 )
             )
         }
         quizesList = quizesArrayList
-    }*/
+    }
+
     companion object {
         var QUIZ_DETAILS = "quiz_details"
     }
