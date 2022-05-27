@@ -51,6 +51,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         report_btn_search.setOnClickListener(this)
 
         report_user_reports.setBackgroundColor(Color.RED)
+        getQuizesNumber()
         //firstFive()
         //quizesRecyclerView(quizesList)
     }
@@ -59,10 +60,10 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.report_btn_search -> {
                 searchString = report_et.text.toString()
-                if(searchString != null) {
-                    if(userReports){
+                if (searchString != null) {
+                    if (userReports) {
                         findUserReports(searchString!!)
-                    }else if(othersReports){
+                    } else if (othersReports) {
                         findOthersReports(searchString!!)
                     }
                 }
@@ -74,6 +75,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     userReports = true
                     othersReports = false
 
+                    offsetId = 0L
                     firstFive()
                     quizesRecyclerView(quizesList)
 
@@ -88,6 +90,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     othersReports = true
                     userReports = false
 
+                    offsetId = 0L
                     firstFive()
                     quizesRecyclerView(quizesList)
 
@@ -96,18 +99,22 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             R.id.report_firstPage -> {
+                getQuizesNumber()
                 firstFive()
                 quizesRecyclerView(quizesList)
             }
             R.id.report_backPage -> {
+                getQuizesNumber()
                 prevFive()
                 quizesRecyclerView(quizesList)
             }
             R.id.report_nextPage -> {
+                getQuizesNumber()
                 nextFive()
                 quizesRecyclerView(quizesList)
             }
             R.id.report_lastPage -> {
+                getQuizesNumber()
                 lastFive()
                 quizesRecyclerView(quizesList)
             }
@@ -289,14 +296,28 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         return xd
     }
 
-    private fun getQuizesNumber(str: String) {
-        val n = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
-                    .count()
+    private fun getQuizesNumber() {
+        if (userReports) {
+            quizesCount = runBlocking {
+                return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
+                    }
+                    QuizeResult.wrapRows(query).count()
+                }
             }
         }
-        quizesCount = n
+        if (othersReports) {
+            quizesCount = runBlocking {
+                return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        Quizes.user eq currentUser!!.id
+                    }
+                    QuizeResult.wrapRows(query).count()
+                }
+            }
+        }
+
     }
 
     private fun exposedToModel(list: List<QuizeResult>) {
@@ -314,8 +335,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     image = i.quiz.image.bytes,
                     author = i.quiz.user.login,
                     no_questions = i.quiz.questions,
-                    points = i.points, //todo ew latwo dolozyc jeszcze max, wczytuje uzyskane
+                    points = i.points,
                     by = i.by.id.value,
+                    max_points = i.quiz.max_points
                 )
             )
         }

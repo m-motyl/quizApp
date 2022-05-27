@@ -13,5 +13,6 @@ data class ReadReportModel(
     var author:String,
     var no_questions: Int,
     var points: Double,
-    var by: Int
+    var by: Int,
+    var max_points: Int
 ): Serializable
