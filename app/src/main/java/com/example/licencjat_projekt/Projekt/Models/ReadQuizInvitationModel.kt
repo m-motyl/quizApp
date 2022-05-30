@@ -8,6 +8,5 @@ class ReadQuizInvitationModel(
     var fromUser: EntityID<Int>,
     var toUser: EntityID<Int>,
     var status: Int,
-    var quizID: Int,
-    var quizCode: String,
+    var quizID: EntityID<Int>,
     ): Serializable

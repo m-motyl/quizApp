@@ -40,7 +40,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
         getAllFriendInvitations()
         friendInvitesRecyclerView(friendInvitesList)
-        //quizInvitesRecyclerView(quizInvitesList)
+        quizInvitesRecyclerView(quizInvitesList)
     }
 
         //:TODO (WITEK) zaprszenie dostaje osoba która wysłała a nie która powinna otrzymać
@@ -59,7 +59,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 //        newSuspendedTransaction(Dispatchers.IO) {
 //            val list = QuizInvitation.all.get()
 //            if (list.isNotEmpty())
-//                exposedToFriendInvitationModel(list)
+//                exposedToQuizInvitationModel(list)
 //        }
 //    }
 
@@ -75,20 +75,18 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    //:TODO(Witek) zrobić QuziInvitation i dać tam kod quizu i id chyba -- jest w bazie i masz juz funkcje ktora dodaje
-//    private fun exposedToQuizInvitationModel(list: List<QuizInvitation>) {
-//        for (i in list) {
-//            quizInvitesList.add(
-//                ReadQuizInvitationModel(
-//                    i.from,
-//                    i.to,
-//                    i.status,
-//                    i.quizID,
-//                    i.quizCode
-//                )
-//            )
-//        }
-//    }
+    private fun exposedToQuizInvitationModel(list: List<QuizInvitation>) {
+        for (i in list) {
+            quizInvitesList.add(
+                ReadQuizInvitationModel(
+                    i.from.id,
+                    i.to.id,
+                    i.status,
+                    i.quiz.id,
+                )
+            )
+        }
+    }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
