@@ -43,6 +43,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         //quizInvitesRecyclerView(quizInvitesList)
     }
 
+        //:TODO (WITEK) zaprszenie dostaje osoba która wysłała a nie która powinna otrzymać
     private fun getAllFriendInvitations() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 0) }
