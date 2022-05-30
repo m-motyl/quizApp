@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.quiz_item.view.*
 import kotlinx.android.synthetic.main.quiz_item.view.quizitem_title
 import kotlinx.android.synthetic.main.report_item.view.*
 
-open class ReportsList(
+open class CurrentUserReportsList(
     private val context: Context,
     private var listOfQuizes: ArrayList<ReadReportModel>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
@@ -46,7 +46,7 @@ open class ReportsList(
                 holder.itemView.reportitem_user_score.text = ptr.points.toString()
             }
             holder.itemView.reportitem_quiz_score.text = "/" + ptr.max_points.toString() + ".0"
-            holder.itemView.reportitem_user.text = ptr.author
+            holder.itemView.reportitem_user.text = getUserById(ptr.by)
             holder.itemView.reportitem_image.setImageBitmap(byteArrayToBitmap(ptr.image))
         }
 
@@ -79,5 +79,8 @@ open class ReportsList(
             0,
             data.size
         )
+    }
+    private fun getUserById(id: Int): String{ //TODO: witold
+        return "kto rozwiazal"
     }
 }

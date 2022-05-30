@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.Models.ReadReportModel
 import com.example.licencjat_projekt.Projekt.database.*
+import com.example.licencjat_projekt.Projekt.utils.CurrentUserReportsList
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
 import com.example.licencjat_projekt.Projekt.utils.ReportsList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
@@ -27,7 +28,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class ReportsActivity : AppCompatActivity(), View.OnClickListener {
-    private var userReports: Boolean = true
+    //private var userReports: Boolean = true
     private var othersReports: Boolean = false
     private var searchString: String? = null
     private var quizesList = ArrayList<ReadReportModel>()
@@ -52,8 +53,8 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
         report_user_reports.setBackgroundColor(Color.RED)
         getQuizesNumber()
-        //firstFive()
-        //quizesRecyclerView(quizesList)
+        firstFive()
+        quizesRecyclerView(quizesList)
     }
 
     override fun onClick(v: View?) {
@@ -61,18 +62,20 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             R.id.report_btn_search -> {
                 searchString = report_et.text.toString()
                 if (searchString != null) {
-                    if (userReports) {
+                    /*if (userReports) {
                         findUserReports(searchString!!)
-                    } else if (othersReports) {
+                    } else */if (othersReports) {
                         findOthersReports(searchString!!)
+                    }else{
+                        findUserReports(searchString!!)
                     }
                 }
             }
             R.id.report_user_reports -> {
-                if (!userReports) {
+                if (othersReports) {
                     quizesList.clear()
                     quizesRecyclerView(quizesList)
-                    userReports = true
+                    //userReports = true
                     othersReports = false
 
                     offsetId = 0L
@@ -88,11 +91,11 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     quizesList.clear()
                     quizesRecyclerView(quizesList)
                     othersReports = true
-                    userReports = false
+                    //userReports = false
 
                     offsetId = 0L
                     firstFive()
-                    quizesRecyclerView(quizesList)
+                    userQuizesRecyclerView(quizesList)
 
                     report_user_reports.setBackgroundColor(Color.GRAY)
                     report_others_reports.setBackgroundColor(Color.RED)
@@ -101,22 +104,38 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             R.id.report_firstPage -> {
                 getQuizesNumber()
                 firstFive()
-                quizesRecyclerView(quizesList)
+                if(othersReports){
+                    userQuizesRecyclerView(quizesList)
+                }else {
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.report_backPage -> {
                 getQuizesNumber()
                 prevFive()
-                quizesRecyclerView(quizesList)
+                if(othersReports){
+                    userQuizesRecyclerView(quizesList)
+                }else {
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.report_nextPage -> {
                 getQuizesNumber()
                 nextFive()
-                quizesRecyclerView(quizesList)
+                if(othersReports){
+                    userQuizesRecyclerView(quizesList)
+                }else {
+                    quizesRecyclerView(quizesList)
+                }
             }
             R.id.report_lastPage -> {
                 getQuizesNumber()
                 lastFive()
-                quizesRecyclerView(quizesList)
+                if(othersReports){
+                    userQuizesRecyclerView(quizesList)
+                }else {
+                    quizesRecyclerView(quizesList)
+                }
             }
         }
     }
@@ -124,7 +143,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun firstFive() {
         this.offsetId = 0L
-        if (userReports) {
+        /*if (userReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
@@ -135,12 +154,25 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         exposedToModel(x)
                 }
             }
-        }
+        }*/
         if (othersReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
                         Quizes.user eq currentUser!!.id
+                    }.limit(5)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                }
+            }
+        }
+        else
+        {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
                     }.limit(5)
                     val x = QuizeResult.wrapRows(query).toList()
                     if (x.isNotEmpty())
@@ -154,7 +186,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun nextFive() {
         this.offsetId += 5L
-        if (userReports) {
+        /*if (userReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
@@ -167,12 +199,27 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         offsetId -= 5L
                 }
             }
-        }
+        }*/
         if (othersReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
                         Quizes.user eq currentUser!!.id
+                    }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId -= 5L
+                }
+            }
+        }
+        else
+        {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
                     }.limit(5, offsetId)
                     val x = QuizeResult.wrapRows(query).toList()
                     if (x.isNotEmpty())
@@ -188,7 +235,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun prevFive() {
         this.offsetId -= 5L
-        if (userReports) {
+        /*if (userReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
@@ -201,12 +248,27 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         offsetId += 5L
                 }
             }
-        }
+        }*/
         if (othersReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
                         Quizes.user eq currentUser!!.id
+                    }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId += 5L
+                }
+            }
+        }
+        else
+        {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
                     }.limit(5, offsetId)
                     val x = QuizeResult.wrapRows(query).toList()
                     if (x.isNotEmpty())
@@ -226,7 +288,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             this.offsetId = quizesCount - 5
         }
-        if (userReports) {
+        /*if (userReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
@@ -238,7 +300,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         exposedToModel(x)
                 }
             }
-        }
+        }*/
         if (othersReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
@@ -252,11 +314,24 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+        else
+        {
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
+                    }.orderBy(QuizeResults.id to SortOrder.DESC)
+                        .limit((quizesCount.mod(5)))
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                }
+            }
+        }
 
 
     }
 
-    //TODO (M) powinno działać?
     private fun quizesRecyclerView(quizes: ArrayList<ReadReportModel>) {
 
         report_rv_quizes.layoutManager = LinearLayoutManager(this)
@@ -268,7 +343,30 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             override fun onClick(position: Int, model: ReadReportModel) {
                 val intent = Intent(
                     this@ReportsActivity,
-                    DetailQuizActivity::class.java
+                    DetailReportActivity::class.java
+                )
+
+                intent.putExtra( //passing object to activity
+                    QUIZ_DETAILS,
+                    model
+                )
+                startActivity(intent)
+            }
+        })
+    }
+
+    private fun userQuizesRecyclerView(quizes: ArrayList<ReadReportModel>) {
+
+        report_rv_quizes.layoutManager = LinearLayoutManager(this)
+        report_rv_quizes.setHasFixedSize(true)
+        val quizesList = CurrentUserReportsList(this, quizes)
+        report_rv_quizes.adapter = quizesList
+
+        quizesList.setOnClickListener(object : CurrentUserReportsList.OnClickListener {
+            override fun onClick(position: Int, model: ReadReportModel) {
+                val intent = Intent(
+                    this@ReportsActivity,
+                    DetailReportActivity::class.java
                 )
 
                 intent.putExtra( //passing object to activity
@@ -297,7 +395,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getQuizesNumber() {
-        if (userReports) {
+        /*if (userReports) {
             quizesCount = runBlocking {
                 return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
@@ -306,12 +404,21 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     QuizeResult.wrapRows(query).count()
                 }
             }
-        }
+        }*/
         if (othersReports) {
             quizesCount = runBlocking {
                 return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                     val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
                         Quizes.user eq currentUser!!.id
+                    }
+                    QuizeResult.wrapRows(query).count()
+                }
+            }
+        }else{
+            quizesCount = runBlocking {
+                return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                        QuizeResults.by eq currentUser!!.id
                     }
                     QuizeResult.wrapRows(query).count()
                 }
