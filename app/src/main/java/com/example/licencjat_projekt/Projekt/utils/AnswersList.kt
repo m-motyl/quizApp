@@ -38,9 +38,13 @@ open class AnswersList(
         val ptr = listOfAnswers[position]
         if(holder is OwnViewHolder){
             holder.itemView.item_answer.text = ptr.answer_text
+            if(ptr.is_Correct) {
+                holder.itemView.item_answer_ll.setBackgroundColor(Color.GRAY)
+            }else{
+                holder.itemView.item_answer_ll.setBackgroundColor(Color.WHITE)
+            }
         }
-        //passing which position was clicked on rv
-        //passing ptr
+
         holder.itemView.setOnClickListener{
             if(onClickListener!= null){
                 onClickListener!!.onClick(position, ptr)

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -170,65 +171,69 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.questions_prev_question -> {
                 //if not empty
-                if (!questions_question.text.isNullOrEmpty()
-                    && !questions_points.text.isNullOrEmpty()) {
-                    if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
-                        lateinit var questionModel: CreateQuestionModel
-                        if (isImage) {
-                            questionModel = CreateQuestionModel(
-                                questions_question.text.toString(),
-                                question_image,
-                                Integer.parseInt(questions_points.text.toString()),
-                                ArrayList(answersList)
+                if(noQuestions > 0) {
+                    //Log.e("no", noQuestions.toString())
+                    if (!questions_question.text.isNullOrEmpty()
+                        && !questions_points.text.isNullOrEmpty()
+                    ) {
+                        if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
+                            lateinit var questionModel: CreateQuestionModel
+                            if (isImage) {
+                                questionModel = CreateQuestionModel(
+                                    questions_question.text.toString(),
+                                    question_image,
+                                    Integer.parseInt(questions_points.text.toString()),
+                                    ArrayList(answersList)
+                                )
+                            } else {
+                                questionModel = CreateQuestionModel(
+                                    questions_question.text.toString(),
+                                    emptyByteArray,
+                                    Integer.parseInt(questions_points.text.toString()),
+                                    ArrayList(answersList)
+                                )
+                            }
+                            question_image = emptyByteArray
+                            isImage = false
+                            answersList.clear()
+                            questionsList.add(questionModel)
+                        } else { //update if exists
+                            questionsList[noQuestions].question_text =
+                                questions_question.text.toString()
+                            if (isImage) {
+                                questionsList[noQuestions].question_image = question_image
+                                isImage = false
+                            }
+                            questionsList[noQuestions].question_pts =
+                                Integer.parseInt(questions_points.text.toString())
+                            questionsList[noQuestions].question_answers += answersList
+                            answersList.clear()
+                        }
+                    } else {
+                        answersList.clear()
+                    }
+
+                    //if (noQuestions > 0) {
+                        noQuestions -= 1
+                    //}
+
+                    if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
+                        questions_question.setText(questionsList[noQuestions].question_text)
+                        if (!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
+                            questions_image_delete.visibility = View.VISIBLE
+                            questions_image.setImageBitmap(
+                                byteArrayToBitmap(questionsList[noQuestions].question_image)
                             )
                         } else {
-                            questionModel = CreateQuestionModel(
-                                questions_question.text.toString(),
-                                emptyByteArray,
-                                Integer.parseInt(questions_points.text.toString()),
-                                ArrayList(answersList)
-                            )
+                            questions_image_delete.visibility = View.GONE
+                            questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
                         }
-                        question_image = emptyByteArray
-                        isImage = false
-                        answersList.clear()
-                        questionsList.add(questionModel)
-                    } else { //update if exists
-                        questionsList[noQuestions].question_text =
-                            questions_question.text.toString()
-                        if (isImage) {
-                            questionsList[noQuestions].question_image = question_image
-                            isImage = false
-                        }
-                        questionsList[noQuestions].question_pts =
-                            Integer.parseInt(questions_points.text.toString())
-                        questionsList[noQuestions].question_answers += answersList
-                        answersList.clear()
-                    }
-                } else {
-                    answersList.clear()
-                }
-
-                if (noQuestions > 0) {
-                    noQuestions -= 1
-                }
-
-                if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
-                    questions_question.setText(questionsList[noQuestions].question_text)
-                    if (!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
-                        questions_image_delete.visibility = View.VISIBLE
-                        questions_image.setImageBitmap(
-                            byteArrayToBitmap(questionsList[noQuestions].question_image)
-                        )
+                        questions_points.setText(questionsList[noQuestions].question_pts.toString())
+                        answersRecyclerView(questionsList[noQuestions].question_answers)
                     } else {
                         questions_image_delete.visibility = View.GONE
-                        questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                        answersRecyclerView(answersList)
                     }
-                    questions_points.setText(questionsList[noQuestions].question_pts.toString())
-                    answersRecyclerView(questionsList[noQuestions].question_answers)
-                } else {
-                    questions_image_delete.visibility = View.GONE
-                    answersRecyclerView(answersList)
                 }
             }
             R.id.questions_next_question -> {
@@ -397,14 +402,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         ansList.setOnClickListener(object : AnswersList.OnClickListener {
             override fun onClick(position: Int, model: AnswerModel) {
                 if (selectCorrect) {
-                    if (model.is_Correct) { //TODO: (MOTYL) repair marking corr ans
-                        model.answer_text = model.answer_text.dropLast(9)
-                        model.is_Correct = false
-                    } else {
-                        model.answer_text += "(correct)"
-                        model.is_Correct = true
-                    }
+                    model.is_Correct = !model.is_Correct
                     questions_recycler_view.adapter = ansList
+                    answersRecyclerView(answers)
                 }
                 if (removeAnswers) {
                     if (questionsList.getOrNull(noQuestions) != null) {

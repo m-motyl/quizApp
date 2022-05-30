@@ -33,6 +33,7 @@ class DetailReportActivity : AppCompatActivity() {
             detail_report_description.text = quizDetails!!.description
             detail_report_tags.text = quizDetails!!.tags
             detail_report_timer.text = quizDetails!!.time_limit.toString() + " minut(y)"
+            detail_report_author_name.text = quizDetails!!.author
             if(quizDetails!!.points.isNaN()){
                 detail_report_user_score.text = getUserById(quizDetails!!.by) + ", 0.0 /" +
                         quizDetails!!.max_points.toString() + ".0"

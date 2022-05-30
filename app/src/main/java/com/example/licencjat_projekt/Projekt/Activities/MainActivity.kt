@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout = findViewById(R.id.main_drawer_layout)
 
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = "QuizApp"
+        supportActionBar!!.title = "Let'sQuiz"
 
         navigationView.bringToFront()
         val toggle = ActionBarDrawerToggle(

@@ -17,7 +17,7 @@ import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.question_item.view.*
 
-open class DisplayQuestionsAnswers(
+open class AuthorAnswersList(
     private val context: Context,
     private var listOfAnswers: ArrayList<ReadAnswerModel>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
@@ -41,7 +41,7 @@ open class DisplayQuestionsAnswers(
             holder.itemView.item_answer.text = ptr.answer_text
         }
 
-        if(ptr.is_Selected) {
+        if(ptr.is_Correct) {
             holder.itemView.item_answer_ll.setBackgroundColor(Color.GRAY)
         }else{
             holder.itemView.item_answer_ll.setBackgroundColor(Color.WHITE)

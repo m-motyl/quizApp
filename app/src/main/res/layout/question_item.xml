@@ -19,6 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:id="@+id/item_answer_ll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -34,7 +35,7 @@
 
                 <TextView
                     android:id="@+id/item_answer"
-                    android:layout_width="320dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primary_text_color"
                     android:textSize="20sp"
