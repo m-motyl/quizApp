@@ -1,5 +1,6 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,10 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
-import com.example.licencjat_projekt.Projekt.database.Friend
-import com.example.licencjat_projekt.Projekt.database.Friends
-import com.example.licencjat_projekt.Projekt.database.User
-import com.example.licencjat_projekt.Projekt.database.Users
+import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendInviteList
 import com.example.licencjat_projekt.Projekt.utils.QuizInviteList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
@@ -23,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
@@ -160,6 +160,43 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         )
     }
 
+    private fun getQuizTags(q: Quiz): String {
+        val tmp = runBlocking {
+            newSuspendedTransaction(Dispatchers.IO) {
+                val query = Tags.innerJoin(QuizTags).slice(Tags.columns).select {
+                    QuizTags.quiz eq q.id
+                }.withDistinct()
+                return@newSuspendedTransaction Tag.wrapRows(query).toList()
+            }
+        }
+        var tags = ""
+        for (i in tmp) {
+            tags += i.name + " "
+        }
+        return tags
+    }
+
+    private fun exposedToQuizModel(quiz: Quiz): ReadQuizModel {
+
+            getQuizTags(quiz)
+            var quizModel =
+                ReadQuizModel(
+                    quiz.id.value,
+                    quiz.title,
+                    quiz.time_limit,
+                    quiz.description,
+                    getQuizTags(quiz),
+                    quiz.gz_text,
+                    quiz.private,
+                    quiz.invitation_code,
+                    quiz.image.bytes,
+                    quiz.user.login,
+                    quiz.questions,
+                )
+
+        return quizModel
+    }
+
     private fun quizInvitesRecyclerView(quizInvites: ArrayList<ReadQuizInvitationModel>) {
         community_invite_rv_quizes.layoutManager = LinearLayoutManager(this)
         community_invite_rv_quizes.setHasFixedSize(true)
@@ -176,8 +213,17 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
                     Log.e("button ACCEPT dziala", "tak")
                     //:TODO(Witek) zmienić status zaproszenia na 1 (model to model zaproszenia)
-                    getAllFriendInvitations()
-                    quizInvitesRecyclerView(quizInvites)
+                    val intent = Intent(
+                        this@CommunityInviteMsg,
+                        DetailQuizActivity::class.java
+                    )
+                    var quiz = Quiz.findById(model.quizID)
+                    var quizModel = exposedToQuizModel(quiz!!)
+                    intent.putExtra(
+                        MainActivity.QUIZ_DETAILS,
+                        quizModel
+                    )
+                    startActivity(intent)
                 }
             },
 
