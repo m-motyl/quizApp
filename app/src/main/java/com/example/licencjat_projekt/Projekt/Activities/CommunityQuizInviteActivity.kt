@@ -30,11 +30,8 @@ import java.time.LocalDateTime
 
 class CommunityQuizInviteActivity : AppCompatActivity() {
     var quizDetails: ReadQuizModel? = null
-    var quizInvitation: ReadQuizInvitationModel? = null
 
     private var friendsList = ArrayList<LoadUserModel>()
-    private lateinit var layoutColorInitial: Drawable
-    private lateinit var friendsLinearLayout: LinearLayout
 
     //    private var toast: Toast = Toast.makeText(
 //        this,
@@ -86,21 +83,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
     }
 
-    private fun exposeToQuizInvitationModel(invitatedUser: LoadUserModel) {
-        var invitatedUserID = invitatedUser.id
-        if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
-            //TODO: (WITEK) get user from id -- ze co exposeToQuizInvitationModel
-//            quizInvitation = ReadQuizInvitationModel(
-//                status = 0,
-//                fromUser = currentUser,
-//                toUser = ,
-//                quizID = quizDetails.id,
-//                quizCode = quizDetails.invitation_code,
-//            )
-        }
-    }
-
-    private fun sendInvitationtoDataBase(userId: Int, quizId : Int) = runBlocking {
+    private fun sendInvitationToDataBase(userId: Int, quizId : Int) = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             QuizInvitation.new {
                 status = 0
@@ -122,8 +105,9 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         friendsList.setOnClickListener(object : FriendsList.OnClickListener {
 
             override fun onClick(position: Int, model: LoadUserModel) {
-                exposeToQuizInvitationModel(model)
-                sendInvitationtoDataBase(quizInvitation!!.fromUser.id.value, quizInvitation!!.quizID.toInt())
+                var userID = model.id
+                var quizID = quizDetails!!.id
+                sendInvitationToDataBase(userID, quizID)
                 //toast.show()
             }
         })

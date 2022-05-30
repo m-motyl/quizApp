@@ -4,11 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
-import com.example.licencjat_projekt.Projekt.Models.ReadUserModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_contact.view.*
 import java.util.*
@@ -19,7 +16,6 @@ open class UsersList(
     private var listOfUsers: ArrayList<LoadUserModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
-    private val filteredListOfUsers: ArrayList<ReadUserModel> = ArrayList<ReadUserModel>()
 
     private class OwnViewHolder(
         view: View

@@ -2,16 +2,23 @@ package com.example.licencjat_projekt.Projekt.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
+import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.activity_profile.profile_toolbar
+import kotlinx.android.synthetic.main.activity_profile_add.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.LocalDateTime
 
 class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
-    private var invitationModel: ReadFriendInvitationModel? = null
     private var visitatedUser: LoadUserModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,34 +30,31 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
         }
 
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
-            visitatedUser = intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS) as LoadUserModel
+            visitatedUser =
+                intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS) as LoadUserModel
         }
+
+        profile_add_add_friend.setOnClickListener(this)
 
         supportActionBar!!.title = "Profil"
     }
 
-    private fun exposeToInvitationModel() {
-        if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
-            var visitatedUserID = visitatedUser?.id
-            //TODO: (WITEK) get user from id -- ??? exposeToInvitationModel
-//            invitationModel = ReadFriendInvitationModel(
-//                status = 0,
-//                fromUser = currentUser,
-//                toUser = ,
-//            )
+    private fun sendFriendInvitationToDatabase() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            Friend.new {
+                status = 0
+                from = currentUser!!
+                to = User.findById(visitatedUser!!.id)!!
+            }
         }
     }
 
-    //:TODO (WITEK) wysłać invitationModel do bazy
-//    private fun sendInvitationToDB(){
-//        invitationModel
-//    }
 
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.profile_add_add_friend -> {
-                exposeToInvitationModel()
-                //sendInvitationToDB()
+                var debugCurrentUser = currentUser
+                sendFriendInvitationToDatabase()
                 Toast.makeText(
                     this,
                     "Zaprosiłeś użytkownika do znajomych.",

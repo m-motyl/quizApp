@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.Projekt.database.Quiz
+import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.item_quiz_message.view.*
@@ -21,6 +22,8 @@ open class QuizInviteList(
     private var listOfFriendInvitations: ArrayList<ReadQuizInvitationModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
+    private var onAcceptClickListener: OnAcceptClickListener? = null
+    private var onDeclineClickListener: OnDeclineClickListener? = null
 
     private class OwnViewHolder(
         view: View
@@ -38,8 +41,19 @@ open class QuizInviteList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfFriendInvitations[position]
         if (holder is OwnViewHolder) {
-            holder.itemView.item_quiz_invite_quiz_name.text = ptr.quizID //TODO: (Witek) get quiz name from ID
+            holder.itemView.item_quiz_invite_quiz_name.text = Quiz.findById(ptr.quizID)!!.title
             holder.itemView.item_quiz_invite_name.text = ptr.fromUser.login
+
+            holder.itemView.item_quiz_accept_btn.setOnClickListener {
+                if (onAcceptClickListener != null){
+                    onAcceptClickListener!!.onClick(position, ptr)
+                }
+            }
+            holder.itemView.item_quiz_decline_btn.setOnClickListener {
+                if (onDeclineClickListener != null){
+                    onDeclineClickListener!!.onClick(position, ptr)
+                }
+            }
         }
 
         //passing which position was clicked on rv
@@ -59,11 +73,21 @@ open class QuizInviteList(
         return listOfFriendInvitations.size
     }
 
-    fun setOnClickListener(onClickListener: OnClickListener) {
+    fun setOnClickListener(onClickListener: OnClickListener, onAcceptClickListener: OnAcceptClickListener, onDeclineClickListener: OnDeclineClickListener) {
         this.onClickListener = onClickListener
+        this.onAcceptClickListener = onAcceptClickListener
+        this.onDeclineClickListener = onDeclineClickListener
     }
 
     interface OnClickListener {
+        fun onClick(position: Int, model: ReadQuizInvitationModel)
+    }
+
+    interface OnAcceptClickListener {
+        fun onClick(position: Int, model: ReadQuizInvitationModel)
+    }
+
+    interface OnDeclineClickListener {
         fun onClick(position: Int, model: ReadQuizInvitationModel)
     }
 }

@@ -14,8 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendModel
-import com.example.licencjat_projekt.Projekt.Models.ReadUserModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendsList
 import com.example.licencjat_projekt.Projekt.utils.UsersList
@@ -78,13 +76,13 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             for (i in x) {
                 Log.e("", i.login)
             }
-            exposedToFriendModel2(x)
+            exposedToUserModel(x)
         }
     }
 
-    private fun exposedToFriendModel2(l: List<User>) {
+    private fun exposedToUserModel(l: List<User>) {
         for (i in l) {
-            friendsList.add(
+            usersList.add(
                 LoadUserModel(
                     id = i.id.value,
                     login = i.login,
@@ -107,23 +105,6 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             )
         }
         for (i in friendsList) {
-            Log.e("", i.login)
-            Log.e("", i.creation_time)
-        }
-    }
-
-    private fun exposedToUserModel(l: List<Friend>) {
-        for (i in l) {
-            usersList.add(
-                LoadUserModel(
-                    id = i.to.id.value,
-                    login = i.to.login,
-                    profile_picture = i.to.profile_picture!!.bytes,
-                    creation_time = i.to.creation_time.toString()
-                )
-            )
-        }
-        for (i in usersList) {
             Log.e("", i.login)
             Log.e("", i.creation_time)
         }
@@ -175,6 +156,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     searchUserString = searchUserString!!.lowercase()
                     getLikeUsers()
                     usersRecyclerView(usersList)
+                    Log.e("rozmiar", usersList.size.toString())
                 }
             }
         }
