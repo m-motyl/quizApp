@@ -9,6 +9,7 @@ import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.Quizes
+import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.item_quiz_message.view.*
@@ -41,8 +42,9 @@ open class QuizInviteList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfFriendInvitations[position]
         if (holder is OwnViewHolder) {
+            val user = User.findById(ptr.fromUser)
             holder.itemView.item_quiz_invite_quiz_name.text = Quiz.findById(ptr.quizID)!!.title
-            holder.itemView.item_quiz_invite_name.text = ptr.fromUser.login
+            holder.itemView.item_quiz_invite_name.text = StringBuilder("od: ").append(user!!.login).toString()
 
             holder.itemView.item_quiz_accept_btn.setOnClickListener {
                 if (onAcceptClickListener != null){
