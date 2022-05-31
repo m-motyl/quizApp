@@ -5,8 +5,8 @@ import org.jetbrains.exposed.dao.id.EntityID
 import java.io.Serializable
 
 class ReadQuizInvitationModel(
-    var fromUser: EntityID<Int>,
-    var toUser: EntityID<Int>,
+    var fromUser: Int,
+    var toUser: Int,
     var status: Int,
-    var quizID: EntityID<Int>,
+    var quizID: Int,
     ): Serializable

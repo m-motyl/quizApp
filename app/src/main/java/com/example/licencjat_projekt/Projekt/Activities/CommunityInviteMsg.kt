@@ -39,29 +39,30 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         community_invite_msg_quizes_btn.setOnClickListener(this)
 
         getAllFriendInvitations()
+        getAllQuizInvitations()
         friendInvitesRecyclerView(friendInvitesList)
         quizInvitesRecyclerView(quizInvitesList)
     }
 
-        //:TODO (WITEK) zaprszenie dostaje osoba która wysłała a nie która powinna otrzymać
     private fun getAllFriendInvitations() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 0) }
+            val list = Friend.find { (Friends.to eq currentUser!!.id) and (Friends.status eq 0) }
                 .with(Friend::to).toList()
             if (list.isNotEmpty())
                 exposedToFriendInvitationModel(list)
         }
     }
 
-    //:TODO(Witek)
 
-//    private fun getAllQuizInvitations()= runBlocking {
-//        newSuspendedTransaction(Dispatchers.IO) {
-//            val list = QuizInvitation.all.get()
-//            if (list.isNotEmpty())
-//                exposedToQuizInvitationModel(list)
-//        }
-//    }
+    private fun getAllQuizInvitations() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val list =
+                QuizInvitation.find { (QuizInvitations.to eq currentUser!!.id) and (QuizInvitations.status eq 0) }
+                    .toList()
+            if (list.isNotEmpty())
+                exposedToQuizInvitationModel(list)
+        }
+    }
 
     private fun exposedToFriendInvitationModel(list: List<Friend>) {
         for (i in list) {
@@ -79,10 +80,10 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         for (i in list) {
             quizInvitesList.add(
                 ReadQuizInvitationModel(
-                    i.from.id,
-                    i.to.id,
+                    i.from.id.value,
+                    i.to.id.value,
                     i.status,
-                    i.quiz.id,
+                    i.quiz.id.value,
                 )
             )
         }
@@ -126,22 +127,41 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun changeFriendInvitestatus(poz: Int, s: Int) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val x =
+                Friend.find { (Friends.from eq friendInvitesList[poz].fromUser) and (Friends.to eq currentUser!!.id) }
+                    .toList()
+            x[0].status = s
+        }
+    }
+
+    private fun changeQuizInvStatus(poz: Int, s: Int) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val x =
+                QuizInvitation.find { (QuizInvitations.from eq quizInvitesList[poz].fromUser) and (QuizInvitations.to eq currentUser!!.id) }
+                    .toList()
+            x[0].status = s
+        }
+    }
+
     private fun friendInvitesRecyclerView(friendInvites: ArrayList<ReadFriendInvitationModel>) {
         community_invite_rv.layoutManager = LinearLayoutManager(this)
         community_invite_rv.setHasFixedSize(true)
         val friendInvitesList = FriendInviteList(this, friendInvites)
         community_invite_rv.adapter = friendInvitesList
 
-        friendInvitesList.setOnClickListener(object : FriendInviteList.OnClickListener {
+        friendInvitesList.setOnClickListener(
+            object : FriendInviteList.OnClickListener {
 
-            override fun onClick(position: Int, model: ReadFriendInvitationModel) {
-            }
-        },
+                override fun onClick(position: Int, model: ReadFriendInvitationModel) {
+                }
+            },
 
             object : FriendInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
                     Log.e("button ACCEPT dziala", "tak")
-                    //:TODO(Witek) zmienić status zaproszenia na 1 (model to model zaproszenia)
+                    changeFriendInvitestatus(position, 1)
                     getAllFriendInvitations()
                     friendInvitesRecyclerView(friendInvites)
                 }
@@ -150,7 +170,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : FriendInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
                     Log.e("button DECLINE dziala", "tak")
-                    //:TODO(Witek) zmienić status zaproszenia na -1 (model to model zaproszenia)
+                    changeFriendInvitestatus(position, -1)
                     getAllFriendInvitations()
                     friendInvitesRecyclerView(friendInvites)
                 }
@@ -176,21 +196,21 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
     private fun exposedToQuizModel(quiz: Quiz): ReadQuizModel {
 
-            getQuizTags(quiz)
-            var quizModel =
-                ReadQuizModel(
-                    quiz.id.value,
-                    quiz.title,
-                    quiz.time_limit,
-                    quiz.description,
-                    getQuizTags(quiz),
-                    quiz.gz_text,
-                    quiz.private,
-                    quiz.invitation_code,
-                    quiz.image.bytes,
-                    quiz.user.login,
-                    quiz.questions,
-                )
+        getQuizTags(quiz)
+        var quizModel =
+            ReadQuizModel(
+                quiz.id.value,
+                quiz.title,
+                quiz.time_limit,
+                quiz.description,
+                getQuizTags(quiz),
+                quiz.gz_text,
+                quiz.private,
+                quiz.invitation_code,
+                quiz.image.bytes,
+                quiz.user.login,
+                quiz.questions,
+            )
 
         return quizModel
     }
@@ -201,16 +221,17 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         val quizInvitesList = QuizInviteList(this, quizInvites)
         community_invite_rv_quizes.adapter = quizInvitesList
 
-        quizInvitesList.setOnClickListener(object : QuizInviteList.OnClickListener {
+        quizInvitesList.setOnClickListener(
+            object : QuizInviteList.OnClickListener {
 
-            override fun onClick(position: Int, model: ReadQuizInvitationModel) {
-            }
-        },
+                override fun onClick(position: Int, model: ReadQuizInvitationModel) {
+                }
+            },
 
             object : QuizInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
                     Log.e("button ACCEPT dziala", "tak")
-                    //:TODO(Witek) zmienić status zaproszenia na 1 (model to model zaproszenia)
+                    changeQuizInvStatus(position,1)
                     val intent = Intent(
                         this@CommunityInviteMsg,
                         DetailQuizActivity::class.java
@@ -228,7 +249,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : QuizInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
                     Log.e("button DECLINE dziala", "tak")
-                    //:TODO(Witek) zmienić status zaproszenia na -1 (model to model zaproszenia)
+                    changeQuizInvStatus(position,-1)
                     getAllFriendInvitations()
                     quizInvitesRecyclerView(quizInvites)
                 }
