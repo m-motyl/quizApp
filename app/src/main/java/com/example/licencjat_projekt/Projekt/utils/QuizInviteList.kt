@@ -5,13 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.Projekt.database.Quiz
-import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.R
-import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.android.synthetic.main.item_quiz_message.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -42,8 +39,9 @@ open class QuizInviteList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfFriendInvitations[position]
         if (holder is OwnViewHolder) {
-            val user = User.findById(ptr.fromUser)
-            holder.itemView.item_quiz_invite_quiz_name.text = Quiz.findById(ptr.quizID)!!.title
+            val user = getUser(ptr.fromUser)
+            val quiz = getQuiz(ptr.quizID)
+            holder.itemView.item_quiz_invite_quiz_name.text = quiz!!.title
             holder.itemView.item_quiz_invite_name.text = StringBuilder("od: ").append(user!!.login).toString()
 
             holder.itemView.item_quiz_accept_btn.setOnClickListener {
@@ -66,9 +64,15 @@ open class QuizInviteList(
             }
         }
     }
-    private fun getQuizNamexd(quizID:Int)= runBlocking {
+    private fun getQuiz(quizID:Int)= runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             Quiz.findById(quizID)
+        }
+    }
+
+    private fun getUser(userID: Int)= runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            User.findById(userID)
         }
     }
     override fun getItemCount(): Int {

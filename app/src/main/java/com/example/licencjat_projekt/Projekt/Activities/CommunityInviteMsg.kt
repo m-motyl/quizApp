@@ -145,6 +145,12 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun restartActivity(){
+        val intent = intent
+        finish()
+        startActivity(intent)
+    }
+
     private fun friendInvitesRecyclerView(friendInvites: ArrayList<ReadFriendInvitationModel>) {
         community_invite_rv.layoutManager = LinearLayoutManager(this)
         community_invite_rv.setHasFixedSize(true)
@@ -160,19 +166,15 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             object : FriendInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
-                    Log.e("button ACCEPT dziala", "tak")
                     changeFriendInvitestatus(position, 1)
-                    getAllFriendInvitations()
-                    friendInvitesRecyclerView(friendInvites)
+                    restartActivity()
                 }
             },
 
             object : FriendInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
-                    Log.e("button DECLINE dziala", "tak")
                     changeFriendInvitestatus(position, -1)
-                    getAllFriendInvitations()
-                    friendInvitesRecyclerView(friendInvites)
+                    restartActivity()
                 }
             },
         )
@@ -230,7 +232,6 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             object : QuizInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
-                    Log.e("button ACCEPT dziala", "tak")
                     changeQuizInvStatus(position, 1)
                     val intent = Intent(
                         this@CommunityInviteMsg,
@@ -253,10 +254,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             object : QuizInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
-                    Log.e("button DECLINE dziala", "tak")
                     changeQuizInvStatus(position, -1)
-                    getAllFriendInvitations()
-                    quizInvitesRecyclerView(quizInvites)
+                    restartActivity()
                 }
             },
         )

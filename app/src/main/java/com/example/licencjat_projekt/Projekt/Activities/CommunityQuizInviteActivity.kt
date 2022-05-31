@@ -33,11 +33,8 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 
     private var friendsList = ArrayList<LoadUserModel>()
 
-    //    private var toast: Toast = Toast.makeText(
-//        this,
-//        "Zaprosiłeś użytkownika do quizu",
-//        Toast.LENGTH_SHORT
-//    )
+    private lateinit var toast: Toast
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community)
@@ -51,6 +48,12 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             quizDetails =
                 intent.getSerializableExtra(DetailQuizActivity.QUIZ_DETAILS) as ReadQuizModel
         }
+
+        toast = Toast.makeText(
+            this,
+            "Zaprosiłeś użytkownika do quizu",
+            Toast.LENGTH_SHORT
+        )
 
         getAllFriends()
         friendsRecyclerView(friendsList)
@@ -83,7 +86,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendInvitationToDataBase(userId: Int, quizId : Int) = runBlocking {
+    private fun sendInvitationToDataBase(userId: Int, quizId: Int) = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             QuizInvitation.new {
                 status = 0
@@ -105,10 +108,10 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         friendsList.setOnClickListener(object : FriendsList.OnClickListener {
 
             override fun onClick(position: Int, model: LoadUserModel) {
-                var userID = model.id
-                var quizID = quizDetails!!.id
+                val userID = model.id
+                val quizID = quizDetails!!.id
                 sendInvitationToDataBase(userID, quizID)
-                //toast.show()
+                toast.show()
             }
         })
     }

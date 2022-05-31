@@ -6,10 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
+import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.Projekt.database.Users
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 
 open class FriendInviteList(
@@ -36,9 +41,8 @@ open class FriendInviteList(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val ptr = listOfFriendInvitations[position]
         if (holder is OwnViewHolder) {
-            //TODO: (WITEK) tutaj się wywala zakomentowane
-            //val user = User.findById(ptr.fromUser)
-            //holder.itemView.item_invite_name.text = user!!.login
+            val user = getUser(ptr.fromUser)
+            holder.itemView.item_invite_name.text = user!!.login
             holder.itemView.item_accept_btn.setOnClickListener {
                 if (onAcceptClickListener != null){
                     onAcceptClickListener!!.onClick(position, ptr)
@@ -62,6 +66,12 @@ open class FriendInviteList(
 
     override fun getItemCount(): Int {
         return listOfFriendInvitations.size
+    }
+
+    private fun getUser(userID: EntityID<Int>)= runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            User.findById(userID)
+        }
     }
 
     fun setOnClickListener(onClickListener: OnClickListener, onAcceptClickListener: OnAcceptClickListener, onDeclineClickListener: OnDeclineClickListener) {
