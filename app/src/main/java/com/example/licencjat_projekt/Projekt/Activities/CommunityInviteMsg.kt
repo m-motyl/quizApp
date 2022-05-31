@@ -8,6 +8,7 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
@@ -37,6 +38,10 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
         community_invite_msg_friends_btn.setOnClickListener(this)
         community_invite_msg_quizes_btn.setOnClickListener(this)
+
+        if (intent.hasExtra(IS_QUIZ_BTN)) {
+            setQuizesBtn()
+        }
 
         getAllFriendInvitations()
         getAllQuizInvitations()
@@ -92,39 +97,46 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.community_invite_msg_friends_btn -> {
-                community_invite_msg_friends_scroll.visibility = View.VISIBLE
-                community_invite_msg_quizes_scroll.visibility = View.GONE
-                community_invite_msg_friends_btn.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.purple_05
-                    )
-                )
-                community_invite_msg_quizes_btn.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.gray
-                    )
-                )
-
+                setFriendBtn()
             }
             R.id.community_invite_msg_quizes_btn -> {
-                community_invite_msg_friends_scroll.visibility = View.GONE
-                community_invite_msg_quizes_scroll.visibility = View.VISIBLE
-                community_invite_msg_friends_btn.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.gray
-                    )
-                )
-                community_invite_msg_quizes_btn.setBackgroundColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.purple_05
-                    )
-                )
+                setQuizesBtn()
             }
         }
+    }
+
+    private fun setFriendBtn(){
+        community_invite_msg_friends_scroll.visibility = View.VISIBLE
+        community_invite_msg_quizes_scroll.visibility = View.GONE
+        community_invite_msg_friends_btn.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.purple_05
+            )
+        )
+        community_invite_msg_quizes_btn.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.gray
+            )
+        )
+    }
+
+    private fun setQuizesBtn(){
+        community_invite_msg_friends_scroll.visibility = View.GONE
+        community_invite_msg_quizes_scroll.visibility = View.VISIBLE
+        community_invite_msg_friends_btn.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.gray
+            )
+        )
+        community_invite_msg_quizes_btn.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                R.color.purple_05
+            )
+        )
     }
 
     private fun changeFriendInvitestatus(poz: Int, s: Int) = runBlocking {
@@ -148,6 +160,13 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private fun restartActivity(){
         val intent = intent
         finish()
+        startActivity(intent)
+    }
+
+    private fun restartQuizesActivity(){
+        val intent = intent
+        finish()
+        intent.putExtra(IS_QUIZ_BTN, true)
         startActivity(intent)
     }
 
@@ -247,6 +266,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                         MainActivity.QUIZ_DETAILS,
                         quizModel
                     )
+                    restartQuizesActivity()
                     startActivity(intent)
                 }
             },
@@ -254,11 +274,13 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : QuizInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
                     changeQuizInvStatus(position, -1)
-                    restartActivity()
+                    restartQuizesActivity()
                 }
             },
         )
     }
-
+    companion object {
+        var IS_QUIZ_BTN = "isQuizBtn"
+    }
 
 }

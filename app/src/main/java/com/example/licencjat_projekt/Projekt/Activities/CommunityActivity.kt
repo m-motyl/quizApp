@@ -176,7 +176,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     ProfileFriendActivity::class.java
                 )
 
-                intent.putExtra("profile", model)
+                intent.putExtra(PROFILE_DETAILS, model)
                 startActivity(intent)
             }
         })
