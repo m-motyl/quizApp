@@ -68,7 +68,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         newSuspendedTransaction(Dispatchers.IO) {
             QuizeResult.new {
                 points = reportModel!!.userPoints
-                user = currentUser!!
+                by = currentUser!!
                 quiz = Quiz.findById(quizDetails!!.id)!!
             }
         }

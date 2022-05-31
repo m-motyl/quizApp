@@ -9,17 +9,17 @@ import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
-import com.example.licencjat_projekt.Projekt.Models.ReadQuestionModel
-import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
-import com.example.licencjat_projekt.Projekt.Models.ReportModel
+import com.example.licencjat_projekt.Projekt.Models.*
 import com.example.licencjat_projekt.Projekt.database.Answer
 import com.example.licencjat_projekt.Projekt.database.Answers
 import com.example.licencjat_projekt.Projekt.database.Question
 import com.example.licencjat_projekt.Projekt.database.Questions
+import com.example.licencjat_projekt.Projekt.utils.AnswersList
+import com.example.licencjat_projekt.Projekt.utils.AuthorAnswersList
 import com.example.licencjat_projekt.Projekt.utils.DisplayQuestionsAnswers
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
+import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_questions_show.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -52,6 +52,8 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     as ReadQuizModel
         }
         readQuestions(quizDetails!!)
+        getQuizScore()
+        checkIfUserIsAuthor()
 
         if(questionsList.size > 0){
             question_display_title.text = questionsList[0].question_text
@@ -63,15 +65,24 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             }else{
                 question_display_image.visibility = View.GONE
             }
-            answersRecyclerView(questionsList[0].question_answers)
             questionsshow_points.text = questionsList[0].question_pts.toString()
             questionsshow_current_question.text = 1.toString()
             question_display_btn_back.visibility = View.GONE
             questionsshow_no_questions.text = questionsList.size.toString()
         }
-        getQuizScore()
-        checkIfUserIsAuthor()
-        showCorrectAnswers()
+
+        if(userIsAuthor){
+            authorAnswersRecyclerView(questionsList[0].question_answers)
+            questionsshow_toolbar_cl.visibility = View.VISIBLE
+            setSupportActionBar(questionsshow_toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            questionsshow_toolbar.setNavigationOnClickListener{
+                onBackPressed()
+            }
+            supportActionBar!!.title = ""
+        }else{
+            answersRecyclerView(questionsList[0].question_answers)
+        }
 
         question_display_btn_next.setOnClickListener(this)
         question_display_btn_back.setOnClickListener(this)
@@ -166,13 +177,24 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         ansList.setOnClickListener(object : DisplayQuestionsAnswers.OnClickListener {
             override fun onClick(position: Int, model: ReadAnswerModel) {
                 if(!userIsAuthor) {
-                    if (model.is_Selected) {
-                        model.answer_text = model.answer_text!!.dropLast(3)
-                        model.is_Selected = false
-                    } else {
-                        model.answer_text += "(*)"
-                        model.is_Selected = true
-                    }
+                    model.is_Selected = !model.is_Selected
+                    questions_show_recycler_view.adapter = ansList
+                    answersRecyclerView(answers)
+                }
+            }
+        })
+    }
+
+    private fun authorAnswersRecyclerView(answers: ArrayList<ReadAnswerModel>) {
+        questions_show_recycler_view.layoutManager = LinearLayoutManager(this)
+        questions_show_recycler_view.setHasFixedSize(true)
+
+        val ansList = AuthorAnswersList(this, answers)
+        questions_show_recycler_view.adapter = ansList
+
+        ansList.setOnClickListener(object : AuthorAnswersList.OnClickListener {
+            override fun onClick(position: Int, model: ReadAnswerModel) {
+                if(userIsAuthor) {
                     questions_show_recycler_view.adapter = ansList
                 }
             }
@@ -203,7 +225,11 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     }else{
                         question_display_image.visibility = View.GONE
                     }
-                    answersRecyclerView(questionsList[noQuestions].question_answers)
+                    if(userIsAuthor){
+                        authorAnswersRecyclerView(questionsList[noQuestions].question_answers)
+                    }else {
+                        answersRecyclerView(questionsList[noQuestions].question_answers)
+                    }
 
                 }
                 else if(questionsList.size - 1 == noQuestions){
@@ -248,7 +274,11 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                     }else{
                         question_display_image.visibility = View.GONE
                     }
-                    answersRecyclerView(questionsList[noQuestions].question_answers)
+                    if(userIsAuthor){
+                        authorAnswersRecyclerView(questionsList[noQuestions].question_answers)
+                    }else {
+                        answersRecyclerView(questionsList[noQuestions].question_answers)
+                    }
                 }
             }
         }
@@ -281,19 +311,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             userScore += i.question_pts * ((correct / wrong)/ allCorrect)
         }
     }
-    private fun checkIfUserIsAuthor(){ //TODO: (WITOLD) napraf
+    private fun checkIfUserIsAuthor(){
         userIsAuthor = (quizDetails!!.author == currentUser!!.login)
-    }
-
-    private fun showCorrectAnswers(){
-        if(!userIsAuthor){
-            for (i in questionsList){
-                for(j in i.question_answers){
-                    if(j.is_Correct){
-                        j.answer_text = j.answer_text!!.dropLast(9)
-                    }
-                }
-            }
-        }
     }
 }

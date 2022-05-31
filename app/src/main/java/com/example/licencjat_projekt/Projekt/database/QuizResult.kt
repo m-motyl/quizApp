@@ -11,13 +11,13 @@ class QuizeResult(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<QuizeResult>(QuizeResults)
 
     var points by QuizeResults.points
-    var user by User referencedOn QuizeResults.user
+    var by by User referencedOn QuizeResults.by
     var quiz by Quiz referencedOn QuizeResults.quiz
 }
 
 object QuizeResults : IntIdTable("QuizResults") {
     val points = double("points")
-    val user = reference("user",Users, onDelete = ReferenceOption.CASCADE)
+    val by = reference("by",Users, onDelete = ReferenceOption.CASCADE)
     val quiz = reference("quiz",Quizes, onDelete = ReferenceOption.CASCADE)
 
 }
