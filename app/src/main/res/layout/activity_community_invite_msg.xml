@@ -18,7 +18,7 @@
             android:id="@+id/community_invite_msg_toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/purple_04"
+            android:background="@color/purple_05"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:layout_constraintEnd_toEndOf="parent"

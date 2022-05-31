@@ -1,6 +1,7 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -9,7 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +23,7 @@ import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.lowerCase
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 
@@ -48,6 +45,10 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         community_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+
+        val colorDrawable = ColorDrawable(ContextCompat.getColor(this, R.color.purple_05))
+        community_toolbar.background = colorDrawable
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         community_own_friends_linear.setOnClickListener(this)
         community_search_btn.setOnClickListener(this)
@@ -156,7 +157,6 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     searchUserString = searchUserString!!.lowercase()
                     getLikeUsers()
                     usersRecyclerView(usersList)
-                    Log.e("rozmiar", usersList.size.toString())
                 }
             }
         }
