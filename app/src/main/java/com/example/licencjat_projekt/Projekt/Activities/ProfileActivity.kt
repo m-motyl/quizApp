@@ -48,7 +48,6 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             R.id.profile_password_update -> {
                 newPassword = profile_change_pasword.text.toString()
 
-                //if(newPassword!!.isNotEmpty()){
                 if(newPassword!!.length < 2 || newPassword!!.length > 20)
                 {
                     Toast.makeText(
