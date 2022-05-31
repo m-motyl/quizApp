@@ -81,11 +81,10 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
                 }
             }
             R.id.profile_show_password -> {
-                if(tv_profile_password_inv.visibility == View.VISIBLE){
+                if (tv_profile_password_inv.visibility == View.VISIBLE) {
                     tv_profile_password_inv.visibility = View.GONE
                     tv_profile_password_vis.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     tv_profile_password_inv.visibility = View.VISIBLE
                     tv_profile_password_vis.visibility = View.GONE
                 }
@@ -101,14 +100,19 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             data.size
         )
     }
-    private fun userQuizTaken() : String{
+
+    private fun userQuizTaken(): String {
         return runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO){
-                return@newSuspendedTransaction QuizeResult.find{QuizeResults.by eq currentUser!!.id}.count().toString()
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                return@newSuspendedTransaction QuizeResult.find { QuizeResults.by eq currentUser!!.id }
+                    .count().toString()
             }
         }
     }
-    private fun updatePassword(str: String){ //TODO (WITOLD) aktualizuj hasło
 
+    private fun updatePassword(str: String) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            currentUser!!.password = str
+        }
     }
 }

@@ -12,11 +12,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.Models.ReadReportModel
+import com.example.licencjat_projekt.Projekt.database.User
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.question_item.view.*
 import kotlinx.android.synthetic.main.quiz_item.view.*
 import kotlinx.android.synthetic.main.quiz_item.view.quizitem_title
 import kotlinx.android.synthetic.main.report_item.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 open class CurrentUserReportsList(
     private val context: Context,
@@ -46,7 +50,7 @@ open class CurrentUserReportsList(
                 holder.itemView.reportitem_user_score.text = ptr.points.toString()
             }
             holder.itemView.reportitem_quiz_score.text = "/" + ptr.max_points.toString() + ".0"
-            holder.itemView.reportitem_user.text = getUserById(ptr.by)
+            holder.itemView.reportitem_user.text = getUserNameById(ptr.by)
             holder.itemView.reportitem_image.setImageBitmap(byteArrayToBitmap(ptr.image))
         }
 
@@ -80,7 +84,11 @@ open class CurrentUserReportsList(
             data.size
         )
     }
-    private fun getUserById(id: Int): String{ //TODO: witold
-        return "kto rozwiazal"
+    private fun getUserNameById(id: Int): String{
+        return runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                return@newSuspendedTransaction User.findById(id)!!.login
+            }
+        }
     }
 }
