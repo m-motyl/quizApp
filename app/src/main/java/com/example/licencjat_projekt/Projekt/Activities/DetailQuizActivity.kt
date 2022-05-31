@@ -11,14 +11,20 @@ import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.CreateQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.database.Quiz
+import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_detail_quiz.*
 import kotlinx.android.synthetic.main.activity_questions.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
     private var userIsAuthor: Boolean = false
+
     companion object {
         var QUESTION_DETAILS = "question_details"
     }
@@ -31,7 +37,8 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
             quizDetails = intent.getSerializableExtra(MainActivity.QUIZ_DETAILS) as ReadQuizModel
         }
         if (intent.hasExtra(UserQuizesActivity.QUIZ_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(UserQuizesActivity.QUIZ_DETAILS) as ReadQuizModel
+            quizDetails =
+                intent.getSerializableExtra(UserQuizesActivity.QUIZ_DETAILS) as ReadQuizModel
         }
         if (intent.hasExtra(SearchActivity.QUIZ_DETAILS)) {
             quizDetails = intent.getSerializableExtra(SearchActivity.QUIZ_DETAILS) as ReadQuizModel
@@ -51,9 +58,9 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
             detail_quiz_timer.text = quizDetails!!.time_limit.toString() + " minut(y)"
         }
         checkIfUserIsAuthor()
-        if(userIsAuthor){
+        if (userIsAuthor) {
             detail_delete_quiz.visibility = View.VISIBLE
-        }else{
+        } else {
             detail_delete_quiz.visibility = View.GONE
         }
 
@@ -111,18 +118,23 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun getAuthorName(): String{
+    private fun getAuthorName(): String {
         return quizDetails!!.author
     }
-    private fun getNOQuestions(): String{
+
+    private fun getNOQuestions(): String {
         return quizDetails!!.no_questions.toString()
     }
-    private fun checkIfUserIsAuthor(){
+
+    private fun checkIfUserIsAuthor() {
         userIsAuthor = (quizDetails!!.author == currentUser!!.login)
     }
 
-    private fun deleteQuiz(){ //TODO (WITOLD) delete quiz, quizDetails
-
+    private fun deleteQuiz() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            Quiz.findById(quizDetails!!.id)!!.delete()
+        }
     }
-    private fun goBack(){}
+
+    private fun goBack() {}
 }

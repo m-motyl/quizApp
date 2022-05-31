@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-class ProfileActivity : AppCompatActivity(), View.OnClickListener{
+class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private var passwordChange: Boolean = false
     private var newPassword: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,11 +24,11 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
         setContentView(R.layout.activity_profile)
         setSupportActionBar(profile_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        profile_toolbar.setNavigationOnClickListener{
+        profile_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
         supportActionBar!!.title = "Profil"
-        if(currentUser != null){
+        if (currentUser != null) {
             profile_main_login.text = currentUser!!.login
             profile_username.text = currentUser!!.login
             profile_email.text = currentUser!!.email
@@ -43,11 +43,11 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     override fun onClick(v: View?) {
-        when(v!!.id){
+        when (v!!.id) {
             R.id.profile_password_update -> {
                 newPassword = profile_change_pasword.text.toString()
 
-                if(newPassword!!.isNotEmpty()){
+                if (newPassword!!.isNotEmpty()) {
                     updatePassword(newPassword!!)
 
                     tv_profile_password_inv.text = newPassword
@@ -60,26 +60,26 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
                 }
             }
             R.id.profile_password_change -> {
-                if(passwordChange){
+                if (passwordChange) {
                     passwordChange = false
                     profile_password_change_rl.visibility = View.GONE
-                }else{
+                } else {
                     passwordChange = true
                     profile_password_change_rl.visibility = View.VISIBLE
                 }
             }
             R.id.profile_show_password -> {
-                if(tv_profile_password_inv.visibility == View.VISIBLE){
+                if (tv_profile_password_inv.visibility == View.VISIBLE) {
                     tv_profile_password_inv.visibility = View.GONE
                     tv_profile_password_vis.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     tv_profile_password_inv.visibility = View.VISIBLE
                     tv_profile_password_vis.visibility = View.GONE
                 }
             }
         }
     }
+
     private fun byteArrayToBitmap(
         data: ByteArray
     ): Bitmap {
@@ -89,14 +89,19 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             data.size
         )
     }
-    private fun userQuizTaken() : String{
+
+    private fun userQuizTaken(): String {
         return runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO){
-                return@newSuspendedTransaction QuizeResult.find{QuizeResults.by eq currentUser!!.id}.count().toString()
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                return@newSuspendedTransaction QuizeResult.find { QuizeResults.by eq currentUser!!.id }
+                    .count().toString()
             }
         }
     }
-    private fun updatePassword(str: String){ //TODO (WITOLD) aktualizuj hasło
 
+    private fun updatePassword(str: String) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            currentUser!!.password = str
+        }
     }
 }

@@ -15,10 +15,8 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.lowerCase
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class SearchActivity : AppCompatActivity(), View.OnClickListener {
@@ -62,7 +60,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.search_firstPage -> {
                 if (searchString!!.isNotEmpty()) {
-                    if(offsetId != 0L) {
+                    if (offsetId != 0L) {
                         firstFive(searchString!!)
                         quizesRecyclerView(quizesList)
                     }
@@ -71,7 +69,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.search_backPage -> {
                 if (searchString!!.isNotEmpty()) {
-                    if(offsetId >= 5L) {
+                    if (offsetId >= 5L) {
                         prevFive(searchString!!)
                         quizesRecyclerView(quizesList)
                     }
@@ -80,7 +78,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.search_nextPage -> {
                 if (searchString!!.isNotEmpty()) {
-                    if(offsetId + 5 <= quizesCount) {
+                    if (offsetId + 5 <= quizesCount) {
                         nextFive(searchString!!)
                         quizesRecyclerView(quizesList)
                     }
@@ -89,7 +87,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.search_lastPage -> {
                 if (searchString!!.isNotEmpty()) {
-                    if(offsetId + 5 < quizesCount) {
+                    if (offsetId + 5 < quizesCount) {
                         lastFive(searchString!!)
                         quizesRecyclerView(quizesList)
                     }
@@ -98,7 +96,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun firstFive(str: String) { //TODO (WITOLD) albo wywalić tagi albo zrobić wyszukiwanie z tagami
+    private fun firstFive(str: String) {
         if (searchCode) {
             searchDBForInviteCode(str)
         } else {
@@ -107,13 +105,12 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId = 0L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list =
-                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and
-                                (Quizes.private eq false) }
-                            .limit(5)
-                            .toList()
+                    val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
+                        ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                    }.limit(5)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
+
                 }
             }
         }
@@ -127,9 +124,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId += 5L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list =
-                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
-                            .limit(5, offsetId).toList()
+                    val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
+                        ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                    }.limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
                     else
@@ -147,9 +144,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId -= 5L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list =
-                        Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
-                            .limit(5, offsetId).toList()
+                    val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
+                        ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                    }.limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
                     else
@@ -173,19 +170,13 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 newSuspendedTransaction(Dispatchers.IO) {
                     var list = emptyList<Quiz>()
                     if (quizesCount.mod(5) != 0) {
-                        list =
-                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and
-                                    (Quizes.private eq false) }
-                                .orderBy(Quizes.id to SortOrder.DESC)
-                                .limit((quizesCount.mod(5)))
-                                .toList()
+                        list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
+                            ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                        }.orderBy(Quizes.id to SortOrder.DESC)).limit((quizesCount.mod(5))).toList()
                     } else {
-                        list =
-                            Quiz.find { (Quizes.title.lowerCase() like "$str%") and
-                                    (Quizes.private eq false) }
-                                .orderBy(Quizes.id to SortOrder.DESC)
-                                .limit(5)
-                                .toList()
+                        list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
+                            ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                        }.orderBy(Quizes.id to SortOrder.DESC)).limit(5).toList()
                     }
                     if (list.isNotEmpty())
                         exposedToModel(list.reversed())
