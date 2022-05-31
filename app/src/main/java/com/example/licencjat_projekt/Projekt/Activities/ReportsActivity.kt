@@ -61,15 +61,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.report_btn_search -> {
                 searchString = report_et.text.toString()
-                if (searchString != null) {
-                    /*if (userReports) {
-                        findUserReports(searchString!!)
-                    } else */if (othersReports) {
-                        findOthersReports(searchString!!)
-                    }else{
-                        findUserReports(searchString!!)
-                    }
-                }
+                searchReports()
             }
             R.id.report_user_reports -> {
                 if (othersReports) {
@@ -454,10 +446,27 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         var QUIZ_DETAILS = "quiz_details"
     }
+
+    private fun searchReports(){ //TODO(WITOLD) wyszukaj raporty
+        if(othersReports){
+            if(searchString!!.isNotEmpty()){
+                Log.e("1:","wyszukaj raporty innych")
+            }else{
+                Log.e("2:"," raporty innych")
+            }
+        }else{
+            if(searchString!!.isNotEmpty()){
+                Log.e("3:","wyszukaj raporty użytkownika")
+            }else{
+                Log.e("4:"," raporty użytkownika")
+            }
+        }
+    }
+    /*
     private fun findOthersReports(str: String){
         //TODO(WITOLD) wyszukiwanie raportów po nazwie usera i tytule quizu
     }
     private fun findUserReports(str: String){
         //TODO(WITOLD) wyszukiwanie raportów po tytule quizu
-    }
+    }*/
 }

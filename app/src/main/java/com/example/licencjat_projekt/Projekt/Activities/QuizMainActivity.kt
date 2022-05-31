@@ -47,7 +47,19 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_quiz_main)
 
         quizmain_toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            val alert = AlertDialog.Builder(this)
+            alert.setTitle("Czy chcesz zakończyć tworzenie quizu?")
+            val items = arrayOf(
+                "Tak",
+                "Nie"
+            )
+            alert.setItems(items) { _, n ->
+                when (n) {
+                    0 -> onBackPressed()
+                    1 -> goBack()
+                }
+            }
+            alert.show()
         }
         quizmain_start_creating.setOnClickListener(this)
         quizmain_privacy.setOnClickListener(this)
@@ -301,4 +313,5 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
         )
         return stream.toByteArray()
     }
+    private fun goBack() {}
 }

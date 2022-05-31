@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.database.QuizeResult
 import com.example.licencjat_projekt.Projekt.database.QuizeResults
 import com.example.licencjat_projekt.Projekt.utils.currentUser
@@ -47,7 +48,18 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             R.id.profile_password_update -> {
                 newPassword = profile_change_pasword.text.toString()
 
-                if(newPassword!!.isNotEmpty()){
+                //if(newPassword!!.isNotEmpty()){
+                if(newPassword!!.length < 2 || newPassword!!.length > 20)
+                {
+                    Toast.makeText(
+                        this,
+                        "Nowe hasło powinno zawierać od 2 do 20 znaków!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else
+                {
+
                     updatePassword(newPassword!!)
 
                     tv_profile_password_inv.text = newPassword
