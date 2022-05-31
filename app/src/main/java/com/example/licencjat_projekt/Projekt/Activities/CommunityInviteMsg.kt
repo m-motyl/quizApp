@@ -231,13 +231,18 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : QuizInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
                     Log.e("button ACCEPT dziala", "tak")
-                    changeQuizInvStatus(position,1)
+                    changeQuizInvStatus(position, 1)
                     val intent = Intent(
                         this@CommunityInviteMsg,
                         DetailQuizActivity::class.java
                     )
-                    var quiz = Quiz.findById(model.quizID)
-                    var quizModel = exposedToQuizModel(quiz!!)
+                    //mmmmm
+                    var quizModel = runBlocking {
+                        return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                            val quiz = Quiz.findById(model.quizID)
+                            exposedToQuizModel(quiz!!)
+                        }
+                    }
                     intent.putExtra(
                         MainActivity.QUIZ_DETAILS,
                         quizModel
@@ -249,7 +254,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : QuizInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
                     Log.e("button DECLINE dziala", "tak")
-                    changeQuizInvStatus(position,-1)
+                    changeQuizInvStatus(position, -1)
                     getAllFriendInvitations()
                     quizInvitesRecyclerView(quizInvites)
                 }
