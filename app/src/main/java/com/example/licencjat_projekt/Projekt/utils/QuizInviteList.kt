@@ -31,7 +31,7 @@ open class QuizInviteList(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return OwnViewHolder(
             LayoutInflater.from(context).inflate(
-                R.layout.item_message, parent, false
+                R.layout.item_quiz_message, parent, false
             )
         )
     }

@@ -53,13 +53,13 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.profile_add_add_friend -> {
-                var debugCurrentUser = currentUser
                 sendFriendInvitationToDatabase()
                 Toast.makeText(
                     this,
                     "Zaprosiłeś użytkownika do znajomych.",
                     Toast.LENGTH_LONG
                 ).show()
+                finish()
             }
         }
     }

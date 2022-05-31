@@ -33,7 +33,8 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 
     private var friendsList = ArrayList<LoadUserModel>()
 
-    private lateinit var toast: Toast
+    private lateinit var toastCorrect: Toast
+    private lateinit var toastIncorrect: Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +50,15 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
                 intent.getSerializableExtra(DetailQuizActivity.QUIZ_DETAILS) as ReadQuizModel
         }
 
-        toast = Toast.makeText(
+        toastCorrect = Toast.makeText(
             this,
             "Zaprosiłeś użytkownika do quizu",
+            Toast.LENGTH_SHORT
+        )
+
+        toastIncorrect = Toast.makeText(
+            this,
+            "Użytkownik już otrzymał zaproszenie",
             Toast.LENGTH_SHORT
         )
 
@@ -98,6 +105,10 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
     }
 
+    private fun isUserInvited(userId: Int, quizId: Int) {
+        //TODO:(Witold) sprawdza czy takie zaproszenie istnieje w bazie
+    }
+
 
     private fun friendsRecyclerView(friends: ArrayList<LoadUserModel>) {
         community_rv_friends.layoutManager = LinearLayoutManager(this)
@@ -110,8 +121,16 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             override fun onClick(position: Int, model: LoadUserModel) {
                 val userID = model.id
                 val quizID = quizDetails!!.id
-                sendInvitationToDataBase(userID, quizID)
-                toast.show()
+                //TODO: (Witold) usunąć to i odkomentować niżej jak już baza bezie skończona
+                sendInvitationToDataBase(userID, quizID) ///////////////////////////
+                toastCorrect.show()                     ///////////////////////////
+
+//                if(isUserInvited(userID, quizID)){
+//                    toastIncorrect.show()
+//                } else {
+//                    sendInvitationToDataBase(userID, quizID)
+//                    toastCorrect.show()
+//                }
             }
         })
     }

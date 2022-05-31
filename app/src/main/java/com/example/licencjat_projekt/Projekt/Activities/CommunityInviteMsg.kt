@@ -237,8 +237,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                         this@CommunityInviteMsg,
                         DetailQuizActivity::class.java
                     )
-                    //mmmmm
-                    var quizModel = runBlocking {
+                    val quizModel = runBlocking {
                         return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                             val quiz = Quiz.findById(model.quizID)
                             exposedToQuizModel(quiz!!)
