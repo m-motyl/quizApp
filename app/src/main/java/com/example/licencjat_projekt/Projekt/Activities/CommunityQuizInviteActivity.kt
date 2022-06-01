@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
 
@@ -68,8 +69,9 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 
     private fun getAllFriends() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
-                .with(Friend::to).toList()
+            val list =
+                Friend.find { ((Friends.from eq currentUser!!.id) or (Friends.to eq currentUser!!.id)) and (Friends.status eq 1) }
+                    .with(Friend::to, Friend::from).toList()
             if (list.isNotEmpty())
                 exposedToFriendModel(list)
         }
@@ -78,14 +80,24 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 
     private fun exposedToFriendModel(l: List<Friend>) {
         for (i in l) {
-            friendsList.add(
-                LoadUserModel(
-                    id = i.to.id.value,
-                    login = i.to.login,
-                    profile_picture = i.to.profile_picture!!.bytes,
-                    creation_time = i.to.creation_time.toString()
+            if (currentUser!!.id == i.from.id)
+                friendsList.add(
+                    LoadUserModel(
+                        id = i.to.id.value,
+                        login = i.to.login,
+                        profile_picture = i.to.profile_picture!!.bytes,
+                        creation_time = i.to.creation_time.toString()
+                    )
                 )
-            )
+            else
+                friendsList.add(
+                    LoadUserModel(
+                        id = i.from.id.value,
+                        login = i.from.login,
+                        profile_picture = i.from.profile_picture!!.bytes,
+                        creation_time = i.from.creation_time.toString()
+                    )
+                )
         }
         for (i in friendsList) {
             Log.e("", i.login)
