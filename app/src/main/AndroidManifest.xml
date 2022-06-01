@@ -56,6 +56,12 @@
             android:name=".Projekt.Activities.ProfileActivityAdd"
             android:exported="true" />
         <activity
+            android:name=".Projekt.Activities.CommunityQuizInviteActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Projekt.Activities.ProfileFriendActivity"
+            android:exported="true" />
+        <activity
             android:name=".Projekt.Activities.SignInActivity"
             android:exported="true">
             <intent-filter>

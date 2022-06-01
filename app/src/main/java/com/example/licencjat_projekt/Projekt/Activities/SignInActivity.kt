@@ -46,6 +46,7 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
                 SchemaUtils.create(Tags)
                 SchemaUtils.create(Friends)
                 SchemaUtils.create(QuizeResults)
+                SchemaUtils.create(QuizInvitations)
             }
         }
     }

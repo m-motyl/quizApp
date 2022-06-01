@@ -1,18 +1,20 @@
 package com.example.licencjat_projekt.Projekt.utils
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendModel
+import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.answer_item.view.*
 import kotlinx.android.synthetic.main.item_contact.view.*
 
 open class FriendsList(
     private val context: Context,
-    private var listOfFriends: ArrayList<ReadFriendModel>
+    private var listOfFriends: ArrayList<LoadUserModel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
 
@@ -33,7 +35,7 @@ open class FriendsList(
         val ptr = listOfFriends[position]
         if (holder is OwnViewHolder) {
             holder.itemView.item_contact_name.text = ptr.login
-            //TODO: avatar
+            holder.itemView.item_contact_avatar.setImageBitmap(byteArrayToBitmap(ptr.profile_picture))
             //passing which position was clicked on rv
             //passing ptr
             holder.itemView.setOnClickListener {
@@ -53,6 +55,9 @@ open class FriendsList(
     }
 
     interface OnClickListener {
-        fun onClick(position: Int, model: ReadFriendModel)
+        fun onClick(position: Int, model: LoadUserModel)
+    }
+    fun byteArrayToBitmap(data: ByteArray): Bitmap {
+        return BitmapFactory.decodeByteArray(data, 0, data.size)
     }
 }

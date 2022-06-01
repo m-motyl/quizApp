@@ -1,20 +1,19 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.SearchView
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendModel
-import com.example.licencjat_projekt.Projekt.Models.ReadUserModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendsList
 import com.example.licencjat_projekt.Projekt.utils.UsersList
@@ -25,85 +24,110 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.time.format.DateTimeFormatter
 
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener {
-    private var friendsList = ArrayList<ReadFriendModel>()
-    private var friendsList2 = ArrayList<LoadUserModel>()
+    var searchUserString: String? = null
 
-    private var usersList = ArrayList<ReadUserModel>()
-    private lateinit var userAdapter: UsersList
+    private var friendsList = ArrayList<LoadUserModel>()
+    private var usersList = ArrayList<LoadUserModel>()
+    private lateinit var layoutColorInitial: Drawable
+    private lateinit var friendsLinearLayout: LinearLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community)
+
+        friendsLinearLayout = findViewById(R.id.community_own_friends_linear)
+        layoutColorInitial = friendsLinearLayout.background
+
         setSupportActionBar(community_toolbar)
         community_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-        firstFiveAccepted()
-//        getAllFriends()
-//        friendsRecyclerView(friendsList)
+
+        val colorDrawable = ColorDrawable(ContextCompat.getColor(this, R.color.purple_05))
+        community_toolbar.background = colorDrawable
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        community_own_friends_linear.setOnClickListener(this)
+        community_search_btn.setOnClickListener(this)
+
+        getAllFriends()
+        friendsRecyclerView(friendsList)
     }
 
-    //TODO (JASIEK) uzyj modelu LoadUserModel
-    private fun firstFiveAccepted() = runBlocking {
+    private fun getAllFriends() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
-                .limit(5).with(Friend::to).toList()
+            val list =
+                Friend.find { ((Friends.from eq currentUser!!.id) or (Friends.to eq currentUser!!.id)) and (Friends.status eq 1) }
+                    .with(Friend::to, Friend::from).toList()
             if (list.isNotEmpty())
-                exposedToModel(list)
+                exposedToFriendModel(list)
         }
     }
 
-    private fun exposedToModel(l: List<Friend>) {
+    private fun getLikeUsers() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+                .toList()
+            val xd = list.map { it.to.id }
+            val x =
+                User.find { (Users.login like "$searchUserString%") and (Users.id notInList xd) and (Users.id neq currentUser!!.id) }
+                    .toList()
+            for (i in x) {
+                Log.e("", i.login)
+            }
+            exposedToUserModel(x)
+        }
+    }
+
+    private fun exposedToUserModel(l: List<User>) {
         for (i in l) {
-            friendsList2.add(
+            usersList.add(
                 LoadUserModel(
-                    id = i.to.id.value,
-                    login = i.to.login,
-                    profile_picture = i.to.profile_picture!!.bytes,
-                    creation_time = i.to.creation_time.toString()
+                    id = i.id.value,
+                    login = i.login,
+                    profile_picture = i.profile_picture!!.bytes,
+                    creation_time = i.creation_time.toString()
                 )
             )
         }
-        for (i in friendsList2) {
+    }
+
+
+    private fun exposedToFriendModel(l: List<Friend>) {
+        for (i in l) {
+            if (currentUser!!.id == i.from.id)
+                friendsList.add(
+                    LoadUserModel(
+                        id = i.to.id.value,
+                        login = i.to.login,
+                        profile_picture = i.to.profile_picture!!.bytes,
+                        creation_time = i.to.creation_time.toString()
+                    )
+                )
+            else
+                friendsList.add(
+                    LoadUserModel(
+                        id = i.from.id.value,
+                        login = i.from.login,
+                        profile_picture = i.from.profile_picture!!.bytes,
+                        creation_time = i.from.creation_time.toString()
+                    )
+                )
+        }
+        for (i in friendsList) {
             Log.e("", i.login)
             Log.e("", i.creation_time)
         }
     }
 
-//    private fun getAllFriends() {
-//        val list = runBlocking {
-//            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-//                //TODO: make return user.friends
-//                User.all().toList()
-//            }
-//        }
-//        if (list.isNotEmpty())
-//            exposedToFriendModel(list)
-//    }
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
-//        val searchItem = menu!!.findItem(R.id.community_search_drawer)
-//        val searchView: SearchView = searchItem.actionView as SearchView
-//
-//        searchView.imeOptions = EditorInfo.IME_ACTION_DONE
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                userAdapter.filter.filter(newText)
-//                return false
-//            }
-//        })
-//        return true
-//    }
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.community_toolbar_menu, menu)
+        return true
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
@@ -114,31 +138,22 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     View.VISIBLE
                 }
-            community_search.visibility =
-                if (community_search_linear.visibility == View.VISIBLE) {
-                    View.GONE
+            community_own_friends_linear.background =
+                if (community_own_friends_linear.background != layoutColorInitial) {
+                    layoutColorInitial
                 } else {
-                    View.VISIBLE
+                    ColorDrawable(ContextCompat.getColor(this, R.color.gray_tint))
                 }
-            //TODO: fix this
-//            community_own_friends_linear.background =
-//                if(community_own_friends_linear.background == ColorDrawable(resources.getColor(R.color.translucent))){
-//                    ColorDrawable(resources.getColor(R.color.gray_tint))
-//                }else{
-//                    ColorDrawable(resources.getColor(R.color.translucent))
-//                }
-//            getAllUsers()
-//            usersRecyclerView(usersList)
             return true
         }
         return if (id == R.id.action_community_toolbar_invitation) {
 
             val intent = Intent(
-                this@CommunityActivity,
+                this,
                 CommunityInviteMsg::class.java
             )
             startActivity(intent)
-            true
+            return true
         } else super.onOptionsItemSelected(item)
     }
 
@@ -148,45 +163,19 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 //TODO: click on layout and make other GONE
                 community_search_linear.visibility = View.GONE
             }
-        }
-    }
-
-    private fun getAllUsers() {
-        val list = runBlocking {
-            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                User.all().toList()
+            R.id.community_search_btn -> {
+                searchUserString = search_et.text.toString()
+                if (searchUserString != null) {
+                    usersList.clear()
+                    searchUserString = searchUserString!!.lowercase()
+                    getLikeUsers()
+                    usersRecyclerView(usersList)
+                }
             }
         }
-        if (list.isNotEmpty())
-            exposedToUserModel(list)
     }
 
-    private fun exposedToFriendModel(list: List<User>) {
-        val friendsArrayList = ArrayList<ReadFriendModel>()
-        for (i in list) {
-            friendsArrayList.add(
-                ReadFriendModel(
-                    i.login,
-                )
-            )
-        }
-        friendsList = friendsArrayList
-    }
-
-    private fun exposedToUserModel(list: List<User>) {
-        val usersArrayList = ArrayList<ReadUserModel>()
-        for (i in list) {
-            usersArrayList.add(
-                ReadUserModel(
-                    i.login,
-                )
-            )
-        }
-        usersList = usersArrayList
-    }
-
-
-    private fun friendsRecyclerView(friends: ArrayList<ReadFriendModel>) {
+    private fun friendsRecyclerView(friends: ArrayList<LoadUserModel>) {
         community_rv_friends.layoutManager = LinearLayoutManager(this)
         community_rv_friends.setHasFixedSize(true)
         val friendsList = FriendsList(this, friends)
@@ -194,37 +183,40 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 
         friendsList.setOnClickListener(object : FriendsList.OnClickListener {
 
-            override fun onClick(position: Int, model: ReadFriendModel) {
+            override fun onClick(position: Int, model: LoadUserModel) {
                 val intent = Intent(
                     this@CommunityActivity,
-                    ProfileActivity::class.java
+                    ProfileFriendActivity::class.java
                 )
 
-                intent.putExtra("profile", model)
+                intent.putExtra(PROFILE_DETAILS, model)
                 startActivity(intent)
             }
         })
     }
 
-    private fun usersRecyclerView(users: ArrayList<ReadUserModel>) {
+    private fun usersRecyclerView(users: ArrayList<LoadUserModel>) {
         community_rv_users.layoutManager = LinearLayoutManager(this)
         community_rv_users.setHasFixedSize(true)
         val usersList = UsersList(this, users)
-        userAdapter = usersList
         community_rv_users.adapter = usersList
 
         usersList.setOnClickListener(object : UsersList.OnClickListener {
 
-            override fun onClick(position: Int, model: ReadUserModel) {
+            override fun onClick(position: Int, model: LoadUserModel) {
                 val intent = Intent(
                     this@CommunityActivity,
                     ProfileActivityAdd::class.java
                 )
 
-                intent.putExtra("profile", model)
+                intent.putExtra(PROFILE_DETAILS, model)
                 startActivity(intent)
             }
         })
+    }
+
+    companion object {
+        var PROFILE_DETAILS = "profile_details"
     }
 
 }
