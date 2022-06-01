@@ -186,7 +186,9 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : FriendInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
                     changeFriendInvitestatus(position, 1)
-                    restartActivity()
+                    //restartActivity()
+                    val intent = Intent(this@CommunityInviteMsg, CommunityActivity::class.java)
+                    startActivity(intent)
                 }
             },
 
