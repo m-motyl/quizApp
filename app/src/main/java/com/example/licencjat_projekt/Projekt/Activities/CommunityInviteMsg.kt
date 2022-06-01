@@ -29,6 +29,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private var friendInvitesList = ArrayList<ReadFriendInvitationModel>()
     private var quizInvitesList = ArrayList<ReadQuizInvitationModel>()
+    private var friendsPage: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community_invite_msg)
@@ -38,13 +39,18 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
         community_invite_msg_friends_btn.setOnClickListener(this)
         community_invite_msg_quizes_btn.setOnClickListener(this)
+        community_invite_msg_firstPage.setOnClickListener(this)
+        community_invite_msg_backPage.setOnClickListener(this)
+        community_invite_msg_nextPage.setOnClickListener(this)
+        community_invite_msg_lastPage.setOnClickListener(this)
 
         if (intent.hasExtra(IS_QUIZ_BTN)) {
             setQuizesBtn()
         }
 
-        getAllFriendInvitations()
-        getAllQuizInvitations()
+        //getAllFriendInvitations()
+        //getAllQuizInvitations()
+        firstFive()
         friendInvitesRecyclerView(friendInvitesList)
         quizInvitesRecyclerView(quizInvitesList)
     }
@@ -97,10 +103,28 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.community_invite_msg_friends_btn -> {
-                setFriendBtn()
+                if(!friendsPage) {
+                    setFriendBtn()
+                    firstFive()
+                }
             }
             R.id.community_invite_msg_quizes_btn -> {
-                setQuizesBtn()
+                if(friendsPage) {
+                    setQuizesBtn()
+                    firstFive()
+                }
+            }
+            R.id.community_invite_msg_firstPage -> {
+                firstFive()
+            }
+            R.id.community_invite_msg_backPage -> {
+                prevFive()
+            }
+            R.id.community_invite_msg_nextPage -> {
+                nextFive()
+            }
+            R.id.community_invite_msg_lastPage -> {
+                lastFive()
             }
         }
     }
@@ -120,6 +144,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                 R.color.gray
             )
         )
+        friendsPage = true
     }
 
     private fun setQuizesBtn(){
@@ -137,6 +162,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                 R.color.purple_05
             )
         )
+        friendsPage = false
     }
 
     private fun changeFriendInvitestatus(poz: Int, s: Int) = runBlocking {
@@ -262,6 +288,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                         return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                             val quiz = Quiz.findById(model.quizID)
                             exposedToQuizModel(quiz!!)
+                            //TODO(WITOLD) usunąć zaproszenie z bazy po wyszukaniu
                         }
                     }
                     intent.putExtra(
@@ -275,7 +302,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             object : QuizInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
-                    changeQuizInvStatus(position, -1)
+
+                    changeQuizInvStatus(position, -1) //TODO(WITOLD usunąć zaproszenie do quizu
                     restartQuizesActivity()
                 }
             },
@@ -284,5 +312,16 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     companion object {
         var IS_QUIZ_BTN = "isQuizBtn"
     }
+    //TODO (WITOLD) paginacja zaproszeń do quizów i znaj
+    private fun firstFive(){
+        if(friendsPage){
+            //5 zaproszeń do znaj
+        }else{
+            //5 zaproszeń do quizu
+        }
+    }
+    private fun prevFive(){}
+    private fun nextFive(){}
+    private fun lastFive(){}
 
 }

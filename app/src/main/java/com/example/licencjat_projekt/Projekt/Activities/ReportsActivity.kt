@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.Models.ReadReportModel
@@ -51,7 +52,11 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         report_others_reports.setOnClickListener(this)
         report_btn_search.setOnClickListener(this)
 
-        report_user_reports.setBackgroundColor(Color.RED)
+        report_user_reports.setBackgroundColor(
+            ContextCompat.getColor(
+            this,
+            R.color.purple_05
+        ))
         getQuizesNumber()
         firstFive()
         quizesRecyclerView(quizesList)
@@ -74,7 +79,10 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     firstFive()
                     quizesRecyclerView(quizesList)
 
-                    report_user_reports.setBackgroundColor(Color.RED)
+                    report_user_reports.setBackgroundColor(ContextCompat.getColor(
+                        this,
+                        R.color.purple_05
+                    ))
                     report_others_reports.setBackgroundColor(Color.GRAY)
                 }
             }
@@ -90,7 +98,10 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     userQuizesRecyclerView(quizesList)
 
                     report_user_reports.setBackgroundColor(Color.GRAY)
-                    report_others_reports.setBackgroundColor(Color.RED)
+                    report_others_reports.setBackgroundColor(ContextCompat.getColor(
+                        this,
+                        R.color.purple_05
+                    ))
                 }
             }
             R.id.report_firstPage -> {

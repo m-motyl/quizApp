@@ -23,6 +23,7 @@ import java.time.LocalDateTime
 class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private var visitatedUser: LoadUserModel? = null
     private var invitationSend: Boolean = false
+    private var maxFriends: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_add)
@@ -46,6 +47,7 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
             profileadd_quiz_taken.text = userQuizTaken()
         }
         checkIfInvitationSend()
+        checkNOFriends()
         if(invitationSend){
             profile_add_add_friend.text = "Zaproszenie zostało wysłane..."
         }
@@ -65,7 +67,7 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.profile_add_add_friend -> {
-                if(!invitationSend) {
+                if(!invitationSend && !maxFriends) {
                     sendFriendInvitationToDatabase()
                     Toast.makeText(
                         this,
@@ -73,6 +75,12 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
                         Toast.LENGTH_LONG
                     ).show()
                     finish()
+                }else if(maxFriends){
+                    Toast.makeText(
+                        this,
+                        "Maksymalna ilość znajomych (50) osiagnięta!",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -97,5 +105,8 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     }
     private fun checkIfInvitationSend(){ //TODO (WITOLD) sprawdzic czy zaproszenie do znaj. już wysłane
         invitationSend = false
+    }
+    private fun checkNOFriends(){ //TODO (WITOLD) sprawdzić czy mniej niż 50 znajomków
+        maxFriends = false //if NOfriends > 50 => true
     }
 }
