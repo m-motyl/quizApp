@@ -17,7 +17,7 @@
     <string name="signup_sign_in">Zaloguj się</string>
     <string name="profile_main_login">Nazwa użytkownika</string>
     <string name="profile_rate">Ocena</string>
-    <string name="profile_quiz_taken">Rozwiązane quziy</string>
+    <string name="profile_quiz_taken">Rozwiązane quizy</string>
     <string name="profile_quiz_taken_count">Liczba</string>
     <string name="profile_rate_number">Liczba</string>
     <string name="profile_login">Login</string>

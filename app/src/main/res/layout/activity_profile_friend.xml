@@ -21,7 +21,7 @@
 
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/profile_toolbar"
+                android:id="@+id/profile_friend_toolbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/purple_05"
@@ -145,7 +145,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/profile_quiz_taken"
+                        android:id="@+id/profile_friend_quiz_taken"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/profile_taken"
@@ -157,6 +157,22 @@
 
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_gravity="center_vertical">
+
+            <Button
+                android:id="@+id/profile_add_delete_friend"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:backgroundTint="@color/purple_05"
+                android:text="Usuń znajomego!"/>
 
         </LinearLayout>
     </LinearLayout>

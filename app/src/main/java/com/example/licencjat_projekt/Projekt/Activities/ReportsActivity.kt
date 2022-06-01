@@ -132,7 +132,6 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-
     private fun firstFive() {
         this.offsetId = 0L
         /*if (userReports) {
@@ -227,20 +226,6 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun prevFive() {
         this.offsetId -= 5L
-        /*if (userReports) {
-            runBlocking {
-                newSuspendedTransaction(Dispatchers.IO) {
-                    val query = QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
-                        QuizeResults.by eq currentUser!!.id
-                    }.limit(5, offsetId)
-                    val x = QuizeResult.wrapRows(query).toList()
-                    if (x.isNotEmpty())
-                        exposedToModel(x)
-                    else
-                        offsetId += 5L
-                }
-            }
-        }*/
         if (othersReports) {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {

@@ -153,6 +153,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 CommunityInviteMsg::class.java
             )
             startActivity(intent)
+            finish()
             return true
         } else super.onOptionsItemSelected(item)
     }
