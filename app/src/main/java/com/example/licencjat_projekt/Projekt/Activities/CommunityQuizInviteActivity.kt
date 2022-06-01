@@ -117,8 +117,14 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
     }
 
-    private fun isUserInvited(userId: Int, quizId: Int) {
-        //TODO:(Witold) sprawdza czy takie zaproszenie istnieje w bazie
+    private fun isUserInvited(userId: Int, quizId: Int) :Boolean{
+        return runBlocking {
+            val x = newSuspendedTransaction(Dispatchers.IO) {
+                QuizInvitation.find { (QuizInvitations.to eq userId) and (QuizInvitations.quiz eq quizId) }
+                    .toList()
+            }
+            return@runBlocking !x.isEmpty()
+        }
     }
 
 
@@ -133,16 +139,12 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             override fun onClick(position: Int, model: LoadUserModel) {
                 val userID = model.id
                 val quizID = quizDetails!!.id
-                //TODO: (Witold) usunąć to i odkomentować niżej jak już baza bezie skończona
-                sendInvitationToDataBase(userID, quizID) ///////////////////////////
-                toastCorrect.show()                     ///////////////////////////
-
-//                if(isUserInvited(userID, quizID)){
-//                    toastIncorrect.show()
-//                } else {
-//                    sendInvitationToDataBase(userID, quizID)
-//                    toastCorrect.show()
-//                }
+                if(isUserInvited(userID, quizID)){
+                    toastIncorrect.show()
+                } else {
+                    sendInvitationToDataBase(userID, quizID)
+                    toastCorrect.show()
+                }
             }
         })
     }
