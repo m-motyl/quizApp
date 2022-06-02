@@ -107,7 +107,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
                         ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                    }.limit(5)).toList()
+                    }.withDistinct().limit(5)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
 
@@ -126,7 +126,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
                         ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                    }.limit(5,offsetId)).toList()
+                    }.withDistinct().limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
                     else
@@ -146,7 +146,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
                         ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                    }.limit(5,offsetId)).toList()
+                    }.withDistinct().limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list)
                     else
@@ -172,11 +172,11 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                     if (quizesCount.mod(5) != 0) {
                         list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
                             ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                        }.orderBy(Quizes.id to SortOrder.DESC)).limit((quizesCount.mod(5))).toList()
+                        }.withDistinct().orderBy(Quizes.id to SortOrder.DESC)).limit((quizesCount.mod(5))).toList()
                     } else {
                         list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
                             ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                        }.orderBy(Quizes.id to SortOrder.DESC)).limit(5).toList()
+                        }.withDistinct().orderBy(Quizes.id to SortOrder.DESC)).limit(5).toList()
                     }
                     if (list.isNotEmpty())
                         exposedToModel(list.reversed())
