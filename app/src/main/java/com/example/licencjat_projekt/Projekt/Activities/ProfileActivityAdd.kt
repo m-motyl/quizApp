@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.activity_profile.profile_toolbar
 import kotlinx.android.synthetic.main.activity_profile_add.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDateTime
 
@@ -103,10 +105,15 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    private fun checkIfInvitationSend(){ //TODO (WITOLD) sprawdzic czy zaproszenie do znaj. już wysłane
-        invitationSend = false
+    private fun checkIfInvitationSend()= runBlocking{
+        newSuspendedTransaction(Dispatchers.IO) {
+            invitationSend = !Friend.find { (Friends.to eq currentUser!!.id) or (Friends.from eq currentUser!!.id)}.empty()
+        }//blokuje wyslanie jesli juz sa znajomymi albo jest wsylane zapro w ktorakolwiek strone
+
     }
-    private fun checkNOFriends(){ //TODO (WITOLD) sprawdzić czy mniej niż 50 znajomków
-        maxFriends = false //if NOfriends > 50 => true
+    private fun checkNOFriends() =runBlocking{
+        newSuspendedTransaction(Dispatchers.IO) {
+            maxFriends = Friend.find { ((Friends.to eq currentUser!!.id) or (Friends.from eq currentUser!!.id)) and (Friends.status eq 1)}.count()>=50
+        }
     }
 }

@@ -11,8 +11,11 @@ import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
+import com.example.licencjat_projekt.Projekt.database.Friend
+import com.example.licencjat_projekt.Projekt.database.Friends
 import com.example.licencjat_projekt.Projekt.database.QuizeResult
 import com.example.licencjat_projekt.Projekt.database.QuizeResults
+import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_profile.profile_toolbar
@@ -20,9 +23,12 @@ import kotlinx.android.synthetic.main.activity_profile_friend.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener{
+class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
     private var user: LoadUserModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +66,7 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener{
     }
 
     override fun onClick(v: View?) {
-        when(v!!.id){
+        when (v!!.id) {
             R.id.profile_add_delete_friend -> {
                 deleteFriend()
 
@@ -70,7 +76,14 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener{
             }
         }
     }
-    private fun deleteFriend(){ //TODO(WITOLD) usuwanie znajomego, user: LoadUserModel
 
+    private fun deleteFriend() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            Friends.deleteWhere {
+                ((Friends.from eq currentUser!!.id) and (Friends.to eq user!!.id)) or
+                        ((Friends.to eq currentUser!!.id) and (Friends.from eq user!!.id))
+
+            }
+        }
     }
 }
