@@ -268,7 +268,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         }
 
 
-    }//todo wszedzie policzyc quizy ilosc
+    }
 
     private fun prevFive() {
         getQuizesNumber()

@@ -23,6 +23,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
@@ -79,8 +80,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         for (i in list) {
             friendInvitesList.add(
                 ReadFriendInvitationModel(
-                    fromUser = i.from.id,
-                    toUser = i.to.id,
+                    fromUser = i.from.id.value,
+                    toUser = i.to.id.value,
                     status = i.status
                 )
             )
@@ -103,13 +104,13 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.community_invite_msg_friends_btn -> {
-                if(!friendsPage) {
+                if (!friendsPage) {
                     setFriendBtn()
                     firstFive()
                 }
             }
             R.id.community_invite_msg_quizes_btn -> {
-                if(friendsPage) {
+                if (friendsPage) {
                     setQuizesBtn()
                     firstFive()
                 }
@@ -129,7 +130,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun setFriendBtn(){
+    private fun setFriendBtn() {
         community_invite_msg_friends_scroll.visibility = View.VISIBLE
         community_invite_msg_quizes_scroll.visibility = View.GONE
         community_invite_msg_friends_btn.setBackgroundColor(
@@ -147,7 +148,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         friendsPage = true
     }
 
-    private fun setQuizesBtn(){
+    private fun setQuizesBtn() {
         community_invite_msg_friends_scroll.visibility = View.GONE
         community_invite_msg_quizes_scroll.visibility = View.VISIBLE
         community_invite_msg_friends_btn.setBackgroundColor(
@@ -177,19 +178,24 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private fun changeQuizInvStatus(poz: Int, s: Int) = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val x =
-                QuizInvitation.find { (QuizInvitations.from eq quizInvitesList[poz].fromUser) and (QuizInvitations.to eq currentUser!!.id) }
+                QuizInvitation.find {
+                    (QuizInvitations.from eq quizInvitesList[poz].fromUser) and
+                            (QuizInvitations.to eq currentUser!!.id) and (QuizInvitations.quiz eq Quiz.findById(
+                        1
+                    )!!.id)
+                }
                     .toList()
             x[0].status = s
         }
     }
 
-    private fun restartActivity(){
+    private fun restartActivity() {
         val intent = intent
         finish()
         startActivity(intent)
     }
 
-    private fun restartQuizesActivity(){
+    private fun restartQuizesActivity() {
         val intent = intent
         finish()
         intent.putExtra(IS_QUIZ_BTN, true)
@@ -288,7 +294,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                         return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                             val quiz = Quiz.findById(model.quizID)
                             exposedToQuizModel(quiz!!)
-                            //TODO(WITOLD) usunąć zaproszenie z bazy po wyszukaniu
+                            //TODO(WITOLD) usunąć zaproszenie z bazy po wyszukaniu -- gdzie
                         }
                     }
                     intent.putExtra(
@@ -303,25 +309,50 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             object : QuizInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
 
-                    changeQuizInvStatus(position, -1) //TODO(WITOLD usunąć zaproszenie do quizu
+                    deleteQuizInv(position)
                     restartQuizesActivity()
                 }
             },
         )
     }
+
+    private fun deleteFrenInv(poz: Int)= runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val f = User.findById(friendInvitesList[poz].fromUser)!!.id
+            val x =
+                Friend.find {(Friends.to eq currentUser!!.id) and (Friends.from eq f)}.toList()
+            x[0].delete()
+
+        }
+    }
+    private fun deleteQuizInv(poz: Int) = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            val x =
+                QuizInvitation.find {
+                    (QuizInvitations.from eq quizInvitesList[poz].fromUser) and
+                            (QuizInvitations.to eq currentUser!!.id) and
+                            (QuizInvitations.quiz eq Quiz.findById(1)!!.id)
+                }.toList()
+            x[0].delete()
+
+        }
+    }
+
     companion object {
         var IS_QUIZ_BTN = "isQuizBtn"
     }
+
     //TODO (WITOLD) paginacja zaproszeń do quizów i znaj
-    private fun firstFive(){
-        if(friendsPage){
+    private fun firstFive() {
+        if (friendsPage) {
             //5 zaproszeń do znaj
-        }else{
+        } else {
             //5 zaproszeń do quizu
         }
     }
-    private fun prevFive(){}
-    private fun nextFive(){}
-    private fun lastFive(){}
+
+    private fun prevFive() {}
+    private fun nextFive() {}
+    private fun lastFive() {}
 
 }
