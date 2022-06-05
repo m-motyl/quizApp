@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_community_invite_msg.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
+import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -31,6 +32,9 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private var friendInvitesList = ArrayList<ReadFriendInvitationModel>()
     private var quizInvitesList = ArrayList<ReadQuizInvitationModel>()
     private var friendsPage: Boolean = true
+    private var quizinvcount = 0L
+    private var friendinvcount = 0L
+    private var offset = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community_invite_msg)
@@ -294,9 +298,10 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                         return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                             val quiz = Quiz.findById(model.quizID)
                             exposedToQuizModel(quiz!!)
-                            //TODO(WITOLD) usunąć zaproszenie z bazy po wyszukaniu -- gdzie
+
                         }
                     }
+                    deleteFrenInv(position) //todo chuj wie gdzie to
                     intent.putExtra(
                         MainActivity.QUIZ_DETAILS,
                         quizModel
@@ -316,15 +321,16 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         )
     }
 
-    private fun deleteFrenInv(poz: Int)= runBlocking {
+    private fun deleteFrenInv(poz: Int) = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val f = User.findById(friendInvitesList[poz].fromUser)!!.id
             val x =
-                Friend.find {(Friends.to eq currentUser!!.id) and (Friends.from eq f)}.toList()
+                Friend.find { (Friends.to eq currentUser!!.id) and (Friends.from eq f) }.toList()
             x[0].delete()
 
         }
     }
+
     private fun deleteQuizInv(poz: Int) = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val x =
@@ -342,17 +348,144 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         var IS_QUIZ_BTN = "isQuizBtn"
     }
 
-    //TODO (WITOLD) paginacja zaproszeń do quizów i znaj
-    private fun firstFive() {
-        if (friendsPage) {
-            //5 zaproszeń do znaj
-        } else {
-            //5 zaproszeń do quizu
+    private fun countFriendInv() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            friendinvcount = Friend.find { Friends.to eq currentUser!!.id }.count()
         }
     }
 
-    private fun prevFive() {}
-    private fun nextFive() {}
-    private fun lastFive() {}
+    private fun countQuizInv() = runBlocking {
+        newSuspendedTransaction(Dispatchers.IO) {
+            quizinvcount = QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.count()
+        }
+    }
+
+    //TODO (WITOLD) paginacja zaproszeń do quizów i znaj
+    private fun firstFive() {
+        this.offset = 0L
+        if (friendsPage) {
+            countFriendInv()
+
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list = Friend.find { Friends.to eq currentUser!!.id }.limit(5).toList()
+                    if (list.isNotEmpty())
+                        exposedToFriendInvitationModel(list)
+                }
+            }
+        } else {
+            countQuizInv()
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list =
+                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.limit(5)
+                            .toList()
+                    if (list.isNotEmpty())
+                        exposedToQuizInvitationModel(list)
+                }
+            }
+        }
+    }
+    private fun nextFive() {
+        this.offset += 5L
+        if (friendsPage) {
+            countFriendInv()
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list = Friend.find { Friends.to eq currentUser!!.id }.limit(5,offset).toList()
+                    if (list.isNotEmpty())
+                        exposedToFriendInvitationModel(list)
+                    else
+                        offset -= 5L
+                }
+            }
+        } else {
+            countQuizInv()
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list =
+                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.limit(5,offset)
+                            .toList()
+                    if (list.isNotEmpty())
+                        exposedToQuizInvitationModel(list)
+                    else
+                        offset -= 5L
+                }
+            }
+        }
+    }
+    private fun prevFive() {
+        this.offset -= 5L
+        if (friendsPage) {
+            countFriendInv()
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list = Friend.find { Friends.to eq currentUser!!.id }.limit(5,offset).toList()
+                    if (list.isNotEmpty())
+                        exposedToFriendInvitationModel(list)
+                    else
+                        offset += 5L
+                }
+            }
+        } else {
+            countQuizInv()
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list =
+                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.limit(5,offset)
+                            .toList()
+                    if (list.isNotEmpty())
+                        exposedToQuizInvitationModel(list)
+                    else
+                        offset += 5L
+                }
+            }
+        }
+    }
+    private fun lastFive() {
+        if (friendsPage) {
+            countFriendInv()
+            if (friendinvcount.mod(5) != 0) {
+                this.offset = friendinvcount - friendinvcount.mod(5)
+            } else {
+                this.offset = friendinvcount - 5
+            }
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val list: List<Friend> = if (friendinvcount.mod(5) != 0) {
+                        Friend.find { Friends.to eq currentUser!!.id }.orderBy(Friends.id to SortOrder.DESC)
+                            .limit((friendinvcount.mod(5)))
+                            .toList()
+                    } else {
+                        Friend.find { Friends.to eq currentUser!!.id }.orderBy(Friends.id to SortOrder.DESC)
+                            .limit(5)
+                            .toList()
+                    }
+                    if (list.isNotEmpty())
+                        exposedToFriendInvitationModel(list.reversed())
+                }
+            }
+        } else {
+            countQuizInv()
+            if (quizinvcount.mod(5) != 0) {
+                this.offset = quizinvcount - quizinvcount.mod(5)
+            } else {
+                this.offset = quizinvcount - 5
+            }
+            runBlocking {
+                val list: List<QuizInvitation> = if (quizinvcount.mod(5) != 0) {
+                    QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.orderBy(QuizInvitations.id to SortOrder.DESC)
+                        .limit((quizinvcount.mod(5)))
+                        .toList()
+                } else {
+                    QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.orderBy(QuizInvitations.id to SortOrder.DESC)
+                        .limit(5)
+                        .toList()
+                }
+                if (list.isNotEmpty())
+                    exposedToQuizInvitationModel(list.reversed())
+            }
+        }
+    }
 
 }
