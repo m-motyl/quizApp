@@ -105,19 +105,27 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendInvitationToDataBase(userId: Int, quizId: Int) = runBlocking {
-        newSuspendedTransaction(Dispatchers.IO) {
-            QuizInvitation.new {
-                status = 0
-                from = currentUser!!
-                to = User.findById(userId)!!
-                quiz = Quiz.findById(quizId)!!
-                time_sent = LocalDateTime.now()
+    private fun sendInvitationToDataBase(userId: Int, quizId: Int): Boolean {
+        return runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                val q = Quiz.findById(quizId)!!
+                val t = User.findById(userId)!!
+                if (q.user == t) {
+                    QuizInvitation.new {
+                        status = 0
+                        from = currentUser!!
+                        to = t
+                        quiz = q
+                        time_sent = LocalDateTime.now()
+                    }
+                    return@newSuspendedTransaction true
+                } else
+                    return@newSuspendedTransaction false
             }
         }
     }
 
-    private fun isUserInvited(userId: Int, quizId: Int) :Boolean{
+    private fun isUserInvited(userId: Int, quizId: Int): Boolean {
         return runBlocking {
             val x = newSuspendedTransaction(Dispatchers.IO) {
                 QuizInvitation.find { (QuizInvitations.to eq userId) and (QuizInvitations.quiz eq quizId) }
@@ -139,7 +147,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             override fun onClick(position: Int, model: LoadUserModel) {
                 val userID = model.id
                 val quizID = quizDetails!!.id
-                if(isUserInvited(userID, quizID)){
+                if (isUserInvited(userID, quizID)) {
                     toastIncorrect.show()
                 } else {
                     sendInvitationToDataBase(userID, quizID)
