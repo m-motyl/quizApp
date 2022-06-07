@@ -36,6 +36,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
 
     private lateinit var toastCorrect: Toast
     private lateinit var toastIncorrect: Toast
+    private lateinit var toastAuthor: Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +61,12 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
         toastIncorrect = Toast.makeText(
             this,
             "Użytkownik już otrzymał zaproszenie",
+            Toast.LENGTH_SHORT
+        )
+
+        toastAuthor = Toast.makeText(
+            this,
+            "Użytkownik jest autorem quizu",
             Toast.LENGTH_SHORT
         )
 
@@ -152,6 +159,8 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
                 } else {
                     if(sendInvitationToDataBase(userID, quizID))
                         toastCorrect.show()
+                    else
+                        toastAuthor.show()
                 }
             }
         })
