@@ -109,8 +109,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                         ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
                     }.withDistinct().limit(5)).toList()
                     if (list.isNotEmpty())
-                        exposedToModel(list)
-
+                        exposedToModel(list.distinct())
                 }
             }
         }
@@ -128,7 +127,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                         ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
                     }.withDistinct().limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
-                        exposedToModel(list)
+                        exposedToModel(list.distinct())
                     else
                         offsetId -= 5L
                 }
@@ -148,7 +147,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                         ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
                     }.withDistinct().limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
-                        exposedToModel(list)
+                        exposedToModel(list.distinct())
                     else
                         offsetId += 5L
                 }
@@ -179,7 +178,7 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                         }.withDistinct().orderBy(Quizes.id to SortOrder.DESC)).limit(5).toList()
                     }
                     if (list.isNotEmpty())
-                        exposedToModel(list.reversed())
+                        exposedToModel(list.reversed().distinct())
                 }
             }
         }

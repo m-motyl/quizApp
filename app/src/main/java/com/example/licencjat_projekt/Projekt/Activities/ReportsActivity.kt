@@ -47,7 +47,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         report_lastPage.setOnClickListener(this)
         report_user_reports.setOnClickListener(this)
         report_others_reports.setOnClickListener(this)
-        report_btn_search.setOnClickListener(this)
+        //report_btn_search.setOnClickListener(this)
 
         report_user_reports.setBackgroundColor(
             ContextCompat.getColor(
@@ -62,19 +62,22 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v!!.id) {
-            R.id.report_btn_search -> {
+            /*R.id.report_btn_search -> {
                 searchString = report_et.text.toString()
                 offsetId = 0
+                quizesList.clear()
                 firstFive()
-            }
+                quizesRecyclerView(quizesList)
+            }*/
             R.id.report_user_reports -> {
                 if (othersReports) {
                     quizesList.clear()
                     quizesRecyclerView(quizesList)
-                    //userReports = true
                     othersReports = false
 
+
                     offsetId = 0L
+                    //searchString = report_et.text.toString()
                     firstFive()
                     quizesRecyclerView(quizesList)
 
@@ -90,10 +93,10 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             R.id.report_others_reports -> {
                 if (!othersReports) {
                     quizesList.clear()
-                    quizesRecyclerView(quizesList)
+                    userQuizesRecyclerView(quizesList)
                     othersReports = true
-                    //userReports = false
 
+                    //searchString = report_et.text.toString()
                     offsetId = 0L
                     firstFive()
                     userQuizesRecyclerView(quizesList)
@@ -150,7 +153,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId = 0L
         getQuizesNumber()
         if (othersReports) {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -162,7 +165,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             exposedToModel(x)
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -173,9 +176,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         if (x.isNotEmpty())
                             exposedToModel(x)
                     }
-                }
+                }*/
         } else {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -187,7 +190,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             exposedToModel(x)
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -198,17 +201,15 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         if (x.isNotEmpty())
                             exposedToModel(x)
                     }
-                }
+                }*/
         }
-
-
     }
 
     private fun nextFive() {
         getQuizesNumber()
         this.offsetId += 5L
         if (othersReports) {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -222,7 +223,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             offsetId -= 5L
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -235,9 +236,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         else
                             offsetId -= 5L
                     }
-                }
+                }*/
         } else {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -251,7 +252,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             offsetId -= 5L
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -264,7 +265,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         else
                             offsetId -= 5L
                     }
-                }
+                }*/
         }
 
 
@@ -274,7 +275,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         getQuizesNumber()
         this.offsetId -= 5L
         if (othersReports) {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -288,7 +289,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             offsetId += 5L
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -301,9 +302,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         else
                             offsetId += 5L
                     }
-                }
+                }*/
         } else {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -317,7 +318,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             offsetId += 5L
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -330,10 +331,8 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         else
                             offsetId += 5L
                     }
-                }
+                }*/
         }
-
-
     }
 
     private fun lastFive() {
@@ -344,7 +343,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId = quizesCount - 5
         }
         if (othersReports) {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -357,7 +356,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             exposedToModel(x)
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -369,9 +368,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         if (x.isNotEmpty())
                             exposedToModel(x)
                     }
-                }
+                }*/
         } else {
-            if (searchString!!.isEmpty())
+            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -384,7 +383,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             exposedToModel(x)
                     }
                 }
-            else
+            /*else
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -396,10 +395,8 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         if (x.isNotEmpty())
                             exposedToModel(x)
                     }
-                }
+                }*/
         }
-
-
     }
 
     private fun quizesRecyclerView(quizes: ArrayList<ReadReportModel>) {
@@ -457,6 +454,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                 return@newSuspendedTransaction Tag.wrapRows(query).toList()
             }
         }
+
         var xd = ""
         for (i in tmp) {
             xd += i.name + " "
