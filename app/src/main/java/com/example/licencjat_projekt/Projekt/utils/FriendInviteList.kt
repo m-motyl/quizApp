@@ -68,7 +68,7 @@ open class FriendInviteList(
         return listOfFriendInvitations.size
     }
 
-    private fun getUser(userID: EntityID<Int>)= runBlocking {
+    private fun getUser(userID: Int)= runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             User.findById(userID)
         }
