@@ -157,11 +157,14 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
                 if (isUserInvited(userID, quizID)) {
                     toastIncorrect.show()
                 } else {
-                    if(sendInvitationToDataBase(userID, quizID))
+                    if(sendInvitationToDataBase(userID, quizID)) {
                         toastCorrect.show()
-                    else
+                    }
+                    else {
                         toastAuthor.show()
+                    }
                 }
+                finish()
             }
         })
     }

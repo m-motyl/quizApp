@@ -101,7 +101,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.drawer_menu_logout -> run {
-                finish()
+                val intent = Intent(this,
+                    SignInActivity::class.java
+                )
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                intent.putExtra("EXIT", true)
+                startActivity(intent)
             }
             R.id.drawer_menu_search -> run {
                 val intent = Intent(
