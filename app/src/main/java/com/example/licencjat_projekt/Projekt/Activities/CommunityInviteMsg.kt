@@ -230,7 +230,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             object : FriendInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
-                    changeFriendInvitestatus(position, -1)
+                    //changeFriendInvitestatus(position, -1)
+                    deleteFrenInv(position)
                     restartActivity()
                 }
             },
@@ -301,7 +302,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
                         }
                     }
-                    deleteFrenInv(position) //todo chuj wie gdzie to
+                    //deleteFrenInv(position) //  todo chuj wie gdzie to
                     intent.putExtra(
                         MainActivity.QUIZ_DETAILS,
                         quizModel

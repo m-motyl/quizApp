@@ -69,9 +69,8 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.profile_add_delete_friend -> {
                 deleteFriend()
-
                 finish()
-                val intent = Intent(this@ProfileFriendActivity, CommunityActivity::class.java)
+                val intent = Intent(this@ProfileFriendActivity, MainActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -82,7 +81,6 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
             Friends.deleteWhere {
                 ((Friends.from eq currentUser!!.id) and (Friends.to eq user!!.id)) or
                         ((Friends.to eq currentUser!!.id) and (Friends.from eq user!!.id))
-
             }
         }
     }
