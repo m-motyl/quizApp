@@ -118,11 +118,20 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
             R.id.detail_quiz_invite_btn -> {
-                val intent = Intent(this,
-                CommunityQuizInviteActivity::class.java
-                )
-                intent.putExtra(QUIZ_DETAILS, quizDetails)
-                startActivity(intent)
+                if(checkIfUserHaveAnyFriends()) {
+                    val intent = Intent(
+                        this,
+                        CommunityQuizInviteActivity::class.java
+                    )
+                    intent.putExtra(QUIZ_DETAILS, quizDetails)
+                    startActivity(intent)
+                }else{
+                    Toast.makeText(
+                        this,
+                        "Brak znajomych!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
@@ -146,4 +155,7 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun goBack() {}
+    private fun checkIfUserHaveAnyFriends(): Boolean {
+        return true
+    } //TODO WITOLD true - ma znajomych,
 }
