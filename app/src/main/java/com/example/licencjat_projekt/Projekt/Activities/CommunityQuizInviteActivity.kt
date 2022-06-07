@@ -110,7 +110,7 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                 val q = Quiz.findById(quizId)!!
                 val t = User.findById(userId)!!
-                if (q.user == t) {
+                if (q.user != t) {
                     QuizInvitation.new {
                         status = 0
                         from = currentUser!!
@@ -150,8 +150,8 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
                 if (isUserInvited(userID, quizID)) {
                     toastIncorrect.show()
                 } else {
-                    sendInvitationToDataBase(userID, quizID)
-                    toastCorrect.show()
+                    if(sendInvitationToDataBase(userID, quizID))
+                        toastCorrect.show()
                 }
             }
         })

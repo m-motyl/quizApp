@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_questions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
@@ -161,7 +162,7 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkIfUserHaveAnyFriends(): Boolean {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction (Friend.find { (Friends.to eq currentUser!!.id) and (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+                return@newSuspendedTransaction (Friend.find { (Friends.to eq currentUser!!.id) or (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
                     .count()) > 0
             }
         }
