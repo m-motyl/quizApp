@@ -11,6 +11,8 @@ import android.view.View
 import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.CreateQuestionModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import com.example.licencjat_projekt.Projekt.database.Friend
+import com.example.licencjat_projekt.Projekt.database.Friends
 import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.Projekt.utils.currentUser
@@ -19,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_detail_quiz.*
 import kotlinx.android.synthetic.main.activity_questions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
@@ -118,14 +121,14 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
             R.id.detail_quiz_invite_btn -> {
-                if(checkIfUserHaveAnyFriends()) {
+                if (checkIfUserHaveAnyFriends()) {
                     val intent = Intent(
                         this,
                         CommunityQuizInviteActivity::class.java
                     )
                     intent.putExtra(QUIZ_DETAILS, quizDetails)
                     startActivity(intent)
-                }else{
+                } else {
                     Toast.makeText(
                         this,
                         "Brak znajomych!",
@@ -156,6 +159,11 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun goBack() {}
     private fun checkIfUserHaveAnyFriends(): Boolean {
-        return true
+        return runBlocking {
+            return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
+                return@newSuspendedTransaction (Friend.find { (Friends.to eq currentUser!!.id) and (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+                    .count()) > 0
+            }
+        }
     } //TODO WITOLD true - ma znajomych,
 }
