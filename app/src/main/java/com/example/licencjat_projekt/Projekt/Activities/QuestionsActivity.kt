@@ -155,6 +155,20 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                                             "co najmniej jedną poprawną odpowiedź!",
                                     Toast.LENGTH_SHORT
                                 ).show()
+                            }else if(res == 4){
+                                Toast.makeText(
+                                    this,
+                                    "Każde pytanie powinno być punktowane" +
+                                            "od 1 do 10 punktów",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }else if (res == 5){
+                                Toast.makeText(
+                                    this,
+                                    "Pytanie powinno zawierać od 2 do 80 znaków",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Log.e("za dlugie pytanie", res.toString())
                             }
                         }
                         1 -> goBack()
@@ -305,6 +319,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(
                             this,
                             "Podaj odpowiedź!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    questions_add_answer.length() > 50 -> {
+                        Toast.makeText(
+                            this,
+                            "Odpowiedź powinna zawierać do 50 znaków!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -591,7 +612,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 for (j in i.question_answers) {
                     Answer.new {
                         answer_text = j.answer_text
-                        answer_image = ExposedBlob(j.answer_image)
+                        //answer_image = ExposedBlob(j.answer_image)
                         is_correct = j.is_Correct
                         question = newQuestion
                     }
@@ -619,6 +640,13 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
             if(ansFlag){
                 return 3
+            }
+
+            if(i.question_pts < 1 || i.question_pts > 10){
+                return 4
+            }
+            if(i.question_text.length < 2 || i.question_text.length > 80){
+                return 5
             }
         }
         return 0

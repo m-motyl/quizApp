@@ -102,7 +102,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                     quizmain_description.length() > 200 || quizmain_description.length() < 2 -> {
                         Toast.makeText(
                             this,
-                            "Opis powinien zawierać od 2 do 20 znaków!",
+                            "Opis powinien zawierać od 2 do 200 znaków!",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

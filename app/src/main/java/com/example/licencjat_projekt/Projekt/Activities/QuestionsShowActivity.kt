@@ -138,7 +138,7 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                 tmp.add(
                     ReadAnswerModel(
                         answer_text = j.answer_text,
-                        answer_image = j.answer_image!!.bytes,
+                        //answer_image = j.answer_image!!.bytes,
                         is_Correct = j.is_correct
                     )
                 )

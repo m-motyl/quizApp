@@ -18,7 +18,7 @@ class Question(id: EntityID<Int>) : IntEntity(id) {
 
 object Questions : IntIdTable("Questions") {
     val number = integer("number")
-    val question_text = varchar("question_text", 50).nullable()
+    val question_text = varchar("question_text", 80).nullable()
     val question_image = blob("question_image").nullable()
     val points = integer("points")
     val quiz = reference("quiz", Quizes, onDelete = ReferenceOption.CASCADE)

@@ -185,6 +185,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         friendsList.setOnClickListener(object : FriendsList.OnClickListener {
 
             override fun onClick(position: Int, model: LoadUserModel) {
+
                 val intent = Intent(
                     this@CommunityActivity,
                     ProfileFriendActivity::class.java

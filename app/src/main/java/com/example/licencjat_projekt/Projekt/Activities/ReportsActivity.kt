@@ -71,8 +71,8 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             }*/
             R.id.report_user_reports -> {
                 if (othersReports) {
-                    quizesList.clear()
-                    quizesRecyclerView(quizesList)
+                    //quizesList.clear()
+                    //quizesRecyclerView(quizesList)
                     othersReports = false
 
 
@@ -111,39 +111,47 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
             R.id.report_firstPage -> {
-                getQuizesNumber()
-                firstFive()
-                if (othersReports) {
-                    userQuizesRecyclerView(quizesList)
-                } else {
-                    quizesRecyclerView(quizesList)
+                if (offsetId != 0L) {
+                    //getQuizesNumber()
+                    firstFive()
+                    if (othersReports) {
+                        userQuizesRecyclerView(quizesList)
+                    } else {
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
             R.id.report_backPage -> {
-                getQuizesNumber()
-                prevFive()
-                if (othersReports) {
-                    userQuizesRecyclerView(quizesList)
-                } else {
-                    quizesRecyclerView(quizesList)
+                if (offsetId >= 5L) {
+                    //getQuizesNumber()
+                    prevFive()
+                    if (othersReports) {
+                        userQuizesRecyclerView(quizesList)
+                    } else {
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
             R.id.report_nextPage -> {
-                getQuizesNumber()
-                nextFive()
-                if (othersReports) {
-                    userQuizesRecyclerView(quizesList)
-                } else {
-                    quizesRecyclerView(quizesList)
+                if (offsetId + 5 <= quizesCount) {
+                    //getQuizesNumber()
+                    nextFive()
+                    if (othersReports) {
+                        userQuizesRecyclerView(quizesList)
+                    } else {
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
             R.id.report_lastPage -> {
-                getQuizesNumber()
-                lastFive()
-                if (othersReports) {
-                    userQuizesRecyclerView(quizesList)
-                } else {
-                    quizesRecyclerView(quizesList)
+                if (offsetId + 5 < quizesCount) {
+                    //getQuizesNumber()
+                    lastFive()
+                    if (othersReports) {
+                        userQuizesRecyclerView(quizesList)
+                    } else {
+                        quizesRecyclerView(quizesList)
+                    }
                 }
             }
         }
