@@ -70,11 +70,13 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getLikeUsers() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+            val list = Friend.find { ((Friends.from eq currentUser!!.id) and (Friends.status eq 1)) or ((Friends.to eq currentUser!!.id) and (Friends.status eq 1)) }
                 .toList()
             val xd = list.map { it.to.id }
+            val xd1 = list.map { it.from.id }
+            val xd2 = xd + xd1
             val x =
-                User.find { (Users.login like "$searchUserString%") and (Users.id notInList xd) and (Users.id neq currentUser!!.id) }
+                User.find { (Users.login like "$searchUserString%") and (Users.id notInList xd2) and (Users.id neq currentUser!!.id) }
                     .toList()
             for (i in x) {
                 Log.e("", i.login)

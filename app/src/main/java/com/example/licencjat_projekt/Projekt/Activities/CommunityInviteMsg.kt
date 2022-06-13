@@ -290,7 +290,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             object : QuizInviteList.OnAcceptClickListener {
                 override fun onClick(position: Int, model: ReadQuizInvitationModel) {
-                    changeQuizInvStatus(position, 1)
+                    deleteQuizInv(position)
                     val intent = Intent(
                         this@CommunityInviteMsg,
                         DetailQuizActivity::class.java
@@ -302,7 +302,6 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
                         }
                     }
-                    //deleteFrenInv(position) //  todo chuj wie gdzie to
                     intent.putExtra(
                         MainActivity.QUIZ_DETAILS,
                         quizModel

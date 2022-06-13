@@ -39,7 +39,7 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var signUpModel: SignUpModel
 
     companion object {
-        internal const val GALLERY_CODE = 1
+        const val GALLERY_CODE = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

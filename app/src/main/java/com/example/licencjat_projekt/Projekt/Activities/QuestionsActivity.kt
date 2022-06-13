@@ -158,7 +158,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                             }else if(res == 4){
                                 Toast.makeText(
                                     this,
-                                    "Każde pytanie powinno być punktowane" +
+                                    "Każde pytanie powinno być punktowane " +
                                             "od 1 do 10 punktów",
                                     Toast.LENGTH_SHORT
                                 ).show()

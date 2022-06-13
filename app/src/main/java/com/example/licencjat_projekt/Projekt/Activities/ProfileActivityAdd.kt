@@ -107,8 +107,8 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     }
     private fun checkIfInvitationSend()= runBlocking{
         newSuspendedTransaction(Dispatchers.IO) {
-            invitationSend = !Friend.find { ((Friends.to eq currentUser!!.id) and (Friends.from eq currentUser!!.id))or
-                    ((Friends.from eq currentUser!!.id) and (Friends.to eq currentUser!!.id))}.empty()
+            invitationSend = !Friend.find { ((Friends.to eq visitatedUser!!.id) and (Friends.from eq currentUser!!.id))or
+                    ((Friends.from eq visitatedUser!!.id) and (Friends.to eq currentUser!!.id))}.empty()
         }//blokuje wyslanie jesli juz sa znajomymi albo jest wsylane zapro w ktorakolwiek strone
 
     }
