@@ -26,5 +26,4 @@ object Users : IntIdTable("Users") {
     val creation_time = datetime("creation_time")
     val profile_picture = blob("profile_picture").nullable()
     val token = uuid("token")
-
 }

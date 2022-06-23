@@ -23,6 +23,9 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
     private var quizesList = ArrayList<ReadQuizModel>()
     private var offsetId: Long = 0L
     private var quizesCount: Long = 0L
+    companion object {
+        var QUIZ_DETAILS = "quiz_details"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_quizes)
@@ -207,8 +210,5 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
         })
-    }
-    companion object {
-        var QUIZ_DETAILS = "quiz_details"
     }
 }

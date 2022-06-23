@@ -29,8 +29,6 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
-    private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-
     private var isPrivate: Boolean = false
     private lateinit var invitation_code: String
     private lateinit var quiz_image: ByteArray
@@ -38,7 +36,7 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     private var quizModel: CreateQuizModel? = null
 
     companion object {
-        internal const val GALLERY_CODE = 1
+        const val GALLERY_CODE = 1
         var QUIZ_DETAILS = "quiz_details"
     }
 
@@ -199,15 +197,15 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkIfInvitationCodeExists(): Boolean {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction Quiz.find { Quizes.invitation_code eq invitation_code }
+                return@newSuspendedTransaction Quiz.find { Quizes.invitation_code eq invitation_code}
                     .toList().isNotEmpty()
             }
         }
     }
 
     private fun generateInvitationCode(): String {
-        var codeLen = 6
-        return ((1..codeLen)
+        val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        return ((1..6)
             .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
             .map(charPool::get).joinToString(""))
     }

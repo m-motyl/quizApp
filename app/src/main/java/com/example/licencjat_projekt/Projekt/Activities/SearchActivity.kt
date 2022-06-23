@@ -25,7 +25,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
     private var quizesCount: Long = 0L
     private var searchCode: Boolean = false
     private var quizesList = ArrayList<ReadQuizModel>()
-
+    companion object {
+        var QUIZ_DETAILS = "quiz_details"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -106,7 +108,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
-                        ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                        ((Tags.name.lowerCase() like "$str%") or
+                                (Quizes.title.lowerCase() like "$str%")) and
+                                (Quizes.private eq false)
                     }.withDistinct().limit(5)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list.distinct())
@@ -280,9 +284,5 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
         })
-    }
-
-    companion object {
-        var QUIZ_DETAILS = "quiz_details"
     }
 }

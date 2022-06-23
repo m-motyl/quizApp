@@ -39,7 +39,6 @@ open class AnswersDisplayList(
                 holder.itemView.answer_item_text_btn.text = ptr.answer_text
                 holder.itemView.answer_item_text_btn.visibility = View.VISIBLE
             } else if (null != holder.itemView.answer_item_image_btn.drawable) {
-                holder.itemView.answer_item_image_btn.setImageBitmap(byteArrayToBitmap(ptr.answer_image))
                 holder.itemView.answer_item_image_btn.visibility = View.VISIBLE
             }
         }

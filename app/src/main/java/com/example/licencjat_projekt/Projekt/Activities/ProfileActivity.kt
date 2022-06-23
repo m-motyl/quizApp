@@ -35,7 +35,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             profile_email.text = currentUser!!.email
             tv_profile_password_vis.text = currentUser!!.password
             tv_profile_password_inv.text = currentUser!!.password
-            profile_image.setImageBitmap(byteArrayToBitmap(currentUser!!.profile_picture!!.bytes))
+            profile_image.setImageBitmap(
+                byteArrayToBitmap(currentUser!!.profile_picture!!.bytes))
             profile_quiz_taken.text = userQuizTaken()
         }
         profile_show_password.setOnClickListener(this)
@@ -103,8 +104,9 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
     private fun userQuizTaken(): String {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction QuizeResult.find { QuizeResults.by eq currentUser!!.id }
-                    .count().toString()
+                return@newSuspendedTransaction QuizeResult.find {
+                    QuizeResults.by eq currentUser!!.id
+                }.count().toString()
             }
         }
     }

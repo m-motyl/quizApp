@@ -28,10 +28,12 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class ReportsActivity : AppCompatActivity(), View.OnClickListener {
     //private var userReports: Boolean = true
     private var othersReports: Boolean = false
-    private var searchString: String? = ""
     private var quizesList = ArrayList<ReadReportModel>()
     private var offsetId = 0L
     private var quizesCount = 0L
+    companion object {
+        var QUIZ_DETAILS = "quiz_details"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reports)
@@ -161,7 +163,6 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId = 0L
         getQuizesNumber()
         if (othersReports) {
-            //if (searchString!!.isEmpty())
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -173,18 +174,6 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                             exposedToModel(x)
                     }
                 }
-            /*else
-                runBlocking {
-                    newSuspendedTransaction(Dispatchers.IO) {
-                        val query =
-                            QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
-                                (Quizes.user eq currentUser!!.id) and ((Quizes.title like "$searchString%"))
-                            }.limit(5)
-                        val x = QuizeResult.wrapRows(query).toList()
-                        if (x.isNotEmpty())
-                            exposedToModel(x)
-                    }
-                }*/
         } else {
             //if (searchString!!.isEmpty())
                 runBlocking {
@@ -472,7 +461,6 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getQuizesNumber() {
         if (othersReports) {
-            if (searchString!!.isEmpty())
                 quizesCount = runBlocking {
                     return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -482,29 +470,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                         QuizeResult.wrapRows(query).count()
                     }
                 }
-            else
-                quizesCount = runBlocking {
-                    return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                        val query =
-                            QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
-                                (Quizes.user eq currentUser!!.id) and ((Quizes.title like "$searchString%"))
-                            }
-                        QuizeResult.wrapRows(query).count()
-                    }
-                }
         } else {
-            if (searchString!!.isNotEmpty())
-
-                quizesCount = runBlocking {
-                    return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                        val query =
-                            QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
-                                (QuizeResults.by eq currentUser!!.id) and ((Quizes.title like "$searchString%"))
-                            }
-                        QuizeResult.wrapRows(query).count()
-                    }
-                }
-            else
                 quizesCount = runBlocking {
                     return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                         val query =
@@ -540,10 +506,6 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
             )
         }
         quizesList = quizesArrayList
-    }
-
-    companion object {
-        var QUIZ_DETAILS = "quiz_details"
     }
 
 }

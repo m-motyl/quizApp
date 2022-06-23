@@ -42,7 +42,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private val emptyByteArray: ByteArray = ByteArray(1)
     private var quizModel: CreateQuizModel? = null
     private var noQuestions = 0
-    private var questionsList = arrayListOf<CreateQuestionModel>()
+    private var questionsList = ArrayList<CreateQuestionModel>()
     private var question_image: ByteArray = ByteArray(1)
     private var selectCorrect: Boolean = false
     private var removeAnswers: Boolean = false
@@ -57,7 +57,19 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_questions)
 
         questions_toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            val alert = AlertDialog.Builder(this)
+            alert.setTitle("Czy chcesz zakończyć tworzenie quizu?")
+            val items = arrayOf(
+                "Tak",
+                "Nie"
+            )
+            alert.setItems(items) { _, n ->
+                when (n) {
+                    0 -> onBackPressed()
+                    1 -> goBack()
+                }
+            }
+            alert.show()
         }
 
         if (intent.hasExtra(QuizMainActivity.QUIZ_DETAILS)) {
@@ -168,7 +180,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                                     "Pytanie powinno zawierać od 2 do 80 znaków",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                Log.e("za dlugie pytanie", res.toString())
                             }
                         }
                         1 -> goBack()
@@ -181,7 +192,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 questions_end_correct_ans.visibility = View.VISIBLE
             }
             R.id.questions_image -> {
-                chooseImageFromGalery()
+                chooseImageFromGallery()
             }
             R.id.questions_prev_question -> {
                 //if not empty
@@ -190,7 +201,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                     if (!questions_question.text.isNullOrEmpty()
                         && !questions_points.text.isNullOrEmpty()
                     ) {
-                        if (questionsList.getOrNull(noQuestions) == null) { //create new if not exists
+                        if (questionsList.getOrNull(noQuestions) == null) {
                             lateinit var questionModel: CreateQuestionModel
                             if (isImage) {
                                 questionModel = CreateQuestionModel(
@@ -332,7 +343,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                     else -> {
                         val ans = AnswerModel(
                             questions_add_answer.text.toString(),
-                            emptyByteArray,
                             false
                         )
                         questions_add_answer.text.clear()
@@ -444,7 +454,7 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun chooseImageFromGalery() {
+    private fun chooseImageFromGallery() {
         Dexter.withContext(this)
             .withPermissions(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -623,31 +633,25 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun validateQuestions(): Int {
-        if(questionsList.size < 2 || questionsList.size > 20){
-            return 1
-        }
-
+        if(questionsList.size < 2 || questionsList.size > 20){ return 1 }
         for (i in questionsList){
             var ansFlag = true
-            if (i.question_answers.size < 2 || i.question_answers.size > 10){
-                return 2
-            }
+            if (i.question_answers.size < 2 || i.question_answers.size > 10){ return 2 }
             for (j in i.question_answers){
-                if(j.is_Correct && ansFlag){
-                    ansFlag = false
-                }
+                if(j.is_Correct && ansFlag){ ansFlag = false }
             }
-
-            if(ansFlag){
-                return 3
-            }
+            if(ansFlag){ return 3 }
 
             if(i.question_pts < 1 || i.question_pts > 10){
-                return 4
-            }
+                Toast.makeText(this, "Pytanie nr ${questionsList.indexOf(i)}",
+                    Toast.LENGTH_SHORT).show()
+                return 4 }
+
             if(i.question_text.length < 2 || i.question_text.length > 80){
-                return 5
-            }
+                Toast.makeText(
+                    this, "Pytanie nr ${questionsList.indexOf(i)}",
+                    Toast.LENGTH_SHORT).show()
+                return 5 }
         }
         return 0
     }

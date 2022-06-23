@@ -7,4 +7,4 @@ data class CreateQuestionModel(
     var question_image: ByteArray,
     var question_pts: Int,
     var question_answers: ArrayList<AnswerModel>
-): Serializable
+)

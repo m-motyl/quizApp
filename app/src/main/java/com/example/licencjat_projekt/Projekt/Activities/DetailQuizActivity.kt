@@ -162,9 +162,13 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkIfUserHaveAnyFriends(): Boolean {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction (Friend.find { (Friends.to eq currentUser!!.id) or (Friends.from eq currentUser!!.id) and (Friends.status eq 1) }
+                return@newSuspendedTransaction (Friend.find {
+                    (Friends.to eq currentUser!!.id) or
+                            (Friends.from eq currentUser!!.id) and (
+                            Friends.status eq 1)
+                }
                     .count()) > 0
             }
         }
-    } //TODO WITOLD true - ma znajomych,
+    }
 }

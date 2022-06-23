@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var quizesCount: Long = 0L
     private var quizesList = ArrayList<ReadQuizModel>()
 
+    companion object {
+        var QUIZ_DETAILS = "quiz_details"
+        var QUIZ_CODE = 1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -167,7 +172,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId = 0L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.private eq false }.limit(5).toList()
+                val list = Quiz.find {
+                    Quizes.private eq false
+                }.limit(5).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
             }
@@ -178,7 +185,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId += 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.private eq false }.limit(5, offsetId).toList()
+                val list = Quiz.find {
+                    Quizes.private eq false
+                }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -191,7 +200,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         this.offsetId -= 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.private eq false }.limit(5, offsetId).toList()
+                val list = Quiz.find {
+                    Quizes.private eq false
+                }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -210,11 +221,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             newSuspendedTransaction(Dispatchers.IO) {
                 var list: List<Quiz>
                 if (quizesCount.mod(5) != 0) {
-                    list = Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
+                    list = Quiz.find {
+                        Quizes.private eq false
+                    }.orderBy(Quizes.id to SortOrder.DESC)
                         .limit((quizesCount.mod(5)))
                         .toList()
                 } else {
-                    list= Quiz.find { Quizes.private eq false }.orderBy(Quizes.id to SortOrder.DESC)
+                    list= Quiz.find {
+                        Quizes.private eq false
+                    }.orderBy(Quizes.id to SortOrder.DESC)
                         .limit(5)
                         .toList()
                 }
@@ -235,7 +250,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun exposedToModel(list: List<Quiz>) {
-
         val quizesArrayList = ArrayList<ReadQuizModel>()
         for (i in list) {
             getQuizTags(i)
@@ -255,7 +269,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
             )
         }
-
         quizesList = quizesArrayList
     }
 
@@ -309,10 +322,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
         })
-    }
-
-    companion object {
-        var QUIZ_DETAILS = "quiz_details"
-        var QUIZ_CODE = 1
     }
 }

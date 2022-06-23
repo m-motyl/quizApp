@@ -35,6 +35,9 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private var usersList = ArrayList<LoadUserModel>()
     private lateinit var layoutColorInitial: Drawable
     private lateinit var friendsLinearLayout: LinearLayout
+    companion object {
+        var PROFILE_DETAILS = "profile_details"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community)
@@ -218,9 +221,4 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
-
-    companion object {
-        var PROFILE_DETAILS = "profile_details"
-    }
-
 }
