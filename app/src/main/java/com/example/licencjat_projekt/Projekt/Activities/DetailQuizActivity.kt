@@ -4,18 +4,16 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.example.licencjat_projekt.Projekt.Models.CreateQuestionModel
+import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.database.Friend
 import com.example.licencjat_projekt.Projekt.database.Friends
 import com.example.licencjat_projekt.Projekt.database.Quiz
-import com.example.licencjat_projekt.Projekt.database.Quizes
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_detail_quiz.*
 import kotlinx.android.synthetic.main.activity_questions.*
@@ -28,25 +26,33 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
     private var quizDetails: ReadQuizModel? = null
     private var userIsAuthor: Boolean = false
-
     companion object {
         var QUESTION_DETAILS = "question_details"
         var QUIZ_DETAILS = "quiz_details"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_quiz)
 
         if (intent.hasExtra(MainActivity.QUIZ_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(MainActivity.QUIZ_DETAILS) as ReadQuizModel
+            quizDetails = intent.getSerializableExtra(MainActivity.QUIZ_DETAILS)
+                    as ReadQuizModel
         }
         if (intent.hasExtra(UserQuizesActivity.QUIZ_DETAILS)) {
             quizDetails =
-                intent.getSerializableExtra(UserQuizesActivity.QUIZ_DETAILS) as ReadQuizModel
+                intent.getSerializableExtra(UserQuizesActivity.QUIZ_DETAILS)
+                        as ReadQuizModel
         }
         if (intent.hasExtra(SearchActivity.QUIZ_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(SearchActivity.QUIZ_DETAILS) as ReadQuizModel
+            quizDetails = intent.getSerializableExtra(SearchActivity.QUIZ_DETAILS)
+                    as ReadQuizModel
         }
 
         if (quizDetails != null) {
@@ -75,7 +81,6 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
         detail_quiz_author_name.text = getAuthorName()
         detail_quiz_number_questions.text = getNOQuestions()
     }
-
 
     private fun byteArrayToBitmap(
         data: ByteArray

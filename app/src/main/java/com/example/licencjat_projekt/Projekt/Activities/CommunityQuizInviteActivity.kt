@@ -1,23 +1,16 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.*
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendsList
-import com.example.licencjat_projekt.Projekt.utils.UsersList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.coroutines.Dispatchers
@@ -30,15 +23,19 @@ import java.time.LocalDateTime
 
 
 class CommunityQuizInviteActivity : AppCompatActivity() {
-    var quizDetails: ReadQuizModel? = null
-
+    private var quizDetails: ReadQuizModel? = null
     private var friendsList = ArrayList<LoadUserModel>()
-
     private lateinit var toastCorrect: Toast
     private lateinit var toastIncorrect: Toast
     private lateinit var toastAuthor: Toast
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community)
 
@@ -77,13 +74,14 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
     private fun getAllFriends() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val list =
-                Friend.find { ((Friends.from eq currentUser!!.id) or (Friends.to eq currentUser!!.id)) and (Friends.status eq 1) }
+                Friend.find { ((Friends.from eq currentUser!!.id) or
+                        (Friends.to eq currentUser!!.id)) and
+                        (Friends.status eq 1) }
                     .with(Friend::to, Friend::from).toList()
             if (list.isNotEmpty())
                 exposedToFriendModel(list)
         }
     }
-
 
     private fun exposedToFriendModel(l: List<Friend>) {
         for (i in l) {
@@ -135,13 +133,13 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
     private fun isUserInvited(userId: Int, quizId: Int): Boolean {
         return runBlocking {
             val x = newSuspendedTransaction(Dispatchers.IO) {
-                QuizInvitation.find { (QuizInvitations.to eq userId) and (QuizInvitations.quiz eq quizId) }
+                QuizInvitation.find { (QuizInvitations.to eq userId) and
+                        (QuizInvitations.quiz eq quizId) }
                     .toList()
             }
             return@runBlocking !x.isEmpty()
         }
     }
-
 
     private fun friendsRecyclerView(friends: ArrayList<LoadUserModel>) {
         community_rv_friends.layoutManager = LinearLayoutManager(this)
@@ -168,5 +166,4 @@ class CommunityQuizInviteActivity : AppCompatActivity() {
             }
         })
     }
-
 }

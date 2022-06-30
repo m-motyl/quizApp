@@ -3,21 +3,17 @@ package com.example.licencjat_projekt.Projekt.Activities
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.*
 import com.example.licencjat_projekt.Projekt.database.Answer
 import com.example.licencjat_projekt.Projekt.database.Answers
 import com.example.licencjat_projekt.Projekt.database.Question
 import com.example.licencjat_projekt.Projekt.database.Questions
-import com.example.licencjat_projekt.Projekt.utils.AnswersList
-import com.example.licencjat_projekt.Projekt.utils.AuthorAnswersList
-import com.example.licencjat_projekt.Projekt.utils.DisplayQuestionsAnswers
-import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.*
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_questions_show.*
@@ -43,6 +39,12 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_questions_show)
 
@@ -102,7 +104,10 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                 override fun onFinish() {
                     cancel()
 
-                    val intent = Intent(this@QuestionsShowActivity, ReportActivity::class.java)
+                    val intent = Intent(
+                        this@QuestionsShowActivity,
+                        ReportActivity::class.java
+                    )
                     getUserScore()
                     val score = ReportModel(
                         userScore,
@@ -126,12 +131,12 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             "jdbc:postgresql://10.0.2.2:5432/db", driver = "org.postgresql.Driver",
             user = "postgres", password = "123"
         )
-        var tmp = ArrayList<ReadAnswerModel>()
+        val tmp = ArrayList<ReadAnswerModel>()
         val questions = newSuspendedTransaction(Dispatchers.IO) {
             Question.find{ Questions.quiz eq R.id}.toList()
         }
         for (i in questions){
-            var answers = newSuspendedTransaction(Dispatchers.IO) {
+            val answers = newSuspendedTransaction(Dispatchers.IO) {
                 Answer.find{ Answers.question eq i.id}.toList()
             }
             for (j in answers){
@@ -283,12 +288,12 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-    fun getQuizScore(){
+    private fun getQuizScore(){
         for (i in questionsList){
             quizScore += i.question_pts
         }
     }
-    fun getUserScore(){
+    private fun getUserScore(){
 
         for (i in questionsList){
 

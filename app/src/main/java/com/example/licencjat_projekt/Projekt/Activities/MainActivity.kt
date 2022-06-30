@@ -226,7 +226,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                var list: List<Quiz>
+                val list: List<Quiz>
                 if (quizesCount.mod(5) != 0) {
                     list = Quiz.find {
                         Quizes.private eq false
@@ -309,7 +309,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun quizesRecyclerView(quizes: ArrayList<ReadQuizModel>) {
-
         main_rv_quizes.layoutManager = LinearLayoutManager(this)
         main_rv_quizes.setHasFixedSize(true)
         val quizesList = QuizesList(this, quizes)

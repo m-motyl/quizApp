@@ -7,13 +7,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.Projekt.Models.CreateQuestionModel
@@ -21,6 +20,7 @@ import com.example.licencjat_projekt.Projekt.Models.CreateQuizModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.AnswersList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -53,6 +53,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_questions)
 
@@ -74,7 +80,8 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
         if (intent.hasExtra(QuizMainActivity.QUIZ_DETAILS)) {
             quizModel =
-                intent.getSerializableExtra(QuizMainActivity.QUIZ_DETAILS) as CreateQuizModel
+                intent.getSerializableExtra(QuizMainActivity.QUIZ_DETAILS)
+                        as CreateQuizModel
         }
 
         questions_add_button.setOnClickListener(this)
@@ -100,7 +107,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 questions_end_del.visibility = View.GONE
             }
             R.id.questions_image_delete -> {
-                questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                questions_image.setImageResource(
+                    R.drawable.add_screen_image_placeholder
+                )
                 if (questionsList.getOrNull(noQuestions) != null) {
                     questionsList[noQuestions].question_image = emptyByteArray
                 }
@@ -244,14 +253,18 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
                     if (questionsList.getOrNull(noQuestions) != null) { //read element if exists
                         questions_question.setText(questionsList[noQuestions].question_text)
-                        if (!questionsList[noQuestions].question_image.contentEquals(emptyByteArray)) {
+                        if (!questionsList[noQuestions].question_image.contentEquals(
+                                emptyByteArray)
+                        ) {
                             questions_image_delete.visibility = View.VISIBLE
                             questions_image.setImageBitmap(
                                 byteArrayToBitmap(questionsList[noQuestions].question_image)
                             )
                         } else {
                             questions_image_delete.visibility = View.GONE
-                            questions_image.setImageResource(R.drawable.add_screen_image_placeholder)
+                            questions_image.setImageResource(
+                                R.drawable.add_screen_image_placeholder
+                            )
                         }
                         questions_points.setText(questionsList[noQuestions].question_pts.toString())
                         answersRecyclerView(questionsList[noQuestions].question_answers)

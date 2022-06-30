@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_contact.view.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 open class UsersList(
     private val context: Context,

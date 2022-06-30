@@ -1,7 +1,6 @@
 package com.example.licencjat_projekt.Projekt.Models
 
 import java.io.Serializable
-import java.util.*
 
 data class LoadUserModel(
     var id: Int,

@@ -10,6 +10,7 @@ import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.activity_user_quizes.*
@@ -27,6 +28,12 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         var QUIZ_DETAILS = "quiz_details"
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_quizes)
         setSupportActionBar(userquizes_toolbar)
@@ -77,7 +84,9 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId = 0L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5).toList()
+                val list = Quiz.find {
+                    Quizes.user eq currentUser!!.id
+                }.limit(5).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
             }
@@ -88,7 +97,9 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId += 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5, offsetId).toList()
+                val list = Quiz.find {
+                    Quizes.user eq currentUser!!.id
+                }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -101,7 +112,9 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         this.offsetId -= 5L
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                val list = Quiz.find { Quizes.user eq currentUser!!.id }.limit(5, offsetId).toList()
+                val list = Quiz.find {
+                    Quizes.user eq currentUser!!.id
+                }.limit(5, offsetId).toList()
                 if (list.isNotEmpty())
                     exposedToModel(list)
                 else
@@ -120,15 +133,14 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
         Log.e("last", "$offsetId")
         runBlocking {
             newSuspendedTransaction(Dispatchers.IO) {
-                var list = emptyList<Quiz>()
-                if (quizesCount.mod(5) != 0) {
-                    list = Quiz.find { Quizes.user eq currentUser!!.id }.orderBy(Quizes.id to SortOrder.DESC)
-                        .limit((quizesCount.mod(5)))
-                        .toList()
+                val list: List<Quiz> = if (quizesCount.mod(5) != 0) {
+                    Quiz.find { Quizes.user eq currentUser!!.id }.orderBy(
+                        Quizes.id to SortOrder.DESC
+                    ).limit((quizesCount.mod(5))).toList()
                 } else {
-                    list= Quiz.find { Quizes.user eq currentUser!!.id }.orderBy(Quizes.id to SortOrder.DESC)
-                        .limit(5)
-                        .toList()
+                    Quiz.find { Quizes.user eq currentUser!!.id }.orderBy(
+                        Quizes.id to SortOrder.DESC
+                    ).limit(5).toList()
                 }
                 if (list.isNotEmpty())
                     exposedToModel(list.reversed())
@@ -204,7 +216,7 @@ class UserQuizesActivity : AppCompatActivity(), View.OnClickListener {
                 )
 
                 intent.putExtra( //passing object to activity
-                    UserQuizesActivity.QUIZ_DETAILS,
+                    QUIZ_DETAILS,
                     model
                 )
                 startActivity(intent)

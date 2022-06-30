@@ -1,16 +1,16 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputType
-import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.database.QuizeResult
 import com.example.licencjat_projekt.Projekt.database.QuizeResults
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +21,12 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
     private var passwordChange: Boolean = false
     private var newPassword: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         setSupportActionBar(profile_toolbar)
@@ -59,7 +65,6 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
                 }
                 else
                 {
-
                     updatePassword(newPassword!!)
 
                     tv_profile_password_inv.text = newPassword

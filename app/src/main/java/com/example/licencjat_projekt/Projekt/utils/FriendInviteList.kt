@@ -6,14 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
-import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.User
-import com.example.licencjat_projekt.Projekt.database.Users
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_message.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 
@@ -55,8 +52,6 @@ open class FriendInviteList(
             }
         }
 
-        //passing which position was clicked on rv
-        //passing ptr
         holder.itemView.setOnClickListener {
             if (onClickListener != null) {
                 onClickListener!!.onClick(position, ptr)

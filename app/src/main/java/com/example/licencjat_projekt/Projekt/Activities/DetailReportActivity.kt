@@ -1,16 +1,15 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
+import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.Models.ReadReportModel
 import com.example.licencjat_projekt.Projekt.database.User
-import com.example.licencjat_projekt.Projekt.database.Users
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_detail_quiz.*
-import kotlinx.android.synthetic.main.activity_detail_quiz.detail_quiz_toolbar
 import kotlinx.android.synthetic.main.activity_detail_report.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -19,6 +18,12 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class DetailReportActivity : AppCompatActivity() {
     private var quizDetails: ReadReportModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_report)
 

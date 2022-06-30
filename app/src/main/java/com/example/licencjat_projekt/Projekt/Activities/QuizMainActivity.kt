@@ -15,6 +15,7 @@ import android.widget.Toast
 import com.example.licencjat_projekt.Projekt.Models.*
 import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.Quizes
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -41,6 +42,12 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz_main)
 
@@ -97,7 +104,8 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    quizmain_description.length() > 200 || quizmain_description.length() < 2 -> {
+                    quizmain_description.length() > 200 ||
+                            quizmain_description.length() < 2 -> {
                         Toast.makeText(
                             this,
                             "Opis powinien zawierać od 2 do 200 znaków!",
@@ -132,7 +140,8 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    quizmain_final_comment.length() > 200 || quizmain_final_comment.length() < 2 -> {
+                    quizmain_final_comment.length() > 200 ||
+                            quizmain_final_comment.length() < 2 -> {
                         Toast.makeText(
                             this,
                             "Wiadomość końcowa powininna zawierać od 2 do 200 znaków!",
@@ -168,14 +177,12 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
                             this,
                             QuestionsActivity::class.java
                         )
-
                         if (quizModel != null) {
                             intent.putExtra(
                                 QUIZ_DETAILS,
                                 quizModel
                             )
                         }
-
                         startActivity(intent)
 
                         setResult(Activity.RESULT_OK)
@@ -197,8 +204,9 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkIfInvitationCodeExists(): Boolean {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction Quiz.find { Quizes.invitation_code eq invitation_code}
-                    .toList().isNotEmpty()
+                return@newSuspendedTransaction Quiz.find {
+                    Quizes.invitation_code eq invitation_code
+                }.toList().isNotEmpty()
             }
         }
     }

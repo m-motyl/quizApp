@@ -5,7 +5,6 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
-import org.jetbrains.exposed.sql.`java-time`.time
 
 class QuizeResult(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<QuizeResult>(QuizeResults)

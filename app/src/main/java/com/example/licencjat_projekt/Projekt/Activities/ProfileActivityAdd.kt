@@ -1,32 +1,36 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.activity_profile.profile_toolbar
 import kotlinx.android.synthetic.main.activity_profile_add.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import java.time.LocalDateTime
 
 class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private var visitatedUser: LoadUserModel? = null
     private var invitationSend: Boolean = false
     private var maxFriends: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_add)
         setSupportActionBar(profileadd_toolbar)
@@ -37,7 +41,8 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
 
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
             visitatedUser =
-                intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS) as LoadUserModel
+                intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS)
+                        as LoadUserModel
         }
 
         profile_add_add_friend.setOnClickListener(this)
@@ -100,21 +105,25 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     private fun userQuizTaken(): String {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction QuizeResult.find { QuizeResults.by eq visitatedUser!!.id }
-                    .count().toString()
+                return@newSuspendedTransaction QuizeResult.find {
+                    QuizeResults.by eq visitatedUser!!.id
+                }.count().toString()
             }
         }
     }
     private fun checkIfInvitationSend()= runBlocking{
         newSuspendedTransaction(Dispatchers.IO) {
-            invitationSend = !Friend.find { ((Friends.to eq visitatedUser!!.id) and (Friends.from eq currentUser!!.id))or
-                    ((Friends.from eq visitatedUser!!.id) and (Friends.to eq currentUser!!.id))}.empty()
-        }//blokuje wyslanie jesli juz sa znajomymi albo jest wsylane zapro w ktorakolwiek strone
-
+            invitationSend = !Friend.find { ((Friends.to eq visitatedUser!!.id) and
+                    (Friends.from eq currentUser!!.id)) or
+                    ((Friends.from eq visitatedUser!!.id) and
+                            (Friends.to eq currentUser!!.id))}.empty()
+        }
     }
     private fun checkNOFriends() =runBlocking{
         newSuspendedTransaction(Dispatchers.IO) {
-            maxFriends = Friend.find { ((Friends.to eq currentUser!!.id) or (Friends.from eq currentUser!!.id)) and (Friends.status eq 1)}.count()>=50
+            maxFriends = Friend.find { ((Friends.to eq currentUser!!.id) or
+                    (Friends.from eq currentUser!!.id)) and
+                    (Friends.status eq 1)}.count()>=50
         }
     }
 }

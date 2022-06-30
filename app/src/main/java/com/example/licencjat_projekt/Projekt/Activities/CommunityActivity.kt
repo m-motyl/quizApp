@@ -1,11 +1,9 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,19 +16,19 @@ import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendsList
 import com.example.licencjat_projekt.Projekt.utils.UsersList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
-
 class CommunityActivity : AppCompatActivity(), View.OnClickListener {
-    var searchUserString: String? = null
-
+    private var searchUserString: String? = null
     private var friendsList = ArrayList<LoadUserModel>()
     private var usersList = ArrayList<LoadUserModel>()
     private lateinit var layoutColorInitial: Drawable
@@ -39,6 +37,12 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         var PROFILE_DETAILS = "profile_details"
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community)
 
@@ -64,7 +68,9 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private fun getAllFriends() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val list =
-                Friend.find { ((Friends.from eq currentUser!!.id) or (Friends.to eq currentUser!!.id)) and (Friends.status eq 1) }
+                Friend.find { ((Friends.from eq currentUser!!.id) or
+                        (Friends.to eq currentUser!!.id)) and
+                        (Friends.status eq 1) }
                     .with(Friend::to, Friend::from).toList()
             if (list.isNotEmpty())
                 exposedToFriendModel(list)
@@ -73,17 +79,17 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getLikeUsers() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { ((Friends.from eq currentUser!!.id) and (Friends.status eq 1)) or ((Friends.to eq currentUser!!.id) and (Friends.status eq 1)) }
+            val list = Friend.find { ((Friends.from eq currentUser!!.id) and
+                    (Friends.status eq 1)) or ((Friends.to eq currentUser!!.id) and
+                    (Friends.status eq 1)) }
                 .toList()
-            val xd = list.map { it.to.id }
-            val xd1 = list.map { it.from.id }
-            val xd2 = xd + xd1
+            val fL = list.map { it.to.id }
+            val fL1 = list.map { it.from.id }
             val x =
-                User.find { (Users.login like "$searchUserString%") and (Users.id notInList xd2) and (Users.id neq currentUser!!.id) }
+                User.find { (Users.login.lowerCase() like "$searchUserString%") and
+                        (Users.id notInList fL + fL1) and
+                        (Users.id neq currentUser!!.id) }
                     .toList()
-            for (i in x) {
-                Log.e("", i.login)
-            }
             exposedToUserModel(x)
         }
     }
@@ -123,10 +129,6 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                     )
                 )
         }
-        for (i in friendsList) {
-            Log.e("", i.login)
-            Log.e("", i.creation_time)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -147,7 +149,10 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 if (community_own_friends_linear.background != layoutColorInitial) {
                     layoutColorInitial
                 } else {
-                    ColorDrawable(ContextCompat.getColor(this, R.color.gray_tint))
+                    ColorDrawable(ContextCompat.getColor(
+                        this,
+                        R.color.gray_tint)
+                    )
                 }
             return true
         }
@@ -166,12 +171,11 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.community_own_friends_linear -> {
-                //TODO: click on layout and make other GONE
                 community_search_linear.visibility = View.GONE
             }
             R.id.community_search_btn -> {
                 searchUserString = search_et.text.toString()
-                if (searchUserString != null) {
+                if (searchUserString!!.isNotEmpty()) {
                     usersList.clear()
                     searchUserString = searchUserString!!.lowercase()
                     getLikeUsers()

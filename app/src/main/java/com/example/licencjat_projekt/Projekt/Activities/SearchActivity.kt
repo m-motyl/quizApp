@@ -1,14 +1,14 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.QuizesList
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class SearchActivity : AppCompatActivity(), View.OnClickListener {
@@ -29,6 +28,12 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
         var QUIZ_DETAILS = "quiz_details"
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         setSupportActionBar(search_toolbar)
@@ -128,7 +133,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
-                        ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                        ((Tags.name.lowerCase() like "$str%") or
+                                (Quizes.title.lowerCase() like "$str%")) and
+                                (Quizes.private eq false)
                     }.withDistinct().limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list.distinct())
@@ -148,7 +155,9 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
-                        ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
+                        ((Tags.name.lowerCase() like "$str%") or
+                                (Quizes.title.lowerCase() like "$str%")) and
+                                (Quizes.private eq false)
                     }.withDistinct().limit(5,offsetId)).toList()
                     if (list.isNotEmpty())
                         exposedToModel(list.distinct())
@@ -174,12 +183,20 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
                     var list = emptyList<Quiz>()
                     if (quizesCount.mod(5) != 0) {
                         list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
-                            ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                        }.withDistinct().orderBy(Quizes.id to SortOrder.DESC)).limit((quizesCount.mod(5))).toList()
+                            ((Tags.name.lowerCase() like "$str%") or
+                                    (Quizes.title.lowerCase() like "$str%")) and
+                                    (Quizes.private eq false)
+                        }.withDistinct().orderBy(
+                            Quizes.id to SortOrder.DESC)
+                        ).limit((quizesCount.mod(5))).toList()
                     } else {
                         list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
-                            ((Tags.name.lowerCase() like "$str%") or (Quizes.title.lowerCase() like "$str%")) and (Quizes.private eq false)
-                        }.withDistinct().orderBy(Quizes.id to SortOrder.DESC)).limit(5).toList()
+                            ((Tags.name.lowerCase() like "$str%") or
+                                    (Quizes.title.lowerCase() like "$str%")) and
+                                    (Quizes.private eq false)
+                        }.withDistinct().orderBy(
+                            Quizes.id to SortOrder.DESC)
+                        ).limit(5).toList()
                     }
                     if (list.isNotEmpty())
                         exposedToModel(list.reversed().distinct())
@@ -232,8 +249,8 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
     private fun getQuizesNumber(str: String) {
         val n = runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                Quiz.find { (Quizes.title.lowerCase() like "$str%") and (Quizes.private eq false) }
-                    .count()
+                Quiz.find { (Quizes.title.lowerCase() like "$str%") and
+                        (Quizes.private eq false) }.count()
             }
         }
         quizesCount = n

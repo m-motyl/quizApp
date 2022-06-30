@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.R
-import kotlinx.android.synthetic.main.answer_item.view.*
 import kotlinx.android.synthetic.main.item_contact.view.*
 
 open class FriendsList(

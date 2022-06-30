@@ -1,15 +1,15 @@
 package com.example.licencjat_projekt.Projekt.Activities
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import com.example.licencjat_projekt.Projekt.Models.CreateQuizModel
+import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
 import com.example.licencjat_projekt.Projekt.Models.ReportModel
 import com.example.licencjat_projekt.Projekt.database.Quiz
 import com.example.licencjat_projekt.Projekt.database.QuizeResult
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_report.*
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +24,12 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
     private var userIsAuthor: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report)
 
@@ -51,7 +57,7 @@ class ReportActivity : AppCompatActivity(), View.OnClickListener {
         if (intent.hasExtra(QuestionsShowActivity.QUIZ_SCORE)) {
             quizDetails = intent.getSerializableExtra(QuestionsShowActivity.QUIZ_DETAILS)
                     as ReadQuizModel
-            report_author_message.text = quizDetails!!.gz_text.toString()
+            report_author_message.text = quizDetails!!.gz_text
         }
 
         if(reportModel != null && !userIsAuthor){

@@ -3,26 +3,20 @@ package com.example.licencjat_projekt.Projekt.Activities
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
-import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
-import com.example.licencjat_projekt.Projekt.database.Friend
 import com.example.licencjat_projekt.Projekt.database.Friends
 import com.example.licencjat_projekt.Projekt.database.QuizeResult
 import com.example.licencjat_projekt.Projekt.database.QuizeResults
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.android.synthetic.main.activity_profile.profile_toolbar
 import kotlinx.android.synthetic.main.activity_profile_friend.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.or
@@ -31,6 +25,13 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
     private var user: LoadUserModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_friend)
         setSupportActionBar(profile_friend_toolbar)
@@ -59,8 +60,9 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
     private fun userQuizTaken(): String {
         return runBlocking {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
-                return@newSuspendedTransaction QuizeResult.find { QuizeResults.by eq user!!.id }
-                    .count().toString()
+                return@newSuspendedTransaction QuizeResult.find {
+                    QuizeResults.by eq user!!.id
+                }.count().toString()
             }
         }
     }
@@ -70,7 +72,10 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
             R.id.profile_add_delete_friend -> {
                 deleteFriend()
                 finish()
-                val intent = Intent(this@ProfileFriendActivity, MainActivity::class.java)
+                val intent = Intent(
+                    this@ProfileFriendActivity,
+                    MainActivity::class.java
+                )
                 startActivity(intent)
             }
         }
@@ -79,8 +84,10 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
     private fun deleteFriend() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             Friends.deleteWhere {
-                ((Friends.from eq currentUser!!.id) and (Friends.to eq user!!.id)) or
-                        ((Friends.to eq currentUser!!.id) and (Friends.from eq user!!.id))
+                ((Friends.from eq currentUser!!.id) and
+                        (Friends.to eq user!!.id)) or
+                        ((Friends.to eq currentUser!!.id) and
+                                (Friends.from eq user!!.id))
             }
         }
     }

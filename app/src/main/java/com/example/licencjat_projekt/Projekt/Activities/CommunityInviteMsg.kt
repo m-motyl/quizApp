@@ -2,13 +2,10 @@ package com.example.licencjat_projekt.Projekt.Activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
 import com.example.licencjat_projekt.Projekt.Models.ReadFriendInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizInvitationModel
 import com.example.licencjat_projekt.Projekt.Models.ReadQuizModel
@@ -16,15 +13,13 @@ import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendInviteList
 import com.example.licencjat_projekt.Projekt.utils.QuizInviteList
 import com.example.licencjat_projekt.Projekt.utils.currentUser
+import com.example.licencjat_projekt.Projekt.utils.falseToken
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.activity_community_invite_msg.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
@@ -36,6 +31,12 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private var friendinvcount = 0L
     private var offset = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (falseToken()){
+            val intent = Intent(this,SignInActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.putExtra("EXIT",true)
+            startActivity(intent)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_community_invite_msg)
         community_invite_msg_toolbar.setNavigationOnClickListener {
@@ -53,31 +54,9 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             setQuizesBtn()
         }
 
-        //getAllFriendInvitations()
-        //getAllQuizInvitations()
         firstFive()
         friendInvitesRecyclerView(friendInvitesList)
         quizInvitesRecyclerView(quizInvitesList)
-    }
-
-    private fun getAllFriendInvitations() = runBlocking {
-        newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { (Friends.to eq currentUser!!.id) and (Friends.status eq 0) }
-                .with(Friend::to).toList()
-            if (list.isNotEmpty())
-                exposedToFriendInvitationModel(list)
-        }
-    }
-
-
-    private fun getAllQuizInvitations() = runBlocking {
-        newSuspendedTransaction(Dispatchers.IO) {
-            val list =
-                QuizInvitation.find { (QuizInvitations.to eq currentUser!!.id) and (QuizInvitations.status eq 0) }
-                    .toList()
-            if (list.isNotEmpty())
-                exposedToQuizInvitationModel(list)
-        }
     }
 
     private fun exposedToFriendInvitationModel(list: List<Friend>) {
@@ -173,21 +152,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private fun changeFriendInvitestatus(poz: Int, s: Int) = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
             val x =
-                Friend.find { (Friends.from eq friendInvitesList[poz].fromUser) and (Friends.to eq currentUser!!.id) }
-                    .toList()
-            x[0].status = s
-        }
-    }
-
-    private fun changeQuizInvStatus(poz: Int, s: Int) = runBlocking {
-        newSuspendedTransaction(Dispatchers.IO) {
-            val x =
-                QuizInvitation.find {
-                    (QuizInvitations.from eq quizInvitesList[poz].fromUser) and
-                            (QuizInvitations.to eq currentUser!!.id) and (QuizInvitations.quiz eq Quiz.findById(
-                        quizInvitesList[poz].quizID
-                    )!!.id)
-                }
+                Friend.find { (Friends.from eq friendInvitesList[poz].fromUser) and
+                        (Friends.to eq currentUser!!.id) }
                     .toList()
             x[0].status = s
         }
@@ -223,14 +189,16 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
                     changeFriendInvitestatus(position, 1)
                     finish()
-                    val intent = Intent(this@CommunityInviteMsg, CommunityActivity::class.java)
+                    val intent = Intent(
+                        this@CommunityInviteMsg,
+                        CommunityActivity::class.java
+                    )
                     startActivity(intent)
                 }
             },
 
             object : FriendInviteList.OnDeclineClickListener {
                 override fun onClick(position: Int, model: ReadFriendInvitationModel) {
-                    //changeFriendInvitestatus(position, -1)
                     deleteFrenInv(position)
                     restartActivity()
                 }
@@ -257,7 +225,7 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
     private fun exposedToQuizModel(quiz: Quiz): ReadQuizModel {
 
         getQuizTags(quiz)
-        var quizModel =
+        val quizModel =
             ReadQuizModel(
                 quiz.id.value,
                 quiz.title,
@@ -325,7 +293,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
         newSuspendedTransaction(Dispatchers.IO) {
             val f = User.findById(friendInvitesList[poz].fromUser)!!.id
             val x =
-                Friend.find { (Friends.to eq currentUser!!.id) and (Friends.from eq f) }.toList()
+                Friend.find { (Friends.to eq currentUser!!.id) and
+                        (Friends.from eq f) }.toList()
             x[0].delete()
 
         }
@@ -337,7 +306,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
                 QuizInvitation.find {
                     (QuizInvitations.from eq quizInvitesList[poz].fromUser) and
                             (QuizInvitations.to eq currentUser!!.id) and
-                            (QuizInvitations.quiz eq Quiz.findById(quizInvitesList[poz].quizID)!!.id)
+                            (QuizInvitations.quiz eq
+                                    Quiz.findById(quizInvitesList[poz].quizID)!!.id)
                 }.toList()
             x[0].delete()
 
@@ -356,11 +326,12 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
     private fun countQuizInv() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            quizinvcount = QuizInvitation.find { QuizInvitations.to eq currentUser!!.id }.count()
+            quizinvcount = QuizInvitation.find {
+                QuizInvitations.to eq currentUser!!.id
+            }.count()
         }
     }
 
-    //TODO (WITOLD) paginacja zaproszeń do quizów i znaj
     private fun firstFive() {
         this.offset = 0L
         if (friendsPage) {
@@ -368,7 +339,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
 
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list = Friend.find { (Friends.to eq currentUser!!.id) and(Friends.status eq 0)}.limit(5).toList()
+                    val list = Friend.find { (Friends.to eq currentUser!!.id) and
+                            (Friends.status eq 0)}.limit(5).toList()
                     if (list.isNotEmpty())
                         exposedToFriendInvitationModel(list)
                 }
@@ -378,7 +350,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list =
-                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and(QuizInvitations.status eq 0)}.limit(5)
+                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and
+                                (QuizInvitations.status eq 0)}.limit(5)
                             .toList()
                     if (list.isNotEmpty())
                         exposedToQuizInvitationModel(list)
@@ -392,7 +365,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             countFriendInv()
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list = Friend.find { Friends.to eq currentUser!!.id and(Friends.status eq 0)}.limit(5,offset).toList()
+                    val list = Friend.find { Friends.to eq currentUser!!.id and
+                            (Friends.status eq 0)}.limit(5,offset).toList()
                     if (list.isNotEmpty())
                         exposedToFriendInvitationModel(list)
                     else
@@ -404,7 +378,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list =
-                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and(QuizInvitations.status eq 0)}.limit(5,offset)
+                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and
+                                (QuizInvitations.status eq 0)}.limit(5,offset)
                             .toList()
                     if (list.isNotEmpty())
                         exposedToQuizInvitationModel(list)
@@ -420,7 +395,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             countFriendInv()
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list = Friend.find { Friends.to eq currentUser!!.id and(Friends.status eq 0)}.limit(5,offset).toList()
+                    val list = Friend.find { Friends.to eq currentUser!!.id and
+                            (Friends.status eq 0)}.limit(5,offset).toList()
                     if (list.isNotEmpty())
                         exposedToFriendInvitationModel(list)
                     else
@@ -432,7 +408,8 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list =
-                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and(QuizInvitations.status eq 0)}.limit(5,offset)
+                        QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and
+                                (QuizInvitations.status eq 0)}.limit(5,offset)
                             .toList()
                     if (list.isNotEmpty())
                         exposedToQuizInvitationModel(list)
@@ -453,13 +430,15 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
                     val list: List<Friend> = if (friendinvcount.mod(5) != 0) {
-                        Friend.find { Friends.to eq currentUser!!.id and(Friends.status eq 0)}.orderBy(Friends.id to SortOrder.DESC)
-                            .limit((friendinvcount.mod(5)))
-                            .toList()
+                        Friend.find { Friends.to eq currentUser!!.id and
+                                (Friends.status eq 0)}.orderBy(
+                            Friends.id to SortOrder.DESC
+                        ).limit((friendinvcount.mod(5))).toList()
                     } else {
-                        Friend.find { Friends.to eq currentUser!!.id and(Friends.status eq 0)}.orderBy(Friends.id to SortOrder.DESC)
-                            .limit(5)
-                            .toList()
+                        Friend.find { Friends.to eq currentUser!!.id and(
+                                Friends.status eq 0)}.orderBy(
+                            Friends.id to SortOrder.DESC
+                        ).limit(5).toList()
                     }
                     if (list.isNotEmpty())
                         exposedToFriendInvitationModel(list.reversed())
@@ -474,18 +453,19 @@ class CommunityInviteMsg : AppCompatActivity(), View.OnClickListener {
             }
             runBlocking {
                 val list: List<QuizInvitation> = if (quizinvcount.mod(5) != 0) {
-                    QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and(QuizInvitations.status eq 0)}.orderBy(QuizInvitations.id to SortOrder.DESC)
-                        .limit((quizinvcount.mod(5)))
-                        .toList()
+                    QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and
+                            (QuizInvitations.status eq 0)}.orderBy(
+                        QuizInvitations.id to SortOrder.DESC
+                    ).limit((quizinvcount.mod(5))).toList()
                 } else {
-                    QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and(QuizInvitations.status eq 0)}.orderBy(QuizInvitations.id to SortOrder.DESC)
-                        .limit(5)
-                        .toList()
+                    QuizInvitation.find { QuizInvitations.to eq currentUser!!.id and
+                            (QuizInvitations.status eq 0)}.orderBy(
+                        QuizInvitations.id to SortOrder.DESC
+                    ).limit(5).toList()
                 }
                 if (list.isNotEmpty())
                     exposedToQuizInvitationModel(list.reversed())
             }
         }
     }
-
 }

@@ -2,15 +2,9 @@ package com.example.licencjat_projekt.Projekt.utils
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.PaintDrawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.licencjat_projekt.Projekt.Models.AnswerModel
 import com.example.licencjat_projekt.R

@@ -32,7 +32,6 @@ class ExampleUnitTest {
             }
             val x = Quiz.wrapRows(list).toList()
             print(x[0].title)
-            print("xd")
         }
 
     }
