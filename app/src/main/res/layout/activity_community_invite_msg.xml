@@ -17,6 +17,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/community_invite_msg_toolbar"
             android:layout_width="0dp"
+            app:titleTextColor="@color/white"
             android:layout_height="wrap_content"
             android:background="@color/purple_05"
             android:minHeight="?attr/actionBarSize"

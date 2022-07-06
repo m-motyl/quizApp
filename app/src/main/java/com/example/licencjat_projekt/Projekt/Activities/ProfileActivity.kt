@@ -22,7 +22,10 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
     private var newPassword: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -42,7 +45,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener{
             tv_profile_password_vis.text = currentUser!!.password
             tv_profile_password_inv.text = currentUser!!.password
             profile_image.setImageBitmap(
-                byteArrayToBitmap(currentUser!!.profile_picture!!.bytes))
+                byteArrayToBitmap(currentUser!!.profile_picture!!.bytes)
+            )
             profile_quiz_taken.text = userQuizTaken()
         }
         profile_show_password.setOnClickListener(this)

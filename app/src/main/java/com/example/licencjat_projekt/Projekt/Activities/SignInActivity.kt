@@ -98,8 +98,10 @@ class SignInActivity : AppCompatActivity(), View.OnClickListener {
         return runBlocking {
             val result = newSuspendedTransaction(Dispatchers.IO) {
                 val resultado =
-                    User.find { Users.login eq signInModel.login and
-                            (Users.password eq signInModel.password) }.toList()
+                    User.find {
+                        Users.login eq signInModel.login and
+                            (Users.password eq signInModel.password)
+                    }.toList()
                 if (resultado.isNotEmpty())
                     resultado.elementAt(0).token = UUID.randomUUID()
                 return@newSuspendedTransaction resultado

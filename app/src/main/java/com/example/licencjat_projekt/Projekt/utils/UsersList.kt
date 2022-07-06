@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
+import com.example.licencjat_projekt.Projekt.Models.ReadUsermodel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.item_contact.view.*
 
 open class UsersList(
     private val context: Context,
-    private var listOfUsers: ArrayList<LoadUserModel>
+    private var listOfUsers: ArrayList<ReadUsermodel>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onClickListener: OnClickListener? = null
 
@@ -54,7 +54,7 @@ open class UsersList(
     }
 
     interface OnClickListener {
-        fun onClick(position: Int, model: LoadUserModel)
+        fun onClick(position: Int, model: ReadUsermodel)
     }
 
     fun byteArrayToBitmap(data: ByteArray): Bitmap {

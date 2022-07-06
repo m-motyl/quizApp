@@ -40,7 +40,7 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         report_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-        supportActionBar!!.title = ""
+        supportActionBar!!.title = "Raporty"
         report_firstPage.setOnClickListener(this)
         report_backPage.setOnClickListener(this)
         report_nextPage.setOnClickListener(this)
@@ -63,8 +63,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
         when (v!!.id) {
             R.id.report_user_reports -> {
                 if (othersReports) {
+                    quizesList.clear()
+                    quizesRecyclerView(quizesList)
                     othersReports = false
-
 
                     offsetId = 0L
                     firstFive()
@@ -189,20 +190,19 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
         } else {
-            //if (searchString!!.isEmpty())
-                runBlocking {
-                    newSuspendedTransaction(Dispatchers.IO) {
-                        val query =
-                            QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
-                                QuizeResults.by eq currentUser!!.id
-                            }.limit(5, offsetId)
-                        val x = QuizeResult.wrapRows(query).toList()
-                        if (x.isNotEmpty())
-                            exposedToModel(x)
-                        else
-                            offsetId -= 5L
-                    }
+            runBlocking {
+                newSuspendedTransaction(Dispatchers.IO) {
+                    val query =
+                        QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                            QuizeResults.by eq currentUser!!.id
+                        }.limit(5, offsetId)
+                    val x = QuizeResult.wrapRows(query).toList()
+                    if (x.isNotEmpty())
+                        exposedToModel(x)
+                    else
+                        offsetId -= 5L
                 }
+            }
         }
     }
 

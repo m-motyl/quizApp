@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
+import com.example.licencjat_projekt.Projekt.Models.ReadUsermodel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.currentUser
 import com.example.licencjat_projekt.Projekt.utils.falseToken
@@ -21,12 +21,15 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
-    private var visitatedUser: LoadUserModel? = null
+    private var visitatedUser: ReadUsermodel? = null
     private var invitationSend: Boolean = false
     private var maxFriends: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -42,7 +45,7 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
             visitatedUser =
                 intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS)
-                        as LoadUserModel
+                        as ReadUsermodel
         }
 
         profile_add_add_friend.setOnClickListener(this)
@@ -50,7 +53,9 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
         supportActionBar!!.title = ""
         if(visitatedUser != null){
             profileadd_main_login.text = visitatedUser!!.login
-            profileadd_image.setImageBitmap(byteArrayToBitmap(visitatedUser!!.profile_picture))
+            profileadd_image.setImageBitmap(
+                byteArrayToBitmap(visitatedUser!!.profile_picture)
+            )
             profileadd_quiz_taken.text = userQuizTaken()
         }
         checkIfInvitationSend()
@@ -113,17 +118,21 @@ class ProfileActivityAdd : AppCompatActivity(), View.OnClickListener {
     }
     private fun checkIfInvitationSend()= runBlocking{
         newSuspendedTransaction(Dispatchers.IO) {
-            invitationSend = !Friend.find { ((Friends.to eq visitatedUser!!.id) and
+            invitationSend = !Friend.find { (
+                    (Friends.to eq visitatedUser!!.id) and
                     (Friends.from eq currentUser!!.id)) or
                     ((Friends.from eq visitatedUser!!.id) and
-                            (Friends.to eq currentUser!!.id))}.empty()
+                            (Friends.to eq currentUser!!.id))
+            }.empty()
         }
     }
     private fun checkNOFriends() =runBlocking{
         newSuspendedTransaction(Dispatchers.IO) {
-            maxFriends = Friend.find { ((Friends.to eq currentUser!!.id) or
+            maxFriends = Friend.find { (
+                    (Friends.to eq currentUser!!.id) or
                     (Friends.from eq currentUser!!.id)) and
-                    (Friends.status eq 1)}.count()>=50
+                    (Friends.status eq 1)
+            }.count()>=50
         }
     }
 }

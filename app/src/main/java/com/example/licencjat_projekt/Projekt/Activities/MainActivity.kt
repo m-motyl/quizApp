@@ -41,7 +41,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)

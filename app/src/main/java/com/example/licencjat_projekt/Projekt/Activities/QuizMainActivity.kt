@@ -43,7 +43,10 @@ class QuizMainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)

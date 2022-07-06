@@ -54,7 +54,10 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -151,7 +154,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                                     questions_question.text.toString()
                                 questionsList[noQuestions].question_pts =
                                     Integer.parseInt(questions_points.text.toString())
-                                questionsList[noQuestions].question_answers += answersList
+                                if(questionsList[noQuestions].question_answers != answersList) {
+                                    questionsList[noQuestions].question_answers += answersList
+                                }
                             }
                             val res = validateQuestions()
                             if(res == 0){
@@ -216,14 +221,18 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                                 questionModel = CreateQuestionModel(
                                     questions_question.text.toString(),
                                     question_image,
-                                    Integer.parseInt(questions_points.text.toString()),
+                                    Integer.parseInt(
+                                        questions_points.text.toString()
+                                    ),
                                     ArrayList(answersList)
                                 )
                             } else {
                                 questionModel = CreateQuestionModel(
                                     questions_question.text.toString(),
                                     emptyByteArray,
-                                    Integer.parseInt(questions_points.text.toString()),
+                                    Integer.parseInt(
+                                        questions_points.text.toString()
+                                    ),
                                     ArrayList(answersList)
                                 )
                             }
@@ -239,8 +248,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                                 isImage = false
                             }
                             questionsList[noQuestions].question_pts =
-                                Integer.parseInt(questions_points.text.toString())
-                            questionsList[noQuestions].question_answers += answersList
+                                Integer.parseInt(
+                                    questions_points.text.toString()
+                                )
+                            if(questionsList[noQuestions].question_answers != answersList) {
+                                questionsList[noQuestions].question_answers += answersList
+                            }
                             answersList.clear()
                         }
                     } else {
@@ -283,14 +296,18 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                             questionModel = CreateQuestionModel(
                                 questions_question.text.toString(),
                                 question_image,
-                                Integer.parseInt(questions_points.text.toString()),
+                                Integer.parseInt(
+                                    questions_points.text.toString()
+                                ),
                                 ArrayList(answersList)
                             )
                         } else {
                             questionModel = CreateQuestionModel(
                                 questions_question.text.toString(),
                                 emptyByteArray,
-                                Integer.parseInt(questions_points.text.toString()),
+                                Integer.parseInt(
+                                    questions_points.text.toString()
+                                ),
                                 ArrayList(answersList)
                             )
                         }
@@ -306,8 +323,12 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                             isImage = false
                         }
                         questionsList[noQuestions].question_pts =
-                            Integer.parseInt(questions_points.text.toString())
-                        questionsList[noQuestions].question_answers += answersList
+                            Integer.parseInt(
+                                questions_points.text.toString()
+                            )
+                        if(questionsList[noQuestions].question_answers != answersList) {
+                            questionsList[noQuestions].question_answers += answersList
+                        }
                         answersList.clear()
                     }
 
@@ -431,7 +452,9 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         removeAnswers = true
         questions_end_del.visibility = View.VISIBLE
         if (questionsList.getOrNull(noQuestions) != null) {
-            questionsList[noQuestions].question_answers += answersList
+            if(questionsList[noQuestions].question_answers != answersList) {
+                questionsList[noQuestions].question_answers += answersList
+            }
             answersList.clear()
         }
     }
@@ -635,7 +658,6 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 for (j in i.question_answers) {
                     Answer.new {
                         answer_text = j.answer_text
-                        //answer_image = ExposedBlob(j.answer_image)
                         is_correct = j.is_Correct
                         question = newQuestion
                     }
@@ -649,25 +671,33 @@ class QuestionsActivity : AppCompatActivity(), View.OnClickListener {
         if(questionsList.size < 2 || questionsList.size > 20){ return 1 }
         for (i in questionsList){
             var ansFlag = true
-            if (i.question_answers.size < 2 || i.question_answers.size > 10){ return 2 }
+            if (i.question_answers.size < 2 || i.question_answers.size > 10){
+                showNoQuestion(i)
+                return 2
+            }
             for (j in i.question_answers){
                 if(j.is_Correct && ansFlag){ ansFlag = false }
             }
-            if(ansFlag){ return 3 }
-
+            if(ansFlag){
+                showNoQuestion(i)
+                return 3
+            }
             if(i.question_pts < 1 || i.question_pts > 10){
-                Toast.makeText(this, "Pytanie nr ${questionsList.indexOf(i)}",
-                    Toast.LENGTH_SHORT).show()
-                return 4 }
-
+                showNoQuestion(i)
+                return 4
+            }
             if(i.question_text.length < 2 || i.question_text.length > 80){
-                Toast.makeText(
-                    this, "Pytanie nr ${questionsList.indexOf(i)}",
-                    Toast.LENGTH_SHORT).show()
-                return 5 }
+                showNoQuestion(i)
+                return 5
+            }
         }
         return 0
     }
-
+    private fun showNoQuestion(i: CreateQuestionModel){
+        Toast.makeText(
+            this,
+            "Pytanie nr ${questionsList.indexOf(i) + 1}",
+            Toast.LENGTH_SHORT).show()
+    }
     private fun goBack() {}
 }

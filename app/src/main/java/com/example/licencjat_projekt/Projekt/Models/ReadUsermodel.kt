@@ -2,7 +2,7 @@ package com.example.licencjat_projekt.Projekt.Models
 
 import java.io.Serializable
 
-data class LoadUserModel(
+data class ReadUsermodel(
     var id: Int,
     var login: String,
     var e_mail: String?=null,

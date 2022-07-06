@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
+import com.example.licencjat_projekt.Projekt.Models.ReadUsermodel
 import com.example.licencjat_projekt.Projekt.database.*
 import com.example.licencjat_projekt.Projekt.utils.FriendsList
 import com.example.licencjat_projekt.Projekt.utils.UsersList
@@ -29,8 +29,8 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private var searchUserString: String? = null
-    private var friendsList = ArrayList<LoadUserModel>()
-    private var usersList = ArrayList<LoadUserModel>()
+    private var friendsList = ArrayList<ReadUsermodel>()
+    private var usersList = ArrayList<ReadUsermodel>()
     private lateinit var layoutColorInitial: Drawable
     private lateinit var friendsLinearLayout: LinearLayout
     companion object {
@@ -38,7 +38,10 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -53,10 +56,15 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         community_toolbar.setNavigationOnClickListener {
             onBackPressed()
         }
+        supportActionBar!!.title = "Społeczność"
 
-        val colorDrawable = ColorDrawable(ContextCompat.getColor(this, R.color.purple_05))
+        val colorDrawable = ColorDrawable(
+            ContextCompat.getColor(
+                this,
+                R.color.purple_05
+            )
+        )
         community_toolbar.background = colorDrawable
-        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         community_own_friends_linear.setOnClickListener(this)
         community_search_btn.setOnClickListener(this)
@@ -70,8 +78,8 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             val list =
                 Friend.find { ((Friends.from eq currentUser!!.id) or
                         (Friends.to eq currentUser!!.id)) and
-                        (Friends.status eq 1) }
-                    .with(Friend::to, Friend::from).toList()
+                        (Friends.status eq 1)
+                }.with(Friend::to, Friend::from).toList()
             if (list.isNotEmpty())
                 exposedToFriendModel(list)
         }
@@ -79,17 +87,20 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getLikeUsers() = runBlocking {
         newSuspendedTransaction(Dispatchers.IO) {
-            val list = Friend.find { ((Friends.from eq currentUser!!.id) and
-                    (Friends.status eq 1)) or ((Friends.to eq currentUser!!.id) and
-                    (Friends.status eq 1)) }
-                .toList()
+            val list = Friend.find { (
+                    (Friends.from eq currentUser!!.id) and
+                    (Friends.status eq 1)) or
+                    ((Friends.to eq currentUser!!.id) and
+                    (Friends.status eq 1))
+            }.toList()
             val fL = list.map { it.to.id }
             val fL1 = list.map { it.from.id }
             val x =
-                User.find { (Users.login.lowerCase() like "$searchUserString%") and
+                User.find { (Users.login.lowerCase() like
+                        "$searchUserString%") and
                         (Users.id notInList fL + fL1) and
-                        (Users.id neq currentUser!!.id) }
-                    .toList()
+                        (Users.id neq currentUser!!.id)
+                }.toList()
             exposedToUserModel(x)
         }
     }
@@ -97,7 +108,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
     private fun exposedToUserModel(l: List<User>) {
         for (i in l) {
             usersList.add(
-                LoadUserModel(
+                ReadUsermodel(
                     id = i.id.value,
                     login = i.login,
                     profile_picture = i.profile_picture!!.bytes,
@@ -112,7 +123,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         for (i in l) {
             if (currentUser!!.id == i.from.id)
                 friendsList.add(
-                    LoadUserModel(
+                    ReadUsermodel(
                         id = i.to.id.value,
                         login = i.to.login,
                         profile_picture = i.to.profile_picture!!.bytes,
@@ -121,7 +132,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 )
             else
                 friendsList.add(
-                    LoadUserModel(
+                    ReadUsermodel(
                         id = i.from.id.value,
                         login = i.from.login,
                         profile_picture = i.from.profile_picture!!.bytes,
@@ -149,9 +160,11 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
                 if (community_own_friends_linear.background != layoutColorInitial) {
                     layoutColorInitial
                 } else {
-                    ColorDrawable(ContextCompat.getColor(
-                        this,
-                        R.color.gray_tint)
+                    ColorDrawable(
+                            ContextCompat.getColor(
+                            this,
+                            R.color.gray_tint
+                        )
                     )
                 }
             return true
@@ -165,6 +178,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
             startActivity(intent)
             finish()
             return true
+
         } else super.onOptionsItemSelected(item)
     }
 
@@ -185,7 +199,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun friendsRecyclerView(friends: ArrayList<LoadUserModel>) {
+    private fun friendsRecyclerView(friends: ArrayList<ReadUsermodel>) {
         community_rv_friends.layoutManager = LinearLayoutManager(this)
         community_rv_friends.setHasFixedSize(true)
         val friendsList = FriendsList(this, friends)
@@ -193,7 +207,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 
         friendsList.setOnClickListener(object : FriendsList.OnClickListener {
 
-            override fun onClick(position: Int, model: LoadUserModel) {
+            override fun onClick(position: Int, model: ReadUsermodel) {
 
                 val intent = Intent(
                     this@CommunityActivity,
@@ -206,7 +220,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun usersRecyclerView(users: ArrayList<LoadUserModel>) {
+    private fun usersRecyclerView(users: ArrayList<ReadUsermodel>) {
         community_rv_users.layoutManager = LinearLayoutManager(this)
         community_rv_users.setHasFixedSize(true)
         val usersList = UsersList(this, users)
@@ -214,7 +228,7 @@ class CommunityActivity : AppCompatActivity(), View.OnClickListener {
 
         usersList.setOnClickListener(object : UsersList.OnClickListener {
 
-            override fun onClick(position: Int, model: LoadUserModel) {
+            override fun onClick(position: Int, model: ReadUsermodel) {
                 val intent = Intent(
                     this@CommunityActivity,
                     ProfileActivityAdd::class.java

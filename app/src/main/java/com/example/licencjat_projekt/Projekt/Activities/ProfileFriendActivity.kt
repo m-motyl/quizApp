@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.licencjat_projekt.Projekt.Models.LoadUserModel
+import com.example.licencjat_projekt.Projekt.Models.ReadUsermodel
 import com.example.licencjat_projekt.Projekt.database.Friends
 import com.example.licencjat_projekt.Projekt.database.QuizeResult
 import com.example.licencjat_projekt.Projekt.database.QuizeResults
@@ -23,10 +23,13 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
-    private var user: LoadUserModel? = null
+    private var user: ReadUsermodel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -42,11 +45,14 @@ class ProfileFriendActivity : AppCompatActivity(), View.OnClickListener {
 
         if (intent.hasExtra(CommunityActivity.PROFILE_DETAILS)) {
             user =
-                intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS) as LoadUserModel
+                intent.getSerializableExtra(CommunityActivity.PROFILE_DETAILS)
+                        as ReadUsermodel
         }
 
         profile_friend_login.text = user!!.login
-        profile_friend_image.setImageBitmap(byteArrayToBitmap(user!!.profile_picture))
+        profile_friend_image.setImageBitmap(
+            byteArrayToBitmap(user!!.profile_picture)
+        )
         profile_friend_quiz_taken.text = userQuizTaken()
 
         supportActionBar!!.title = ""

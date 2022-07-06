@@ -19,7 +19,10 @@ class DetailReportActivity : AppCompatActivity() {
     private var quizDetails: ReadReportModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -28,7 +31,8 @@ class DetailReportActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail_report)
 
         if (intent.hasExtra(ReportsActivity.QUIZ_DETAILS)) {
-            quizDetails = intent.getSerializableExtra(ReportsActivity.QUIZ_DETAILS) as ReadReportModel
+            quizDetails = intent.getSerializableExtra(ReportsActivity.QUIZ_DETAILS)
+                    as ReadReportModel
         }
 
         setSupportActionBar(detail_report_toolbar)
@@ -38,19 +42,22 @@ class DetailReportActivity : AppCompatActivity() {
         }
         if(quizDetails != null){
             supportActionBar!!.title = quizDetails!!.title
-            detail_report_image.setImageBitmap(byteArrayToBitmap(quizDetails!!.image))
+            detail_report_image.setImageBitmap(
+                byteArrayToBitmap(quizDetails!!.image)
+            )
             detail_report_title.text = quizDetails!!.invitation_code
             detail_report_description.text = quizDetails!!.description
             detail_report_tags.text = quizDetails!!.tags
-            detail_report_timer.text = quizDetails!!.time_limit.toString() + " minut(y)"
+            detail_report_timer.text = quizDetails!!.time_limit.toString() +
+                    " minut(y)"
             detail_report_author_name.text = quizDetails!!.author
             if(quizDetails!!.points.isNaN()){
-                detail_report_user_score.text = getUserNameById(quizDetails!!.by) + ", 0.0 /" +
-                        quizDetails!!.max_points.toString() + ".0"
+                detail_report_user_score.text = getUserNameById(quizDetails!!.by) +
+                        ", 0.0 /" + quizDetails!!.max_points.toString() + ".0"
             }
             else {
-                detail_report_user_score.text = getUserNameById(quizDetails!!.by) + ", " +
-                        quizDetails!!.points.toString() + " /" +
+                detail_report_user_score.text = getUserNameById(quizDetails!!.by) +
+                        ", " + quizDetails!!.points.toString() + " /" +
                         quizDetails!!.max_points.toString() + ".0"
             }
         }

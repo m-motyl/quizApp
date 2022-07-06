@@ -40,7 +40,10 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -143,7 +146,6 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
                 tmp.add(
                     ReadAnswerModel(
                         answer_text = j.answer_text,
-                        //answer_image = j.answer_image!!.bytes,
                         is_Correct = j.is_correct
                     )
                 )
@@ -176,10 +178,10 @@ class QuestionsShowActivity : AppCompatActivity(), View.OnClickListener {
         questions_show_recycler_view.layoutManager = LinearLayoutManager(this)
         questions_show_recycler_view.setHasFixedSize(true)
 
-        val ansList = DisplayQuestionsAnswers(this, answers)
+        val ansList = QuestionsAnswersList(this, answers)
         questions_show_recycler_view.adapter = ansList
 
-        ansList.setOnClickListener(object : DisplayQuestionsAnswers.OnClickListener {
+        ansList.setOnClickListener(object : QuestionsAnswersList.OnClickListener {
             override fun onClick(position: Int, model: ReadAnswerModel) {
                 if(!userIsAuthor) {
                     model.is_Selected = !model.is_Selected

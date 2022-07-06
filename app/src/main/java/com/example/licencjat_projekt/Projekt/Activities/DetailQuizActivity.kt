@@ -33,7 +33,10 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (falseToken()){
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(
+                this,
+                SignInActivity::class.java
+            )
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("EXIT",true)
             startActivity(intent)
@@ -62,11 +65,14 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
                 onBackPressed()
             }
             supportActionBar!!.title = quizDetails!!.title
-            detail_quiz_image.setImageBitmap(byteArrayToBitmap(quizDetails!!.image))
+            detail_quiz_image.setImageBitmap(
+                byteArrayToBitmap(quizDetails!!.image)
+            )
             detail_quiz_title.text = quizDetails!!.invitation_code
             detail_quiz_description.text = quizDetails!!.description
             detail_quiz_tags.text = quizDetails!!.tags
-            detail_quiz_timer.text = quizDetails!!.time_limit.toString() + " minut(y)"
+            detail_quiz_timer.text = quizDetails!!.time_limit.toString() +
+                    " minut(y)"
         }
         checkIfUserIsAuthor()
         if (userIsAuthor) {
@@ -169,10 +175,9 @@ class DetailQuizActivity : AppCompatActivity(), View.OnClickListener {
             return@runBlocking newSuspendedTransaction(Dispatchers.IO) {
                 return@newSuspendedTransaction (Friend.find {
                     (Friends.to eq currentUser!!.id) or
-                            (Friends.from eq currentUser!!.id) and (
-                            Friends.status eq 1)
-                }
-                    .count()) > 0
+                            (Friends.from eq currentUser!!.id) and
+                            (Friends.status eq 1)
+                }.count()) > 0
             }
         }
     }

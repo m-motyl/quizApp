@@ -10,7 +10,7 @@ import com.example.licencjat_projekt.Projekt.Models.ReadAnswerModel
 import com.example.licencjat_projekt.R
 import kotlinx.android.synthetic.main.question_item.view.*
 
-open class DisplayQuestionsAnswers(
+open class QuestionsAnswersList(
     private val context: Context,
     private var listOfAnswers: ArrayList<ReadAnswerModel>
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
