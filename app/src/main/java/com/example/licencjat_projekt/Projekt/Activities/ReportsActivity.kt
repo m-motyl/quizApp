@@ -149,7 +149,9 @@ class ReportsActivity : AppCompatActivity(), View.OnClickListener {
                 runBlocking {
                     newSuspendedTransaction(Dispatchers.IO) {
                         val query =
-                            QuizeResults.innerJoin(Quizes).slice(QuizeResults.columns).select {
+                            QuizeResults.innerJoin(Quizes).slice(
+                                QuizeResults.columns
+                            ).select {
                                 Quizes.user eq currentUser!!.id
                             }.limit(5)
                         val x = QuizeResult.wrapRows(query).toList()

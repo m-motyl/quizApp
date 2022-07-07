@@ -112,7 +112,8 @@ class SearchActivity : AppCompatActivity(), View.OnClickListener {
             this.offsetId = 0L
             runBlocking {
                 newSuspendedTransaction(Dispatchers.IO) {
-                    val list = Quiz.wrapRows(Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
+                    val list = Quiz.wrapRows(
+                        Quizes.innerJoin(QuizTags).innerJoin(Tags).select {
                         ((Tags.name.lowerCase() like "$str%") or
                                 (Quizes.title.lowerCase() like "$str%")) and
                                 (Quizes.private eq false)
