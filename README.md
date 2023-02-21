@@ -77,8 +77,8 @@ Screenshots below will be described in the future :v
 
 
 <p float="center">
-  <img src="app-screenshots/com.png" width="350" height="300" />
-  <img src="app-screenshots/com-ser.png" width="350" height="250" /> 
+  <img src="app-screenshots/com.png" width="350" height="650" />
+  <img src="app-screenshots/com-ser.png" width="350" height="650" /> 
 </p>
 
 
@@ -86,8 +86,8 @@ Screenshots below will be described in the future :v
 
 
 <p float="center">
-  <img src="app-screenshots/inv-fri.png" width="350" height="300" />
-  <img src="app-screenshots/inv-qui.png" width="350" height="300" /> 
+  <img src="app-screenshots/inv-fri.png" width="350" height="650" />
+  <img src="app-screenshots/inv-qui.png" width="350" height="650" /> 
 </p>
 
 
@@ -103,8 +103,8 @@ Screenshots below will be described in the future :v
 
 
 <p float="center">
-  <img src="app-screenshots/rep-usr.png" width="350" height="300" />
-  <img src="app-screenshots/rep-aut.png" width="350" height="300" /> 
+  <img src="app-screenshots/rep-usr.png" width="350" height="650" />
+  <img src="app-screenshots/rep-aut.png" width="350" height="650" /> 
 </p>
 
 
